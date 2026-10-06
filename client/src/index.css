@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #e8f1fa;
+  --color-primary-100: #c0daf0;
+  --color-primary-200: #7ab0e0;
+  --color-primary-300: #3b82c4;
+  --color-primary-400: #2563a8;
+  --color-primary-500: #1e4d8c;
+  --color-primary-600: #1a3a6e;
+  --color-primary-700: #142e58;
+  --color-primary-800: #0f2240;
+  --color-primary-900: #0a1628;
+
+  --color-accent-100: #d1f4f6;
+  --color-accent-200: #94e4ea;
+  --color-accent-300: #45d0d8;
+  --color-accent-400: #14b8c4;
+  --color-accent-500: #0f9199;
+  --color-accent-600: #0d7377;
+
+  --font-sans: Inter, sans-serif;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #1f2937;
+  background-color: #f9fafb;
+}
+
+@layer utilities {
+  .glass {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background-color: color-mix(in srgb, var(--color-primary-900) 80%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+}
