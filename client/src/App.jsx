@@ -15,6 +15,7 @@ import AdminLayout from './layouts/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminInquiries from './pages/admin/AdminInquiries';
+import AdminSettings from './pages/admin/AdminSettings';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 function App() {
@@ -46,11 +47,10 @@ function App() {
               </AdminLayout>
             </ProtectedRoute>
           } />
-          {/* Settings placeholder for now */}
           <Route path="/admin/settings" element={
             <ProtectedRoute>
               <AdminLayout>
-                <div className="p-8"><h1 className="text-3xl font-bold mb-4">Settings</h1><p>Global site configuration coming soon.</p></div>
+                <AdminSettings />
               </AdminLayout>
             </ProtectedRoute>
           } />

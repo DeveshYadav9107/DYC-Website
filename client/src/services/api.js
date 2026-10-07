@@ -45,4 +45,15 @@ export const updateInquiryStatus = async (id, status) => {
   return response.data;
 };
 
+// Settings Services
+export const getSettings = async () => {
+  const response = await api.get('/settings');
+  return response.data;
+};
+
+export const updateSettings = async (settingsData) => {
+  const response = await api.put('/settings', settingsData);
+  return response.data;
+};
+
 export default api;
