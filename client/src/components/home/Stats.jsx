@@ -1,4 +1,6 @@
 import siteConfig from '../../config/siteConfig';
+import { StaggerContainer, StaggerItem } from '../animations/Stagger';
+import Reveal from '../animations/Reveal';
 
 const Stats = () => {
   const stats = [
@@ -25,21 +27,23 @@ const Stats = () => {
   ];
 
   return (
-    <section className="py-20 bg-primary-900 text-white relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-primary-900 to-primary-900"></div>
+    <section className="py-24 bg-surface text-text-primary relative overflow-hidden border-b border-border/50">
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:2rem_2rem]"></div>
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
-          {stats.map((stat, idx) => (
-            <div key={idx} className="flex flex-col items-center">
-              <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-accent-400 mb-2 font-mono flex items-center justify-center">
-                <span>{stat.value}</span>
-                <span>{stat.suffix}</span>
-              </div>
-              <div className="text-primary-200 font-medium md:text-lg">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+        <Reveal>
+          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
+            {stats.map((stat, idx) => (
+              <StaggerItem key={idx} className="flex flex-col items-center group cursor-default">
+                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-2 tracking-tighter flex items-center justify-center transition-transform group-hover:scale-105 group-hover:text-primary-bright">
+                  <span>{stat.value}</span>
+                  <span>{stat.suffix}</span>
+                </div>
+                <div className="text-text-secondary font-medium md:text-lg">{stat.label}</div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </Reveal>
       </div>
     </section>
   );

@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import Reveal from '../animations/Reveal';
+import { StaggerContainer, StaggerItem } from '../animations/Stagger';
 
 const SAPCapabilitiesPreview = () => {
   const capabilities = [
@@ -13,32 +15,39 @@ const SAPCapabilitiesPreview = () => {
   ];
 
   return (
-    <section className="py-24 bg-gray-50 border-t border-gray-200 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div className="max-w-2xl">
-            <div className="text-accent-600 font-bold uppercase tracking-wider text-sm mb-2">Our Expertise</div>
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">Deep SAP Capabilities</h2>
-            <p className="text-lg text-gray-600">
-              From legacy systems to S/4HANA, our certified consultants bring deep module-specific expertise to your enterprise.
-            </p>
-          </div>
-          <Link to="/sap-capabilities" className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded shadow font-medium transition whitespace-nowrap">
-            View All Capabilities
-          </Link>
-        </div>
-
-        <div className="flex flex-wrap gap-4">
-          {capabilities.map((cap, idx) => (
-            <div key={idx} className="bg-white border border-gray-200 px-6 py-4 rounded-lg shadow-sm hover:border-primary-300 hover:shadow-md transition cursor-default flex flex-col justify-center">
-              <div className="text-xs text-gray-500 font-medium mb-1 uppercase tracking-wide">{cap.type}</div>
-              <div className="font-bold text-primary-900">{cap.name}</div>
+    <section className="py-32 bg-bg-primary border-t border-border/50 px-6 relative">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <Reveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div className="max-w-2xl">
+              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
+                <span className="w-8 h-px bg-primary"></span>
+                Our Expertise
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Deep SAP Capabilities</h2>
+              <p className="text-lg text-text-secondary leading-relaxed">
+                From legacy systems to S/4HANA, our certified consultants bring deep module-specific expertise to your enterprise.
+              </p>
             </div>
+            <Link to="/sap-capabilities" className="btn-secondary px-6 py-3 whitespace-nowrap">
+              View All Capabilities
+            </Link>
+          </div>
+        </Reveal>
+
+        <StaggerContainer className="flex flex-wrap gap-4">
+          {capabilities.map((cap, idx) => (
+            <StaggerItem key={idx} className="glass-panel px-6 py-4 flex-grow md:flex-grow-0 min-w-[200px] hover:border-primary/50 transition-colors cursor-default">
+              <div className="text-[10px] text-text-muted font-bold mb-1 uppercase tracking-widest">{cap.type}</div>
+              <div className="font-semibold text-white tracking-tight">{cap.name}</div>
+            </StaggerItem>
           ))}
-          <Link to="/sap-capabilities" className="px-6 py-4 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 hover:border-primary-500 hover:text-primary-600 transition flex items-center justify-center font-medium">
-            + More Modules
-          </Link>
-        </div>
+          <StaggerItem className="px-6 py-4 rounded-xl border-2 border-dashed border-border text-text-muted hover:border-primary/50 hover:text-primary transition-colors flex items-center justify-center font-medium min-w-[200px]">
+            <Link to="/sap-capabilities" className="w-full h-full flex items-center justify-center">
+              + Explore More
+            </Link>
+          </StaggerItem>
+        </StaggerContainer>
       </div>
     </section>
   );

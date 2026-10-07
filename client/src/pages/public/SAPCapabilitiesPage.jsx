@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import Reveal from '../../components/animations/Reveal';
+import { StaggerContainer, StaggerItem } from '../../components/animations/Stagger';
 
 const SAPCapabilitiesPage = () => {
   const categories = [
@@ -36,55 +38,63 @@ const SAPCapabilitiesPage = () => {
   ];
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-bg-primary min-h-screen text-text-primary">
       {/* Header */}
-      <div className="bg-primary-900 text-white py-20 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-accent-400 via-primary-900 to-primary-900"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">SAP Capabilities</h1>
-          <p className="text-xl text-primary-200 max-w-3xl">
-            We provide comprehensive SAP expertise across the entire enterprise landscape. From legacy ECC systems to modern S/4HANA transformations, our certified consultants deliver end-to-end solutions.
-          </p>
+      <div className="bg-bg-secondary text-white py-24 px-6 relative overflow-hidden border-b border-border/50">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,var(--color-primary),transparent_70%)]"></div>
+        <div className="max-w-7xl mx-auto relative z-10 pt-10">
+          <Reveal>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">SAP <span className="text-primary-bright">Capabilities</span></h1>
+            <p className="text-xl text-text-secondary max-w-3xl leading-relaxed">
+              We provide comprehensive SAP expertise across the entire enterprise landscape. From legacy ECC systems to modern S/4HANA transformations, our certified consultants deliver end-to-end solutions.
+            </p>
+          </Reveal>
         </div>
       </div>
 
       {/* Modules Grid */}
-      <div className="max-w-7xl mx-auto px-6 py-16 space-y-20">
+      <div className="max-w-7xl mx-auto px-6 py-24 space-y-32">
         {categories.map((category, idx) => (
           <div key={idx}>
-            <div className="mb-10">
-              <h2 className="text-3xl font-bold text-primary-900 mb-3">{category.title}</h2>
-              <p className="text-lg text-gray-600">{category.desc}</p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {category.modules.map((mod, i) => (
-                <div key={i} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-primary-300 hover:shadow-md transition group cursor-default">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-lg flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-primary-100 transition">
-                      {mod.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-xl text-primary-900 mb-1">{mod.name}</h3>
-                      <p className="text-gray-500 text-sm">{mod.full}</p>
-                    </div>
-                  </div>
+            <Reveal>
+              <div className="mb-12">
+                <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
+                  <span className="w-8 h-px bg-primary"></span>
+                  Domain {idx + 1}
                 </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">{category.title}</h2>
+                <p className="text-lg text-text-secondary">{category.desc}</p>
+              </div>
+            </Reveal>
+            
+            <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {category.modules.map((mod, i) => (
+                <StaggerItem key={i} className="glass-panel p-6 group cursor-default flex items-start gap-5 hover:border-primary/50 transition-colors">
+                  <div className="w-14 h-14 bg-surface border border-border text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:border-primary/50 transition-all duration-300 shadow-sm grayscale group-hover:grayscale-0">
+                    {mod.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-xl text-white mb-1 tracking-tight group-hover:text-primary-bright transition-colors">{mod.name}</h3>
+                    <p className="text-text-muted text-sm leading-relaxed">{mod.full}</p>
+                  </div>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         ))}
       </div>
 
       {/* CTA */}
-      <div className="bg-white border-t border-gray-200 py-20 px-6 text-center">
-        <h2 className="text-3xl font-bold text-primary-900 mb-4">Need a specific SAP expert?</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-          Whether you need a single ABAP developer or a full functional team for an S/4HANA rollout, we can deploy the right talent quickly.
-        </p>
-        <Link to="/contact" className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded shadow transition">
-          Request SAP Resources
-        </Link>
+      <div className="bg-bg-secondary border-t border-border/50 py-32 px-6 text-center">
+        <Reveal>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Need a specific SAP expert?</h2>
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+            Whether you need a single ABAP developer or a full functional team for an S/4HANA rollout, we can deploy the right talent quickly.
+          </p>
+          <Link to="/contact" className="btn-primary inline-block px-8 py-4 text-lg">
+            Request SAP Resources
+          </Link>
+        </Reveal>
       </div>
     </div>
   );

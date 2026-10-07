@@ -1,4 +1,6 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
+import Reveal from '../../components/animations/Reveal';
+import { StaggerContainer, StaggerItem } from '../../components/animations/Stagger';
 
 const servicesData = {
   'staffing': {
@@ -61,52 +63,65 @@ const ServicePage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-bg-primary min-h-screen text-text-primary">
       {/* Header */}
-      <div className="bg-primary-900 text-white py-20 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-primary-900 to-primary-900"></div>
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center gap-8">
-          <div className="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center text-4xl border border-white/20 backdrop-blur-sm">
-            {service.icon}
-          </div>
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{service.title}</h1>
-            <p className="text-xl text-primary-200 max-w-3xl">
-              {service.subtitle}
-            </p>
-          </div>
+      <div className="bg-bg-secondary text-white py-24 px-6 relative overflow-hidden border-b border-border/50">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)]"></div>
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center gap-10 pt-10">
+          <Reveal>
+            <div className="w-24 h-24 bg-surface rounded-2xl flex items-center justify-center text-5xl border border-border shadow-surface grayscale">
+              {service.icon}
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div>
+              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
+                <span className="w-8 h-px bg-primary"></span>
+                Service Detail
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{service.title}</h1>
+              <p className="text-xl text-text-secondary max-w-3xl leading-relaxed">
+                {service.subtitle}
+              </p>
+            </div>
+          </Reveal>
         </div>
       </div>
 
       {/* Features Grid */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <h2 className="text-3xl font-bold text-primary-900 mb-10 text-center">What We Offer</h2>
-        <div className="grid md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-6 py-32">
+        <Reveal>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-16 text-center tracking-tight">What We Offer</h2>
+        </Reveal>
+        
+        <StaggerContainer className="grid md:grid-cols-2 gap-8">
           {service.features.map((feat, idx) => (
-            <div key={idx} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex gap-6">
-              <div className="text-accent-500 text-2xl mt-1">✓</div>
+            <StaggerItem key={idx} className="glass-panel p-8 flex gap-6 group hover:border-primary/50 transition-colors">
+              <div className="text-primary text-2xl mt-1 group-hover:scale-125 transition-transform">✓</div>
               <div>
-                <h3 className="text-xl font-bold text-primary-900 mb-2">{feat.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feat.desc}</p>
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-bright transition-colors">{feat.title}</h3>
+                <p className="text-text-secondary leading-relaxed">{feat.desc}</p>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
 
       {/* Dynamic CTA */}
-      <div className="bg-white border-t border-gray-200 py-20 px-6 text-center">
-        <h2 className="text-3xl font-bold text-primary-900 mb-4">Ready to get started?</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-          Our team is ready to assist you with your {service.title.toLowerCase()} needs. 
-          Contact us today for a free consultation.
-        </p>
-        <Link 
-          to={`/contact?type=${service.inquiryType}`} 
-          className="inline-block bg-accent-500 hover:bg-accent-400 text-white font-bold py-3 px-8 rounded shadow transition"
-        >
-          Request {service.title}
-        </Link>
+      <div className="bg-bg-secondary border-t border-border/50 py-32 px-6 text-center">
+        <Reveal>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to get started?</h2>
+          <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+            Our team is ready to assist you with your {service.title.toLowerCase()} needs. 
+            Contact us today for a free consultation.
+          </p>
+          <Link 
+            to={`/contact?type=${service.inquiryType}`} 
+            className="btn-primary inline-block px-8 py-4 text-lg"
+          >
+            Request {service.title}
+          </Link>
+        </Reveal>
       </div>
     </div>
   );

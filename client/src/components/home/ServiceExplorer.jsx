@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import Reveal from '../animations/Reveal';
 
 const ServiceExplorer = () => {
   const [activeTab, setActiveTab] = useState('resources');
@@ -67,73 +69,97 @@ const ServiceExplorer = () => {
   };
 
   return (
-    <section id="services" className="py-24 bg-white px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary-900 mb-4">What do you need help with?</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Select an area below to explore how we can support your business goals.
-          </p>
-        </div>
-
-        <div className="bg-gray-50 rounded-2xl p-4 md:p-8 border border-gray-100 shadow-sm">
-          {/* Tabs */}
-          <div className="flex flex-wrap justify-center gap-2 mb-10">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                  activeTab === tab.id
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+    <section id="services" className="py-32 bg-bg-primary px-6 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-surface),transparent_50%)] opacity-30"></div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <Reveal>
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">What do you need help with?</h2>
+            <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
+              Select an area below to explore how we can support your business goals with enterprise-grade solutions.
+            </p>
           </div>
+        </Reveal>
 
-          {/* Content Area */}
-          <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm min-h-[400px]">
-            <div key={activeTab} className="grid md:grid-cols-2 h-full animate-fadeIn">
-              <div className="p-8 md:p-12 flex flex-col justify-center">
-                <h3 className="text-3xl font-bold text-primary-900 mb-4">{content[activeTab].title}</h3>
-                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  {content[activeTab].desc}
-                </p>
-                
-                <ul className="space-y-4 mb-10">
-                  {content[activeTab].list.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <span className="text-accent-500 mt-1">✓</span>
-                      <span className="text-gray-700 font-medium">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+        <Reveal delay={0.2}>
+          <div className="glass-panel p-4 md:p-8">
+            {/* Tabs */}
+            <div className="flex flex-wrap justify-center gap-3 mb-10">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 border ${
+                    activeTab === tab.id
+                      ? 'bg-primary text-white border-primary shadow-glow'
+                      : 'bg-bg-secondary text-text-secondary hover:text-white hover:bg-surface-hover border-border'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-                <div>
-                  <Link
-                    to={content[activeTab].link}
-                    className="inline-block bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded shadow font-semibold transition-colors"
-                  >
-                    {content[activeTab].cta}
-                  </Link>
-                </div>
-              </div>
-              
-              <div className="relative min-h-[300px] hidden md:block">
-                <div className="absolute inset-0 bg-primary-900/10 z-10"></div>
-                <img
-                  src={content[activeTab].image}
-                  alt={content[activeTab].title}
-                  className="w-full h-full object-cover absolute inset-0"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/20 to-transparent z-20"></div>
-              </div>
+            {/* Content Area */}
+            <div className="bg-bg-secondary rounded-2xl overflow-hidden border border-border shadow-inner relative min-h-[450px]">
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={activeTab} 
+                  className="grid md:grid-cols-2 h-full"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="p-8 md:p-12 flex flex-col justify-center">
+                    <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">{content[activeTab].title}</h3>
+                    <p className="text-lg text-text-secondary mb-8 leading-relaxed">
+                      {content[activeTab].desc}
+                    </p>
+                    
+                    <ul className="space-y-4 mb-10">
+                      {content[activeTab].list.map((item, idx) => (
+                        <motion.li 
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 + (idx * 0.1) }}
+                          key={idx} 
+                          className="flex items-start gap-3"
+                        >
+                          <span className="text-primary mt-1">✓</span>
+                          <span className="text-text-primary font-medium">{item}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+
+                    <div>
+                      <Link
+                        to={content[activeTab].link}
+                        className="btn-primary inline-block px-8 py-3"
+                      >
+                        {content[activeTab].cta}
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  <div className="relative min-h-[300px] hidden md:block overflow-hidden rounded-r-2xl">
+                    <motion.img
+                      initial={{ scale: 1.05 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      whileHover={{ scale: 1.03 }}
+                      src={content[activeTab].image}
+                      alt={content[activeTab].title}
+                      className="w-full h-full object-cover absolute inset-0 opacity-80 mix-blend-luminosity"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-bg-secondary via-transparent to-transparent z-20"></div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
