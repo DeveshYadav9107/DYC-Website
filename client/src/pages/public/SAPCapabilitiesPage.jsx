@@ -8,31 +8,31 @@ const SAPCapabilitiesPage = () => {
       title: 'Functional Modules',
       desc: 'Optimize your core business processes with expert configuration.',
       modules: [
-        { name: 'SAP FICO', full: 'Financial Accounting & Controlling', icon: '💰' },
-        { name: 'SAP MM', full: 'Materials Management', icon: '📦' },
-        { name: 'SAP SD', full: 'Sales and Distribution', icon: '📈' },
-        { name: 'SAP HR/HCM', full: 'Human Capital Management', icon: '👥' },
-        { name: 'SAP PP', full: 'Production Planning', icon: '🏭' },
-        { name: 'SAP PM', full: 'Plant Maintenance', icon: '🔧' },
+        { name: 'SAP FICO', full: 'Financial Accounting & Controlling', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP MM', full: 'Materials Management', image: 'https://images.unsplash.com/photo-1586528116311-ad8ed7c663be?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP SD', full: 'Sales and Distribution', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP HR/HCM', full: 'Human Capital Management', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP PP', full: 'Production Planning', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP PM', full: 'Plant Maintenance', image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80' },
       ]
     },
     {
       title: 'Technical Modules',
       desc: 'Robust development, integration, and system administration.',
       modules: [
-        { name: 'SAP ABAP', full: 'Advanced Business Application Programming', icon: '💻' },
-        { name: 'SAP Basis', full: 'System Administration', icon: '⚙️' },
-        { name: 'SAP Fiori / UI5', full: 'User Experience & Interfaces', icon: '📱' },
-        { name: 'SAP PI/PO', full: 'Process Integration / Orchestration', icon: '🔄' },
+        { name: 'SAP ABAP', full: 'Advanced Business Application Programming', image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP Basis', full: 'System Administration', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP Fiori / UI5', full: 'User Experience & Interfaces', image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP PI/PO', full: 'Process Integration / Orchestration', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80' },
       ]
     },
     {
       title: 'Cloud & Environments',
       desc: 'Modernize your landscape with the latest SAP innovations.',
       modules: [
-        { name: 'SAP S/4HANA', full: 'Next-generation ERP', icon: '☁️' },
-        { name: 'SAP SuccessFactors', full: 'Cloud HR', icon: '🌟' },
-        { name: 'SAP Ariba', full: 'Procurement & Supply Chain', icon: '🛒' },
+        { name: 'SAP S/4HANA', full: 'Next-generation ERP', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP SuccessFactors', full: 'Cloud HR', image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP Ariba', full: 'Procurement & Supply Chain', image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80' },
       ]
     }
   ];
@@ -67,15 +67,25 @@ const SAPCapabilitiesPage = () => {
               </div>
             </Reveal>
             
-            <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {category.modules.map((mod, i) => (
-                <StaggerItem key={i} className="glass-panel p-6 group cursor-default flex items-start gap-5 hover:border-primary/50 transition-colors">
-                  <div className="w-14 h-14 bg-surface border border-border text-white rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 group-hover:border-primary/50 transition-all duration-300 shadow-sm grayscale group-hover:grayscale-0">
-                    {mod.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl text-white mb-1 tracking-tight group-hover:text-primary-bright transition-colors">{mod.name}</h3>
-                    <p className="text-text-muted text-sm leading-relaxed">{mod.full}</p>
+                <StaggerItem key={i} className="relative rounded-2xl overflow-hidden h-[250px] flex flex-col justify-end p-6 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-surface group hover:-translate-y-1 hover:shadow-glow cursor-default">
+                  
+                  {/* Background Image */}
+                  <img 
+                    src={mod.image} 
+                    alt={mod.name} 
+                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                  />
+                  
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/90 to-transparent"></div>
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"></div>
+
+                  {/* Content */}
+                  <div className="relative z-10">
+                    <h3 className="font-bold text-2xl text-white mb-1 tracking-tight group-hover:text-primary-bright transition-colors">{mod.name}</h3>
+                    <p className="text-text-secondary text-sm leading-relaxed">{mod.full}</p>
                   </div>
                 </StaggerItem>
               ))}

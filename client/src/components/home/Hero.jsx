@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Reveal from '../animations/Reveal';
-import { StaggerContainer, StaggerItem } from '../animations/Stagger';
 
 const Hero = () => {
   return (
@@ -58,7 +57,7 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-50 rounded-xl pointer-events-none"></div>
             
             <div className="flex items-center justify-between mb-6 border-b border-border pb-4 relative z-10">
-               <div className="text-lg font-semibold tracking-tight text-white">Business Value</div>
+               <div className="text-lg font-semibold tracking-tight text-white">Core Technology Hub</div>
                <div className="flex gap-2">
                  <div className="w-2.5 h-2.5 rounded-full bg-border-light"></div>
                  <div className="w-2.5 h-2.5 rounded-full bg-border-light"></div>
@@ -66,31 +65,15 @@ const Hero = () => {
                </div>
             </div>
             
-            <StaggerContainer delayOffset={0.6} className="space-y-4 relative z-10">
-              <StaggerItem className="flex items-center gap-4 bg-bg-secondary p-4 rounded-lg border border-border/50 group hover:border-primary/30 transition-colors">
-                <div className="w-10 h-10 rounded bg-surface border border-border flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all">👥</div>
-                <div>
-                  <div className="font-semibold text-white">Skilled Manpower</div>
-                  <div className="text-xs text-text-muted">Contract & Full-time IT Staffing</div>
-                </div>
-              </StaggerItem>
-              
-              <StaggerItem className="flex items-center gap-4 bg-bg-secondary p-4 rounded-lg border border-border/50 group hover:border-primary/30 transition-colors">
-                <div className="w-10 h-10 rounded bg-surface border border-border flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all">⚙️</div>
-                <div>
-                  <div className="font-semibold text-white">SAP Resources</div>
-                  <div className="text-xs text-text-muted">Functional & Technical Consultants</div>
-                </div>
-              </StaggerItem>
-              
-              <StaggerItem className="flex items-center gap-4 bg-bg-secondary p-4 rounded-lg border border-border/50 group hover:border-primary/30 transition-colors">
-                <div className="w-10 h-10 rounded bg-surface border border-border flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all">💻</div>
-                <div>
-                  <div className="font-semibold text-white">ERP Solutions</div>
-                  <div className="text-xs text-text-muted">Custom Software & Automations</div>
-                </div>
-              </StaggerItem>
-            </StaggerContainer>
+            <div className="relative z-10 w-full overflow-hidden rounded-lg border border-border/50 group">
+              <img 
+                src="/images/hero-tech.jpg" 
+                alt="Enterprise Technology Hub" 
+                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700" 
+              />
+              {/* Subtle overlay to make it blend with the dark theme */}
+              <div className="absolute inset-0 bg-primary/10 mix-blend-overlay pointer-events-none"></div>
+            </div>
           </motion.div>
         </div>
       </div>

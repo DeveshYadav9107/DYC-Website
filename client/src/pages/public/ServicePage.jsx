@@ -13,7 +13,7 @@ const servicesData = {
       { title: 'Bulk Hiring', desc: 'Rapid deployment of large teams for immediate operational scale-up.' }
     ],
     inquiryType: 'staffing-request',
-    icon: '👥'
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80'
   },
   'sap-resources': {
     title: 'SAP Resources',
@@ -25,7 +25,7 @@ const servicesData = {
       { title: 'S/4HANA Specialists', desc: 'Consultants experienced in greenfield and brownfield S/4HANA migrations.' }
     ],
     inquiryType: 'sap-resource-request',
-    icon: '⚙️'
+    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80'
   },
   'sap-support': {
     title: 'SAP Support & Maintenance',
@@ -37,7 +37,7 @@ const servicesData = {
       { title: 'Custom Enhancements', desc: 'Development of custom Z-reports, workflows, and user exits as your needs evolve.' }
     ],
     inquiryType: 'sap-support',
-    icon: '🛠️'
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80'
   },
   'erp-solutions': {
     title: 'Custom ERP Solutions',
@@ -49,7 +49,7 @@ const servicesData = {
       { title: 'Business Analytics', desc: 'Custom dashboards reporting on your most critical KPIs and metrics.' }
     ],
     inquiryType: 'erp-inquiry',
-    icon: '💻'
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
   }
 };
 
@@ -65,22 +65,24 @@ const ServicePage = () => {
   return (
     <div className="bg-bg-primary min-h-screen text-text-primary">
       {/* Header */}
-      <div className="bg-bg-secondary text-white py-24 px-6 relative overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)]"></div>
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center gap-10 pt-10">
+      <div className="relative bg-bg-secondary text-white py-32 px-6 overflow-hidden border-b border-border/50">
+        
+        {/* Background Image & Overlays */}
+        <div className="absolute inset-0 z-0">
+          <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-bg-primary via-bg-primary/90 to-bg-primary/40"></div>
+          <div className="absolute inset-0 bg-bg-primary/50"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10 pt-10">
           <Reveal>
-            <div className="w-24 h-24 bg-surface rounded-2xl flex items-center justify-center text-5xl border border-border shadow-surface grayscale">
-              {service.icon}
-            </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div>
-              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
-                <span className="w-8 h-px bg-primary"></span>
+            <div className="max-w-3xl">
+              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-4 inline-flex items-center gap-2 bg-bg-primary/50 px-3 py-1 rounded-full backdrop-blur-sm border border-border/50">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                 Service Detail
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{service.title}</h1>
-              <p className="text-xl text-text-secondary max-w-3xl leading-relaxed">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight drop-shadow-xl">{service.title}</h1>
+              <p className="text-xl md:text-2xl text-gray-300 leading-relaxed drop-shadow-md">
                 {service.subtitle}
               </p>
             </div>

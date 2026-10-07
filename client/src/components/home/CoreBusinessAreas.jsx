@@ -7,30 +7,26 @@ const CoreBusinessAreas = () => {
     {
       title: 'Manpower Supply',
       desc: 'Skilled IT and non-IT professionals for contract and permanent roles.',
-      icon: '👥',
+      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
       link: '/services/staffing',
-      color: 'bg-primary/10 text-primary',
     },
     {
       title: 'SAP Resources',
       desc: 'Expert functional and technical SAP consultants for your projects.',
-      icon: '⚙️',
+      image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80',
       link: '/services/sap-resources',
-      color: 'bg-primary-bright/10 text-primary-bright',
     },
     {
       title: 'SAP Support',
       desc: 'Comprehensive AMS, migration, and optimization services.',
-      icon: '🛠️',
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
       link: '/services/sap-support',
-      color: 'bg-primary/10 text-primary',
     },
     {
       title: 'ERP Solutions',
       desc: 'Custom-built software for payroll, sales, and business trackability.',
-      icon: '💻',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
       link: '/services/erp-solutions',
-      color: 'bg-primary-dark/10 text-primary-bright',
     },
   ];
 
@@ -59,23 +55,30 @@ const CoreBusinessAreas = () => {
           {areas.map((area, idx) => (
             <StaggerItem key={idx}>
               <Link to={area.link} className="block group h-full">
-                <div className="glass-panel p-8 h-full flex flex-col relative overflow-hidden group-hover:border-primary/50 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-glow">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full -mr-10 -mt-10 opacity-50 group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+                <div className="relative rounded-2xl overflow-hidden h-[400px] flex flex-col justify-end p-8 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-surface group-hover:-translate-y-2 group-hover:shadow-glow-strong">
                   
-                  <div className={`w-14 h-14 rounded-xl ${area.color} border border-border flex items-center justify-center text-2xl mb-8 relative z-10 grayscale group-hover:grayscale-0 transition-all duration-500`}>
-                    {area.icon}
-                  </div>
+                  {/* Background Image */}
+                  <img 
+                    src={area.image} 
+                    alt={area.title} 
+                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                  />
                   
-                  <h3 className="text-2xl font-bold text-white mb-4 relative z-10 group-hover:text-primary-bright transition-colors tracking-tight">
-                    {area.title}
-                  </h3>
-                  
-                  <p className="text-text-secondary mb-8 relative z-10 flex-grow">
-                    {area.desc}
-                  </p>
-                  
-                  <div className="text-primary font-medium flex items-center gap-2 relative z-10 group-hover:gap-3 transition-all">
-                    Learn more <span>→</span>
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/90 to-transparent"></div>
+                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"></div>
+
+                  {/* Content */}
+                  <div className="relative z-10 mt-auto">
+                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-primary-bright transition-colors">
+                      {area.title}
+                    </h3>
+                    <p className="text-text-secondary leading-relaxed mb-6">
+                      {area.desc}
+                    </p>
+                    <div className="text-primary font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                      Learn more <span aria-hidden="true">→</span>
+                    </div>
                   </div>
                 </div>
               </Link>
