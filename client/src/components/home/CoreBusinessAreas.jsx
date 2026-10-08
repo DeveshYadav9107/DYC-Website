@@ -31,7 +31,7 @@ const CoreBusinessAreas = () => {
   ];
 
   return (
-    <section className="py-32 bg-bg-secondary px-6 border-b border-border/50">
+    <section className="py-32 bg-bg-primary px-6 border-b border-border-light">
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-6">
@@ -40,12 +40,12 @@ const CoreBusinessAreas = () => {
                 <span className="w-8 h-px bg-primary"></span>
                 Core Capabilities
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">What We Do</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">What We Do</h2>
               <p className="text-xl text-text-secondary leading-relaxed">
                 Comprehensive enterprise solutions spanning people, processes, and technology.
               </p>
             </div>
-            <a href="#services" className="text-primary-bright font-semibold hover:text-white transition-colors flex items-center gap-2 group">
+            <a href="#services" className="text-primary font-semibold hover:text-primary-dark transition-colors flex items-center gap-2 group">
               View All Services <span aria-hidden="true" className="group-hover:translate-x-1 transition-transform">→</span>
             </a>
           </div>
@@ -55,7 +55,7 @@ const CoreBusinessAreas = () => {
           {areas.map((area, idx) => (
             <StaggerItem key={idx}>
               <Link to={area.link} className="block group h-full">
-                <div className="relative rounded-2xl overflow-hidden h-[400px] flex flex-col justify-end p-8 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-surface group-hover:-translate-y-2 group-hover:shadow-glow-strong">
+                <div className="relative rounded-2xl overflow-hidden h-[400px] flex flex-col justify-end p-8 border border-border hover:border-primary/30 transition-all duration-500 shadow-surface group-hover:-translate-y-2 group-hover:shadow-surface-hover">
                   
                   {/* Background Image */}
                   <img 
@@ -65,12 +65,12 @@ const CoreBusinessAreas = () => {
                   />
                   
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/90 to-transparent"></div>
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent"></div>
+                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
 
                   {/* Content */}
                   <div className="relative z-10 mt-auto">
-                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-primary-bright transition-colors">
+                    <h3 className="text-2xl font-bold text-text-primary mb-3 tracking-tight group-hover:text-primary transition-colors">
                       {area.title}
                     </h3>
                     <p className="text-text-secondary leading-relaxed mb-6">

@@ -40,11 +40,18 @@ const SAPCapabilitiesPage = () => {
   return (
     <div className="bg-bg-primary min-h-screen text-text-primary">
       {/* Header */}
-      <div className="bg-bg-secondary text-white py-24 px-6 relative overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,var(--color-primary),transparent_70%)]"></div>
+      <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
+        
+        {/* Background Image & Overlays */}
+        <div className="absolute inset-0 z-0 opacity-50">
+          <img src="/images/sap-banner.png" alt="SAP Capabilities Banner" className="w-full h-full object-cover" />
+        </div>
+        <div className="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_top_right,var(--color-primary-light),transparent_70%)] z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-bg-tertiary via-transparent to-transparent z-0"></div>
+
         <div className="max-w-7xl mx-auto relative z-10 pt-10">
           <Reveal>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">SAP <span className="text-primary-bright">Capabilities</span></h1>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">SAP <span className="text-primary">Capabilities</span></h1>
             <p className="text-xl text-text-secondary max-w-3xl leading-relaxed">
               We provide comprehensive SAP expertise across the entire enterprise landscape. From legacy ECC systems to modern S/4HANA transformations, our certified consultants deliver end-to-end solutions.
             </p>
@@ -62,14 +69,14 @@ const SAPCapabilitiesPage = () => {
                   <span className="w-8 h-px bg-primary"></span>
                   Domain {idx + 1}
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">{category.title}</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4 tracking-tight">{category.title}</h2>
                 <p className="text-lg text-text-secondary">{category.desc}</p>
               </div>
             </Reveal>
             
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {category.modules.map((mod, i) => (
-                <StaggerItem key={i} className="relative rounded-2xl overflow-hidden h-[250px] flex flex-col justify-end p-6 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-surface group hover:-translate-y-1 hover:shadow-glow cursor-default">
+                <StaggerItem key={i} className="relative rounded-2xl overflow-hidden h-[250px] flex flex-col justify-end p-6 border border-border hover:border-primary/30 transition-all duration-500 shadow-surface group hover:-translate-y-1 hover:shadow-surface-hover cursor-default">
                   
                   {/* Background Image */}
                   <img 
@@ -79,12 +86,12 @@ const SAPCapabilitiesPage = () => {
                   />
                   
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/90 to-transparent"></div>
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent"></div>
+                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
 
                   {/* Content */}
                   <div className="relative z-10">
-                    <h3 className="font-bold text-2xl text-white mb-1 tracking-tight group-hover:text-primary-bright transition-colors">{mod.name}</h3>
+                    <h3 className="font-bold text-2xl text-text-primary mb-1 tracking-tight group-hover:text-primary transition-colors">{mod.name}</h3>
                     <p className="text-text-secondary text-sm leading-relaxed">{mod.full}</p>
                   </div>
                 </StaggerItem>
@@ -95,9 +102,9 @@ const SAPCapabilitiesPage = () => {
       </div>
 
       {/* CTA */}
-      <div className="bg-bg-secondary border-t border-border/50 py-32 px-6 text-center">
+      <div className="bg-bg-tertiary border-t border-border-light py-32 px-6 text-center">
         <Reveal>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Need a specific SAP expert?</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Need a specific SAP expert?</h2>
           <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
             Whether you need a single ABAP developer or a full functional team for an S/4HANA rollout, we can deploy the right talent quickly.
           </p>

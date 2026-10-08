@@ -8,30 +8,46 @@ const BusinessValue = () => {
       title: 'Connected Enterprise',
       desc: 'Break down silos and unify your business processes.',
       image: '/images/connected-enterprise.png',
-      link: '/services/erp-solutions',
+      hoverItems: [
+        { title: 'SAP S/4HANA', sub: 'Next-gen ERP suite' },
+        { title: 'System Integration', sub: 'Seamless data flow' },
+        { title: 'Cloud Migration', sub: 'Secure & scalable' }
+      ]
     },
     {
       title: 'Operational Visibility',
       desc: 'Real-time insights across your entire organization.',
       image: '/images/operational-visibility.png',
-      link: '/services/sap-support',
+      hoverItems: [
+        { title: 'Advanced Analytics', sub: 'Real-time dashboards' },
+        { title: 'Supply Chain', sub: 'End-to-end tracking' },
+        { title: 'Financial Reporting', sub: 'Compliance & accuracy' }
+      ]
     },
     {
       title: 'Scalable Growth',
       desc: 'Future-proof systems that grow with your business.',
       image: '/images/scalable-growth.png',
-      link: '/services/staffing',
+      hoverItems: [
+        { title: 'Strategic Staffing', sub: 'Expert consultants' },
+        { title: 'Capacity Planning', sub: 'Future-proof architecture' },
+        { title: 'Global Rollouts', sub: 'Multi-region deployment' }
+      ]
     },
     {
       title: 'Measurable Outcomes',
       desc: 'Data-driven results that impact your bottom line.',
       image: '/images/measurable-outcomes.png',
-      link: '/contact',
+      hoverItems: [
+        { title: 'Process Optimization', sub: 'Reduce operational costs' },
+        { title: 'ROI Tracking', sub: 'Clear performance metrics' },
+        { title: 'Quality Assurance', sub: 'Zero-defect delivery' }
+      ]
     },
   ];
 
   return (
-    <section className="py-32 bg-bg-primary px-6 border-y border-border/50">
+    <section className="py-32 bg-bg-tertiary px-6 border-y border-border-light">
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <div className="text-center mb-20">
@@ -40,7 +56,7 @@ const BusinessValue = () => {
               The DYC Advantage
               <span className="w-8 h-px bg-primary"></span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Why Businesses Choose Us</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Why Businesses Choose Us</h2>
             <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
               We deliver technology solutions that drive actual business value, not just IT implementations.
             </p>
@@ -50,33 +66,45 @@ const BusinessValue = () => {
         <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {values.map((val, idx) => (
             <StaggerItem key={idx}>
-              <Link to={val.link} className="block group h-full">
-                <div className="relative rounded-2xl overflow-hidden h-[420px] flex flex-col justify-end p-8 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-surface group-hover:-translate-y-2 group-hover:shadow-glow-strong">
+              <div className="block group h-full relative cursor-default">
+                <div className="relative rounded-2xl overflow-hidden h-[420px] flex flex-col justify-end p-8 border border-border shadow-surface transition-all duration-500">
                   {/* Background Image */}
                   <img 
                     src={val.image} 
                     alt={val.title} 
-                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
                   />
                   
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/90 to-transparent"></div>
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"></div>
+                  {/* Gradient Overlay Base */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent group-hover:opacity-0 transition-opacity duration-300 z-0"></div>
 
-                  {/* Content */}
-                  <div className="relative z-10 mt-auto">
-                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-primary-bright transition-colors">
+                  {/* Content Base State */}
+                  <div className="relative z-10 mt-auto group-hover:opacity-0 transition-opacity duration-300">
+                    <h3 className="text-2xl font-bold text-text-primary mb-3 tracking-tight">
                       {val.title}
                     </h3>
-                    <p className="text-text-secondary leading-relaxed mb-6">
+                    <p className="text-text-secondary leading-relaxed">
                       {val.desc}
                     </p>
-                    <div className="text-primary font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                      Explore <span aria-hidden="true">→</span>
+                  </div>
+
+                  {/* Hover Overlay State */}
+                  <div className="absolute inset-0 bg-bg-navy/95 text-white p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col z-20 backdrop-blur-sm">
+                    <h4 className="text-xl font-bold mb-6 tracking-tight text-white">{val.title}</h4>
+                    <div className="flex flex-col h-full">
+                      {val.hoverItems.map((item, i) => (
+                        <div key={i} className="group/item flex items-center justify-between border-b border-white/20 py-4 last:border-0 cursor-pointer">
+                          <div>
+                            <div className="font-semibold text-white mb-1 group-hover/item:text-primary-light transition-colors">{item.title}</div>
+                            <div className="text-sm text-primary-light/70">{item.sub}</div>
+                          </div>
+                          <span className="text-primary-light/50 group-hover/item:text-primary-light group-hover/item:translate-x-1 transition-all">→</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             </StaggerItem>
           ))}
         </StaggerContainer>

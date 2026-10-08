@@ -65,24 +65,24 @@ const ServicePage = () => {
   return (
     <div className="bg-bg-primary min-h-screen text-text-primary">
       {/* Header */}
-      <div className="relative bg-bg-secondary text-white py-32 px-6 overflow-hidden border-b border-border/50">
+      <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
         
         {/* Background Image & Overlays */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 opacity-30">
           <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-bg-primary via-bg-primary/90 to-bg-primary/40"></div>
-          <div className="absolute inset-0 bg-bg-primary/50"></div>
         </div>
+        <div className="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_top_right,var(--color-primary-light),transparent_70%)] z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-bg-tertiary via-transparent to-transparent z-0"></div>
 
         <div className="max-w-7xl mx-auto relative z-10 pt-10">
           <Reveal>
             <div className="max-w-3xl">
-              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-4 inline-flex items-center gap-2 bg-bg-primary/50 px-3 py-1 rounded-full backdrop-blur-sm border border-border/50">
+              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-4 inline-flex items-center gap-2 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm border border-border">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                 Service Detail
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight drop-shadow-xl">{service.title}</h1>
-              <p className="text-xl md:text-2xl text-gray-300 leading-relaxed drop-shadow-md">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-text-primary">{service.title}</h1>
+              <p className="text-xl md:text-2xl text-text-secondary leading-relaxed">
                 {service.subtitle}
               </p>
             </div>
@@ -93,15 +93,15 @@ const ServicePage = () => {
       {/* Features Grid */}
       <div className="max-w-7xl mx-auto px-6 py-32">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-16 text-center tracking-tight">What We Offer</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-16 text-center tracking-tight">What We Offer</h2>
         </Reveal>
         
         <StaggerContainer className="grid md:grid-cols-2 gap-8">
           {service.features.map((feat, idx) => (
-            <StaggerItem key={idx} className="glass-panel p-8 flex gap-6 group hover:border-primary/50 transition-colors">
+            <StaggerItem key={idx} className="bg-surface border border-border shadow-surface rounded-2xl p-8 flex gap-6 group hover:border-primary/50 hover:shadow-surface-hover hover:-translate-y-1 transition-all">
               <div className="text-primary text-2xl mt-1 group-hover:scale-125 transition-transform">✓</div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary-bright transition-colors">{feat.title}</h3>
+                <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-primary transition-colors">{feat.title}</h3>
                 <p className="text-text-secondary leading-relaxed">{feat.desc}</p>
               </div>
             </StaggerItem>
@@ -110,9 +110,9 @@ const ServicePage = () => {
       </div>
 
       {/* Dynamic CTA */}
-      <div className="bg-bg-secondary border-t border-border/50 py-32 px-6 text-center">
+      <div className="bg-bg-tertiary border-t border-border-light py-32 px-6 text-center">
         <Reveal>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to get started?</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Ready to get started?</h2>
           <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
             Our team is ready to assist you with your {service.title.toLowerCase()} needs. 
             Contact us today for a free consultation.

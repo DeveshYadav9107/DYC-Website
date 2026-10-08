@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
+// Global scroll reset on route change
+import ScrollToTop from './components/common/ScrollToTop';
+
 // Public Layout & Pages
 import PublicLayout from './layouts/PublicLayout';
 import HomePage from './pages/public/HomePage';
@@ -22,6 +25,7 @@ function App() {
   return (
     <HelmetProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />

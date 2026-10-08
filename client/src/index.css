@@ -1,25 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary: #050505;
-  --color-bg-secondary: #0c0c0e;
-  --color-surface: #141416;
-  --color-surface-hover: #1e1e24;
-  --color-primary: #0066FF;
-  --color-primary-bright: #3385ff;
-  --color-primary-dark: #004ecc;
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F8F8FC;
+  --color-bg-tertiary: #F1EEFF;
+  --color-bg-light-blue: #EEF5FF;
+  --color-bg-navy: #11183F;
   
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a1a1aa;
-  --color-text-muted: #71717a;
-  --color-border: #27272a;
-  --color-border-light: #3f3f46;
+  --color-surface: #FFFFFF;
+  
+  --color-primary: #4F6FFF;
+  --color-primary-bright: #3B82F6;
+  --color-primary-dark: #18234F;
+  --color-primary-light: #F1EEFF;
+  
+  --color-accent-violet: #7048FF;
+  --color-accent-purple: #9146E8;
+  --color-accent-magenta: #C94BCF;
+  --color-accent-pink: #F29BD7;
+  
+  --color-text-primary: #11183F;
+  --color-text-secondary: #43516A;
+  --color-text-muted: #718096;
+  --color-text-light: #FFFFFF;
+  
+  --color-border: #E5E7F0;
+  --color-border-light: #F1F2F6;
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Manrope', system-ui, -apple-system, sans-serif;
   
-  --shadow-glow: 0 0 20px rgba(0, 102, 255, 0.15);
-  --shadow-glow-strong: 0 0 30px rgba(0, 102, 255, 0.3);
-  --shadow-surface: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-surface: 0 8px 30px rgba(17, 24, 63, 0.04);
+  --shadow-surface-hover: 0 12px 40px rgba(17, 24, 63, 0.08);
 }
 
 html {
@@ -28,14 +40,33 @@ html {
 }
 
 body {
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   background-color: var(--color-bg-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+}
+
 @layer utilities {
+  .text-gradient {
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent-violet), var(--color-accent-magenta));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-subtle {
+    background: linear-gradient(90deg, var(--color-primary-dark), var(--color-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
   .glass-panel {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -44,48 +75,43 @@ body {
   }
   
   .glass-panel-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .glass-panel-hover:hover {
-    background-color: var(--color-surface-hover);
-    border-color: var(--color-border-light);
+    background-color: var(--color-surface);
+    border-color: var(--color-primary);
     transform: translateY(-4px);
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--shadow-surface-hover);
   }
   
   .btn-primary {
-    background-color: var(--color-primary);
-    color: white;
-    border-radius: 9999px;
+    background-color: var(--color-primary-dark);
+    color: var(--color-text-light);
+    border-radius: 0.5rem;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px 0 rgba(0, 102, 255, 0.39);
+    box-shadow: 0 4px 14px rgba(17, 24, 63, 0.1);
   }
   
   .btn-primary:hover {
-    background-color: var(--color-primary-bright);
+    background-color: var(--color-primary);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+    box-shadow: 0 8px 20px rgba(79, 111, 255, 0.25);
   }
 
   .btn-secondary {
-    background-color: transparent;
-    color: var(--color-text-primary);
+    background-color: var(--color-surface);
+    color: var(--color-primary-dark);
     border: 1px solid var(--color-border);
-    border-radius: 9999px;
+    border-radius: 0.5rem;
     font-weight: 600;
     transition: all 0.3s ease;
   }
 
   .btn-secondary:hover {
-    background-color: var(--color-surface-hover);
-    border-color: var(--color-text-secondary);
-  }
-  
-  .text-gradient {
-    background: linear-gradient(to right, #ffffff, #a1a1aa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
   }
 }

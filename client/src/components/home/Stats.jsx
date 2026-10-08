@@ -27,8 +27,8 @@ const Stats = () => {
   ];
 
   return (
-    <section className="py-24 bg-surface text-text-primary relative overflow-hidden border-b border-border/50">
-      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:2rem_2rem]"></div>
+    <section className="py-24 bg-surface text-text-primary relative overflow-hidden border-b border-border-light">
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(11,92,171,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(11,92,171,0.5)_1px,transparent_1px)] bg-[size:2rem_2rem]"></div>
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <Reveal>

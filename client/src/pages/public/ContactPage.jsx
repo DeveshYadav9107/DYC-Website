@@ -41,14 +41,21 @@ const ContactPage = () => {
   return (
     <div className="bg-bg-primary min-h-screen text-text-primary">
       {/* Header */}
-      <div className="bg-bg-secondary text-white py-24 px-6 relative overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_bottom_left,var(--color-primary),transparent_70%)]"></div>
-        <div className="max-w-7xl mx-auto text-center relative z-10 pt-10">
+      <div className="bg-white text-text-primary py-24 md:py-32 px-6 relative overflow-hidden border-b border-border-light">
+        
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img src="/images/contact-banner.png" alt="Contact Us Banner" className="w-full h-full object-cover object-center" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10 pt-10">
           <Reveal>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Contact Us</h1>
-            <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
-              Ready to optimize your enterprise? Reach out to our team of experts for tailored SAP and staffing solutions.
-            </p>
+            <div className="max-w-2xl">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-[#102A43]">Contact Us</h1>
+              <p className="text-xl text-text-secondary leading-relaxed">
+                Ready to optimize your enterprise? Reach out to our team of experts for tailored SAP and staffing solutions.
+              </p>
+            </div>
           </Reveal>
         </div>
       </div>
@@ -62,45 +69,45 @@ const ContactPage = () => {
                 <span className="w-8 h-px bg-primary"></span>
                 Connect With Us
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-10 tracking-tight">Get in Touch</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-10 tracking-tight">Get in Touch</h2>
               
               <div className="space-y-8">
                 <div className="flex items-start gap-5 group">
-                  <div className="w-14 h-14 bg-surface border border-border rounded-xl shadow-sm flex items-center justify-center text-2xl group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">
+                  <div className="w-14 h-14 bg-surface border border-border-light rounded-xl shadow-sm flex items-center justify-center text-2xl group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">
                     📍
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-white group-hover:text-primary-bright transition-colors">Head Office</h3>
+                    <h3 className="font-bold text-lg text-text-primary group-hover:text-primary transition-colors">Head Office</h3>
                     <p className="text-text-secondary mt-1 leading-relaxed">{siteConfig.contact.address}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-5 group">
-                  <div className="w-14 h-14 bg-surface border border-border rounded-xl shadow-sm flex items-center justify-center text-2xl group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">
+                  <div className="w-14 h-14 bg-surface border border-border-light rounded-xl shadow-sm flex items-center justify-center text-2xl group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">
                     📞
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-white group-hover:text-primary-bright transition-colors">Phone</h3>
+                    <h3 className="font-bold text-lg text-text-primary group-hover:text-primary transition-colors">Phone</h3>
                     <p className="text-text-secondary mt-1 leading-relaxed">{siteConfig.contact.phone}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-5 group">
-                  <div className="w-14 h-14 bg-surface border border-border rounded-xl shadow-sm flex items-center justify-center text-2xl group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">
+                  <div className="w-14 h-14 bg-surface border border-border-light rounded-xl shadow-sm flex items-center justify-center text-2xl group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">
                     ✉️
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-white group-hover:text-primary-bright transition-colors">Email</h3>
+                    <h3 className="font-bold text-lg text-text-primary group-hover:text-primary transition-colors">Email</h3>
                     <p className="text-text-secondary mt-1 leading-relaxed">{siteConfig.contact.email}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-12 p-8 glass-panel border-primary/20 bg-primary/5">
-                <h3 className="font-bold text-xl text-white mb-2">Support Hours</h3>
+              <div className="mt-12 p-8 bg-surface border border-border rounded-2xl shadow-surface">
+                <h3 className="font-bold text-xl text-text-primary mb-2">Support Hours</h3>
                 <p className="text-text-secondary">Monday - Friday: 9:00 AM - 6:00 PM (IST)</p>
-                <p className="text-primary-bright text-sm mt-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-primary-bright animate-pulse"></span>
+                <p className="text-primary text-sm mt-3 flex items-center gap-2 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                   24/7 Support available for active SAP SLA clients.
                 </p>
               </div>
@@ -109,13 +116,13 @@ const ContactPage = () => {
 
           {/* Contact Form */}
           <Reveal delay={0.2}>
-            <div className="glass-panel p-8 md:p-10">
-              <h2 className="text-2xl font-bold text-white mb-8 tracking-tight">Send a Message</h2>
+            <div className="bg-surface border border-border shadow-surface rounded-2xl p-8 md:p-10">
+              <h2 className="text-2xl font-bold text-text-primary mb-8 tracking-tight">Send a Message</h2>
               
               {status.submitted ? (
-                <div className="bg-primary/10 border border-primary/30 text-primary-bright p-8 rounded-xl text-center animate-fadeIn">
+                <div className="bg-primary-light/50 border border-primary/30 text-primary p-8 rounded-xl text-center animate-fadeIn">
                   <div className="text-4xl mb-4">✅</div>
-                  <h3 className="font-bold text-lg mb-2 text-white">Message Sent Successfully!</h3>
+                  <h3 className="font-bold text-lg mb-2 text-text-primary">Message Sent Successfully!</h3>
                   <p className="text-sm">Thank you for reaching out. One of our experts will contact you shortly.</p>
                 </div>
               ) : (
@@ -129,7 +136,7 @@ const ContactPage = () => {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-bg-secondary border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition text-white placeholder-text-muted"
+                        className="w-full px-4 py-3 bg-bg-primary border border-border-light rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition text-text-primary placeholder-text-muted/50"
                         placeholder="John Doe"
                       />
                     </div>
@@ -141,7 +148,7 @@ const ContactPage = () => {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-bg-secondary border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition text-white placeholder-text-muted"
+                        className="w-full px-4 py-3 bg-bg-primary border border-border-light rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition text-text-primary placeholder-text-muted/50"
                         placeholder="john@company.com"
                       />
                     </div>
@@ -155,7 +162,7 @@ const ContactPage = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-bg-secondary border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition text-white placeholder-text-muted"
+                        className="w-full px-4 py-3 bg-bg-primary border border-border-light rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition text-text-primary placeholder-text-muted/50"
                         placeholder="+91..."
                       />
                     </div>
@@ -166,7 +173,7 @@ const ContactPage = () => {
                         name="company"
                         value={formData.company}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-bg-secondary border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition text-white placeholder-text-muted"
+                        className="w-full px-4 py-3 bg-bg-primary border border-border-light rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition text-text-primary placeholder-text-muted/50"
                         placeholder="Your Company"
                       />
                     </div>
@@ -178,7 +185,7 @@ const ContactPage = () => {
                       name="type"
                       value={formData.type}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-bg-secondary border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition text-white"
+                      className="w-full px-4 py-3 bg-bg-primary border border-border-light rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition text-text-primary"
                     >
                       <option value="general">General Inquiry</option>
                       <option value="sap-support">SAP Support & Maintenance</option>
@@ -196,7 +203,7 @@ const ContactPage = () => {
                       rows="4"
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-bg-secondary border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none transition resize-none text-white placeholder-text-muted"
+                      className="w-full px-4 py-3 bg-bg-primary border border-border-light rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition resize-none text-text-primary placeholder-text-muted/50"
                       placeholder="How can we help you?"
                     ></textarea>
                   </div>

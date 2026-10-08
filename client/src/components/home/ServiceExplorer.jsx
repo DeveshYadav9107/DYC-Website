@@ -70,7 +70,7 @@ const ServiceExplorer = () => {
 
   return (
     <section id="services" className="py-32 bg-bg-primary px-6 relative">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-surface),transparent_50%)] opacity-30"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-bg-tertiary),transparent_50%)] opacity-70"></div>
       
       <div className="max-w-7xl mx-auto relative z-10">
         <Reveal>
@@ -83,7 +83,7 @@ const ServiceExplorer = () => {
         </Reveal>
 
         <Reveal delay={0.2}>
-          <div className="glass-panel p-4 md:p-8">
+          <div className="bg-surface border border-border rounded-2xl p-4 md:p-8 shadow-surface">
             {/* Tabs */}
             <div className="flex flex-wrap justify-center gap-3 mb-10">
               {tabs.map((tab) => (
@@ -92,8 +92,8 @@ const ServiceExplorer = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 border ${
                     activeTab === tab.id
-                      ? 'bg-primary text-white border-primary shadow-glow'
-                      : 'bg-bg-secondary text-text-secondary hover:text-white hover:bg-surface-hover border-border'
+                      ? 'bg-primary text-white border-primary shadow-surface-hover'
+                      : 'bg-surface text-text-secondary hover:text-primary hover:bg-bg-secondary border-border'
                   }`}
                 >
                   {tab.label}
@@ -102,7 +102,7 @@ const ServiceExplorer = () => {
             </div>
 
             {/* Content Area */}
-            <div className="bg-bg-secondary rounded-2xl overflow-hidden border border-border shadow-inner relative min-h-[450px]">
+            <div className="bg-bg-secondary rounded-2xl overflow-hidden border border-border-light relative min-h-[450px]">
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={activeTab} 
@@ -113,7 +113,7 @@ const ServiceExplorer = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="p-8 md:p-12 flex flex-col justify-center">
-                    <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">{content[activeTab].title}</h3>
+                    <h3 className="text-3xl font-bold text-text-primary mb-4 tracking-tight">{content[activeTab].title}</h3>
                     <p className="text-lg text-text-secondary mb-8 leading-relaxed">
                       {content[activeTab].desc}
                     </p>

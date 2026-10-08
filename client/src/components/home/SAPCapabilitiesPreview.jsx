@@ -15,7 +15,7 @@ const SAPCapabilitiesPreview = () => {
   ];
 
   return (
-    <section className="py-32 bg-bg-primary border-t border-border/50 px-6 relative">
+    <section className="py-32 bg-bg-light-blue border-t border-border-light px-6 relative">
       <div className="max-w-7xl mx-auto relative z-10">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -37,12 +37,12 @@ const SAPCapabilitiesPreview = () => {
 
         <StaggerContainer className="flex flex-wrap gap-4">
           {capabilities.map((cap, idx) => (
-            <StaggerItem key={idx} className="glass-panel px-6 py-4 flex-grow md:flex-grow-0 min-w-[200px] hover:border-primary/50 transition-colors cursor-default">
-              <div className="text-[10px] text-text-muted font-bold mb-1 uppercase tracking-widest">{cap.type}</div>
-              <div className="font-semibold text-white tracking-tight">{cap.name}</div>
+            <StaggerItem key={idx} className="bg-surface border border-border px-6 py-4 rounded-xl shadow-surface flex-grow md:flex-grow-0 min-w-[200px] hover:border-primary/30 hover:shadow-surface-hover hover:-translate-y-1 transition-all cursor-default">
+              <div className="text-[10px] text-primary font-bold mb-1 uppercase tracking-widest">{cap.type}</div>
+              <div className="font-bold text-text-primary tracking-tight">{cap.name}</div>
             </StaggerItem>
           ))}
-          <StaggerItem className="px-6 py-4 rounded-xl border-2 border-dashed border-border text-text-muted hover:border-primary/50 hover:text-primary transition-colors flex items-center justify-center font-medium min-w-[200px]">
+          <StaggerItem className="px-6 py-4 rounded-xl border-2 border-dashed border-border-light text-text-muted hover:border-primary/50 hover:text-primary hover:-translate-y-1 hover:bg-white transition-all flex items-center justify-center font-medium min-w-[200px]">
             <Link to="/sap-capabilities" className="w-full h-full flex items-center justify-center">
               + Explore More
             </Link>
