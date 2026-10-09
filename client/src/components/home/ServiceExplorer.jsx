@@ -153,7 +153,7 @@ const ServiceExplorer = () => {
                       alt={content[activeTab].title}
                       className="w-full h-full object-cover absolute inset-0"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-bg-secondary via-transparent to-transparent z-20"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-bg-secondary/40 to-transparent z-20"></div>
                   </div>
                 </motion.div>
               </AnimatePresence>

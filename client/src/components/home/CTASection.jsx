@@ -16,7 +16,7 @@ const CTASection = () => {
             </div>
           </div>
           
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-white">Ready to transform your <span className="text-gradient-subtle">business?</span></h2>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight !text-white">Ready to transform your <span className="bg-gradient-to-r from-primary-light to-accent-pink bg-clip-text text-transparent">business?</span></h2>
           <p className="text-xl text-primary-light/80 mb-12 max-w-2xl mx-auto leading-relaxed">
             Whether you need immediate SAP support, expert staffing, or a custom ERP build, our team is ready to deliver measurable results.
           </p>

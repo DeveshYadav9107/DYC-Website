@@ -45,7 +45,7 @@ const IndustriesGrid = () => {
                   />
 
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
 
                   {/* Content */}

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const Hero = () => {
   return (
-    <section className="relative bg-bg-primary overflow-hidden text-text-primary pt-32 pb-32 px-6 min-h-[90vh] flex items-center border-b border-border-light">
+    <section className="relative bg-bg-primary overflow-hidden text-text-primary pt-24 pb-20 md:pt-28 md:pb-24 px-6 border-b border-border-light">
       
       {/* Background ambient gradient blobs (Right side) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">

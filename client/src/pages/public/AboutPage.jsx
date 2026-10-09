@@ -10,18 +10,28 @@ const AboutPage = () => {
       <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
         
         {/* Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 opacity-50">
-          <img src="/images/about-banner.png" alt="About Dinesh Yadav & Company" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 z-0 opacity-100">
+          <img src="/images/about-banner.png" alt="About Dinesh Yadav & Company" className="w-full h-full object-cover object-center" />
         </div>
-        <div className="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_top_right,var(--color-primary-light),transparent_70%)] z-0"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-bg-tertiary via-transparent to-transparent z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-bg-tertiary/80 via-bg-tertiary/30 to-transparent z-0"></div>
 
-        <div className="max-w-7xl mx-auto relative z-10 text-center pt-10">
+        <div className="max-w-7xl mx-auto relative z-10 pt-10">
           <Reveal>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">About <span className="text-primary">{siteConfig.company.name}</span></h1>
-            <p className="text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
-              {siteConfig.company.description}
-            </p>
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight !text-[#102A43]">About <span className="!text-[#102A43]">{siteConfig.company.name}</span></h1>
+                <p className="text-xl text-text-secondary leading-relaxed max-w-xl">
+                  {siteConfig.company.description}
+                </p>
+              </div>
+              
+              <div className="bg-white/60 backdrop-blur-md p-8 rounded-2xl border border-white/50 shadow-sm hidden md:block">
+                <h3 className="text-xl font-bold text-[#102A43] mb-4">Our Commitment</h3>
+                <p className="text-[#102A43]/90 leading-relaxed font-medium">
+                  We bridge the gap between exceptional talent and transformative technology. Our goal is to empower enterprises to scale efficiently through world-class SAP integration, innovative ERP solutions, and unparalleled strategic staffing tailored to your exact needs.
+                </p>
+              </div>
+            </div>
           </Reveal>
         </div>
       </div>
@@ -74,23 +84,56 @@ const AboutPage = () => {
           </Reveal>
 
           <StaggerContainer className="grid md:grid-cols-3 gap-8">
-            <StaggerItem className="bg-surface border border-border p-8 rounded-2xl shadow-surface text-center group hover:shadow-surface-hover hover:-translate-y-1 transition-all">
-              <div className="w-16 h-16 bg-bg-secondary border border-border-light rounded-full flex items-center justify-center text-2xl mx-auto mb-6 group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">🤝</div>
-              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-primary transition-colors">Client Partnership</h3>
-              <p className="text-text-secondary leading-relaxed">We don't just act as vendors; we integrate with your team to deeply understand and solve your business challenges.</p>
-            </StaggerItem>
-            
-            <StaggerItem className="bg-surface border border-border p-8 rounded-2xl shadow-surface text-center group hover:shadow-surface-hover hover:-translate-y-1 transition-all">
-              <div className="w-16 h-16 bg-bg-secondary border border-border-light rounded-full flex items-center justify-center text-2xl mx-auto mb-6 group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">🎯</div>
-              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-primary transition-colors">Excellence in Execution</h3>
-              <p className="text-text-secondary leading-relaxed">From a single staffing placement to a massive SAP rollout, we commit to the highest standards of quality.</p>
-            </StaggerItem>
-            
-            <StaggerItem className="bg-surface border border-border p-8 rounded-2xl shadow-surface text-center group hover:shadow-surface-hover hover:-translate-y-1 transition-all">
-              <div className="w-16 h-16 bg-bg-secondary border border-border-light rounded-full flex items-center justify-center text-2xl mx-auto mb-6 group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300">💡</div>
-              <h3 className="text-xl font-bold text-text-primary mb-4 group-hover:text-primary transition-colors">Continuous Innovation</h3>
-              <p className="text-text-secondary leading-relaxed">Technology evolves rapidly. We constantly upskill our teams to bring you the latest in cloud, ERP, and automation.</p>
-            </StaggerItem>
+            {[
+              {
+                title: 'Client Partnership',
+                desc: "We don't just act as vendors; we integrate with your team to deeply understand and solve your business challenges.",
+                image: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=800&q=80'
+              },
+              {
+                title: 'Excellence in Execution',
+                desc: 'From a single staffing placement to a massive SAP rollout, we commit to the highest standards of quality.',
+                image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80'
+              },
+              {
+                title: 'Continuous Innovation',
+                desc: 'Technology evolves rapidly. We constantly upskill our teams to bring you the latest in cloud, ERP, and automation.',
+                image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80'
+              }
+            ].map((val, idx) => (
+              <StaggerItem key={idx}>
+                <div className="block group h-full">
+                  <div className="relative rounded-2xl overflow-hidden h-[380px] flex flex-col justify-end p-8 border border-border shadow-surface transition-all duration-500 hover:shadow-surface-hover cursor-default group-hover:-translate-y-2 group-hover:border-primary/30">
+                    
+                    {/* Background Image */}
+                    <img
+                      src={val.image}
+                      alt={val.title}
+                      className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                    />
+                    
+                    {/* Gradient Overlay Base */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent group-hover:opacity-0 transition-opacity duration-300 z-0"></div>
+
+                    {/* Content Base State */}
+                    <div className="relative z-10 mt-auto group-hover:opacity-0 transition-opacity duration-300 text-center md:text-left">
+                      <h3 className="text-xl font-bold text-text-primary mb-3 tracking-tight transition-colors">
+                        {val.title}
+                      </h3>
+                      <p className="text-text-secondary leading-relaxed line-clamp-3">
+                        {val.desc}
+                      </p>
+                    </div>
+
+                    {/* Hover Overlay State */}
+                    <div className="absolute inset-0 bg-bg-navy/95 text-white p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end z-20 backdrop-blur-sm text-center md:text-left">
+                      <h4 className="text-2xl font-bold mb-4 tracking-tight text-white">{val.title}</h4>
+                      <p className="text-white/90 leading-relaxed text-lg">{val.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              </StaggerItem>
+            ))}
           </StaggerContainer>
         </div>
       </div>

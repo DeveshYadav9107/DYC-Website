@@ -5,19 +5,14 @@ const Navbar = () => {
   return (
     <header className="bg-bg-primary/95 backdrop-blur-md border-b border-border-light py-4 px-6 md:px-12 sticky top-0 z-50 flex items-center justify-between transition-all duration-300 shadow-sm">
       <div className="flex items-center gap-2 relative">
-        <Link to="/" className="flex items-center h-8 overflow-visible">
+        <Link to="/" className="flex items-center gap-3 h-10 overflow-visible">
           <img 
-            src="/images/dyc-logo-light.png" 
+            src="/favicon.jpg" 
             alt="Dinesh Yadav & Company Logo" 
-            className="h-14 w-auto object-contain mix-blend-multiply hover:opacity-80 transition-all duration-300 -my-3"
-            onError={(e) => {
-              e.target.onerror = null; 
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'block';
-            }}
+            className="h-10 w-10 object-contain rounded-sm shadow-sm"
           />
-          <span className="text-2xl font-bold text-text-primary tracking-tight hidden">
-            {siteConfig.company.shortName}
+          <span className="text-lg md:text-xl font-bold text-[#102A43] tracking-tight">
+            Dinesh Yadav & Company
           </span>
         </Link>
       </div>

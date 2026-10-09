@@ -43,11 +43,10 @@ const SAPCapabilitiesPage = () => {
       <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
         
         {/* Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 opacity-50">
-          <img src="/images/sap-banner.png" alt="SAP Capabilities Banner" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 z-0 opacity-100">
+          <img src="/images/sap-banner.png" alt="SAP Capabilities Banner" className="w-full h-full object-cover object-right" />
         </div>
-        <div className="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_top_right,var(--color-primary-light),transparent_70%)] z-0"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-bg-tertiary via-transparent to-transparent z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-bg-tertiary/80 via-bg-tertiary/30 to-transparent z-0"></div>
 
         <div className="max-w-7xl mx-auto relative z-10 pt-10">
           <Reveal>

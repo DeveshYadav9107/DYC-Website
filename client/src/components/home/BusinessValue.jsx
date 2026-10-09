@@ -76,7 +76,7 @@ const BusinessValue = () => {
                   />
                   
                   {/* Gradient Overlay Base */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent group-hover:opacity-0 transition-opacity duration-300 z-0"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent group-hover:opacity-0 transition-opacity duration-300 z-0"></div>
 
                   {/* Content Base State */}
                   <div className="relative z-10 mt-auto group-hover:opacity-0 transition-opacity duration-300">
@@ -93,12 +93,9 @@ const BusinessValue = () => {
                     <h4 className="text-xl font-bold mb-6 tracking-tight text-white">{val.title}</h4>
                     <div className="flex flex-col h-full">
                       {val.hoverItems.map((item, i) => (
-                        <div key={i} className="group/item flex items-center justify-between border-b border-white/20 py-4 last:border-0 cursor-pointer">
-                          <div>
-                            <div className="font-semibold text-white mb-1 group-hover/item:text-primary-light transition-colors">{item.title}</div>
-                            <div className="text-sm text-primary-light/70">{item.sub}</div>
-                          </div>
-                          <span className="text-primary-light/50 group-hover/item:text-primary-light group-hover/item:translate-x-1 transition-all">→</span>
+                        <div key={i} className="group/item border-b border-white/20 py-4 last:border-0 cursor-default">
+                          <div className="font-semibold text-white mb-1 transition-colors">{item.title}</div>
+                          <div className="text-sm text-primary-light/70">{item.sub}</div>
                         </div>
                       ))}
                     </div>
