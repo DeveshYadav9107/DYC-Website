@@ -34,7 +34,7 @@ function App() {
           <Route path="/sap-capabilities" element={<PublicLayout><SAPCapabilitiesPage /></PublicLayout>} />
           <Route path="/services/:serviceId" element={<PublicLayout><ServicePage /></PublicLayout>} />
           <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
-          
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={

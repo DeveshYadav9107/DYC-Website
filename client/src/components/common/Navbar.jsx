@@ -6,13 +6,13 @@ const Navbar = () => {
     <header className="bg-bg-primary/95 backdrop-blur-md border-b border-border-light py-4 px-6 md:px-12 sticky top-0 z-50 flex items-center justify-between transition-all duration-300 shadow-sm">
       <div className="flex items-center gap-2 relative">
         <Link to="/" className="flex items-center gap-3 h-10 overflow-visible">
-          <img 
-            src="/favicon.jpg" 
-            alt="Dinesh Yadav & Company Logo" 
+          <img
+            src="/favicon.jpg"
+            alt="DY&C Logo"
             className="h-10 w-10 object-contain rounded-sm shadow-sm"
           />
           <span className="text-lg md:text-xl font-bold text-[#102A43] tracking-tight">
-            Dinesh Yadav & Company
+            DY&C
           </span>
         </Link>
       </div>
@@ -20,7 +20,7 @@ const Navbar = () => {
       <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-text-secondary">
         <Link to="/" className="hover:text-primary transition-colors">Home</Link>
         <Link to="/about" className="hover:text-primary transition-colors">About</Link>
-        
+
         <div className="relative group cursor-pointer py-2">
           <span className="hover:text-primary transition-colors">Services ▾</span>
           <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50">

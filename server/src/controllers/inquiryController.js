@@ -53,7 +53,7 @@ export const addInquiryNote = async (req, res, next) => {
   try {
     const { text } = req.body;
     const inquiry = await Inquiry.findById(req.params.id);
-    
+
     if (!inquiry) {
       return next(new ApiError(404, 'Inquiry not found'));
     }

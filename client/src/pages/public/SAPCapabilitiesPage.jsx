@@ -7,32 +7,35 @@ const SAPCapabilitiesPage = () => {
     {
       title: 'Functional Modules',
       desc: 'Optimize your core business processes with expert configuration.',
+      paragraph: 'Our functional consultants possess deep industry knowledge and understand that technology is merely an enabler for business goals. We specialize in mapping complex business workflows into standard SAP processes, minimizing custom developments while maximizing efficiency. From streamlining financial closes to optimizing supply chains, our experts ensure your SAP environment perfectly aligns with your operational realities.',
       modules: [
-        { name: 'SAP FICO', full: 'Financial Accounting & Controlling', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP MM', full: 'Materials Management', image: 'https://images.unsplash.com/photo-1586528116311-ad8ed7c663be?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP SD', full: 'Sales and Distribution', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP HR/HCM', full: 'Human Capital Management', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP PP', full: 'Production Planning', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP PM', full: 'Plant Maintenance', image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP FICO', full: 'Financial Accounting & Controlling' },
+        { name: 'SAP MM', full: 'Materials Management' },
+        { name: 'SAP SD', full: 'Sales and Distribution' },
+        { name: 'SAP HR/HCM', full: 'Human Capital Management' },
+        { name: 'SAP PP', full: 'Production Planning' },
+        { name: 'SAP PM', full: 'Plant Maintenance' },
       ]
     },
     {
       title: 'Technical Modules',
       desc: 'Robust development, integration, and system administration.',
+      paragraph: 'Behind every successful SAP landscape is a rock-solid technical foundation. Our technical architects and developers build scalable, secure, and highly performant solutions. Whether you need custom ABAP developments, seamless integrations via PI/PO, or 24/7 Basis support to maintain system health, our technical teams deliver excellence. We also prioritize intuitive user experiences by designing modern Fiori applications that drive user adoption.',
       modules: [
-        { name: 'SAP ABAP', full: 'Advanced Business Application Programming', image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP Basis', full: 'System Administration', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP Fiori / UI5', full: 'User Experience & Interfaces', image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP PI/PO', full: 'Process Integration / Orchestration', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP ABAP', full: 'Advanced Business Application Programming' },
+        { name: 'SAP Basis', full: 'System Administration' },
+        { name: 'SAP Fiori / UI5', full: 'User Experience & Interfaces' },
+        { name: 'SAP PI/PO', full: 'Process Integration / Orchestration' },
       ]
     },
     {
       title: 'Cloud & Environments',
       desc: 'Modernize your landscape with the latest SAP innovations.',
+      paragraph: 'The future of enterprise technology lives in the cloud. We guide organizations through the complexities of digital transformation, mitigating risks during critical transitions like S/4HANA migrations. Our cloud specialists help you harness the full power of SAP\'s modern suite, integrating core ERP capabilities with specialized cloud solutions like SuccessFactors and Ariba to create a unified, intelligent enterprise architecture.',
       modules: [
-        { name: 'SAP S/4HANA', full: 'Next-generation ERP', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP SuccessFactors', full: 'Cloud HR', image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80' },
-        { name: 'SAP Ariba', full: 'Procurement & Supply Chain', image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80' },
+        { name: 'SAP S/4HANA', full: 'Next-generation ERP' },
+        { name: 'SAP SuccessFactors', full: 'Cloud HR' },
+        { name: 'SAP Ariba', full: 'Procurement & Supply Chain' },
       ]
     }
   ];
@@ -58,44 +61,34 @@ const SAPCapabilitiesPage = () => {
         </div>
       </div>
 
-      {/* Modules Grid */}
-      <div className="max-w-7xl mx-auto px-6 py-24 space-y-32">
+      {/* Modules List */}
+      <div className="max-w-7xl mx-auto px-6 py-24 space-y-24">
         {categories.map((category, idx) => (
-          <div key={idx}>
-            <Reveal>
-              <div className="mb-12">
+          <div key={idx} className="grid md:grid-cols-12 gap-12 items-start border-t border-border-light pt-16 first:border-0 first:pt-0">
+            <Reveal className="md:col-span-5">
+              <div className="sticky top-32">
                 <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
                   <span className="w-8 h-px bg-primary"></span>
                   Domain {idx + 1}
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4 tracking-tight">{category.title}</h2>
-                <p className="text-lg text-text-secondary">{category.desc}</p>
+                <p className="text-xl text-text-secondary font-medium mb-6">{category.desc}</p>
+                <p className="text-text-secondary leading-relaxed mb-8">
+                  {category.paragraph}
+                </p>
               </div>
             </Reveal>
             
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {category.modules.map((mod, i) => (
-                <StaggerItem key={i} className="relative rounded-2xl overflow-hidden h-[250px] flex flex-col justify-end p-6 border border-border hover:border-primary/30 transition-all duration-500 shadow-surface group hover:-translate-y-1 hover:shadow-surface-hover cursor-default">
-                  
-                  {/* Background Image */}
-                  <img 
-                    src={mod.image} 
-                    alt={mod.name} 
-                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
-                  />
-                  
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent"></div>
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
-
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <h3 className="font-bold text-2xl text-text-primary mb-1 tracking-tight group-hover:text-primary transition-colors">{mod.name}</h3>
+            <div className="md:col-span-7">
+              <StaggerContainer className="grid sm:grid-cols-2 gap-4">
+                {category.modules.map((mod, i) => (
+                  <StaggerItem key={i} className="bg-surface border border-border rounded-xl p-6 hover:border-primary/50 transition-colors shadow-sm group">
+                    <h3 className="font-bold text-xl text-[#102A43] mb-2 group-hover:text-primary transition-colors">{mod.name}</h3>
                     <p className="text-text-secondary text-sm leading-relaxed">{mod.full}</p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
+                  </StaggerItem>
+                ))}
+              </StaggerContainer>
+            </div>
           </div>
         ))}
       </div>

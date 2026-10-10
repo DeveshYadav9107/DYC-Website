@@ -37,7 +37,7 @@ const AdminLogin = () => {
           <h1 className="text-2xl font-bold text-white mb-2">{siteConfig.company.shortName} Admin</h1>
           <p className="text-primary-200 text-sm">Secure Dashboard Access</p>
         </div>
-        
+
         <div className="p-8">
           {error && (
             <div className="bg-red-50 text-red-700 border border-red-200 p-3 rounded mb-6 text-sm text-center">
@@ -57,7 +57,7 @@ const AdminLogin = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <input

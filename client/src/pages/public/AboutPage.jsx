@@ -11,7 +11,7 @@ const AboutPage = () => {
         
         {/* Background Image & Overlays */}
         <div className="absolute inset-0 z-0 opacity-100">
-          <img src="/images/about-banner.png" alt="About Dinesh Yadav & Company" className="w-full h-full object-cover object-center" />
+          <img src="/images/about-banner.png" alt="About DY&C" className="w-full h-full object-cover object-center" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-bg-tertiary/80 via-bg-tertiary/30 to-transparent z-0"></div>
 
@@ -47,7 +47,7 @@ const AboutPage = () => {
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-6 tracking-tight">Our Story</h2>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Founded on the principle that technology should drive measurable business value, Dinesh Yadav & Company (DYC) has grown into a trusted partner for enterprises navigating complex digital transformations.
+                Founded on the principle that technology should drive measurable business value, DY&C has grown into a trusted partner for enterprises navigating complex digital transformations.
               </p>
               <p className="text-text-secondary mb-8 leading-relaxed">
                 With over {siteConfig.metrics.yearsExperience.value} years of excellence, we bridge the gap between business strategy and IT execution. Whether it's sourcing the perfect SAP consultant, managing an S/4HANA migration, or building custom ERP software from the ground up, we bring deep industry expertise to every engagement.

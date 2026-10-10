@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const UserSchema = new mongoose.Schema({
-  name:     { type: String, required: [true, 'Name is required'] },
-  email:    { type: String, required: [true, 'Email is required'], unique: true, lowercase: true },
+  name: { type: String, required: [true, 'Name is required'] },
+  email: { type: String, required: [true, 'Email is required'], unique: true, lowercase: true },
   password: { type: String, required: [true, 'Password is required'], minlength: 6, select: false },
-  role:     { type: String, enum: ['admin', 'editor'], default: 'editor' },
+  role: { type: String, enum: ['admin', 'editor'], default: 'editor' },
   isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 

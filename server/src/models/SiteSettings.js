@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const SiteSettingsSchema = new mongoose.Schema({
   // Company identity
-  companyName:    { type: String, default: 'Dinesh Yadav & Company' },
+  companyName:    { type: String, default: 'DY&C' },
   companyTagline: { type: String, default: 'We help businesses run smarter with the right people and the right systems.' },
   logoUrl:        { type: String },
   faviconUrl:     { type: String },
@@ -23,7 +23,7 @@ const SiteSettingsSchema = new mongoose.Schema({
 
   // SEO defaults
   seo: {
-    defaultTitle:       { type: String, default: 'Dinesh Yadav & Company | SAP & ERP Solutions' },
+    defaultTitle:       { type: String, default: 'DY&C | SAP & ERP Solutions' },
     defaultDescription: { type: String, default: 'Enterprise SAP consulting, staffing solutions and custom ERP software.' },
     ogImage:            { type: String },
   },

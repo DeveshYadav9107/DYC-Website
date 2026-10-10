@@ -4,14 +4,14 @@ import { StaggerContainer, StaggerItem } from '../animations/Stagger';
 
 const SAPCapabilitiesPreview = () => {
   const capabilities = [
-    { name: 'SAP S/4HANA', type: 'Environment' },
-    { name: 'SAP FICO', type: 'Functional' },
-    { name: 'SAP MM', type: 'Functional' },
-    { name: 'SAP SD', type: 'Functional' },
-    { name: 'SAP ABAP', type: 'Technical' },
-    { name: 'SAP Fiori', type: 'Technical' },
-    { name: 'SAP Basis', type: 'Technical' },
-    { name: 'SAP SuccessFactors', type: 'Cloud' },
+    { name: 'SAP S/4HANA', type: 'Environment', desc: 'Next-gen enterprise resource planning.' },
+    { name: 'SAP FICO', type: 'Functional', desc: 'Financial accounting & controlling.' },
+    { name: 'SAP MM', type: 'Functional', desc: 'Streamline materials management.' },
+    { name: 'SAP SD', type: 'Functional', desc: 'Optimize sales and distribution.' },
+    { name: 'SAP ABAP', type: 'Technical', desc: 'Custom enterprise development.' },
+    { name: 'SAP Fiori', type: 'Technical', desc: 'Intuitive user experiences.' },
+    { name: 'SAP Basis', type: 'Technical', desc: 'Reliable system administration.' },
+    { name: 'SAP SuccessFactors', type: 'Cloud', desc: 'Modern human capital management.' },
   ];
 
   return (
@@ -35,16 +35,34 @@ const SAPCapabilitiesPreview = () => {
           </div>
         </Reveal>
 
-        <StaggerContainer className="flex flex-wrap gap-4">
+        <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {capabilities.map((cap, idx) => (
-            <StaggerItem key={idx} className="bg-surface border border-border px-6 py-4 rounded-xl shadow-surface flex-grow md:flex-grow-0 min-w-[200px] hover:border-primary/30 hover:shadow-surface-hover hover:-translate-y-1 transition-all cursor-default">
-              <div className="text-[10px] text-primary font-bold mb-1 uppercase tracking-widest">{cap.type}</div>
-              <div className="font-bold text-text-primary tracking-tight">{cap.name}</div>
+            <StaggerItem key={idx} className="h-full">
+              <Link to="/sap-capabilities" className="block group relative bg-surface border border-border px-6 py-6 md:py-8 rounded-2xl shadow-surface hover:shadow-surface-hover transition-all duration-500 overflow-hidden h-full group-hover:-translate-y-1">
+                {/* Background Hover Effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#102A43] to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+
+                {/* Content */}
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <div className="text-xs text-primary font-bold mb-2 uppercase tracking-widest group-hover:text-primary-light/80 transition-colors duration-300">{cap.type}</div>
+                    <div className="font-bold text-xl md:text-2xl text-text-primary tracking-tight group-hover:text-white transition-colors duration-300">{cap.name}</div>
+                  </div>
+                  
+                  {/* Hover Description */}
+                  <div className="mt-4 text-primary-light/90 text-sm md:text-base opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75 leading-relaxed line-clamp-2">
+                    {cap.desc}
+                  </div>
+                </div>
+              </Link>
             </StaggerItem>
           ))}
-          <StaggerItem className="px-6 py-4 rounded-xl border-2 border-dashed border-border-light text-text-muted hover:border-primary/50 hover:text-primary hover:-translate-y-1 hover:bg-white transition-all flex items-center justify-center font-medium min-w-[200px]">
-            <Link to="/sap-capabilities" className="w-full h-full flex items-center justify-center">
-              + Explore More
+          <StaggerItem className="h-full">
+            <Link to="/sap-capabilities" className="group relative px-6 py-6 md:py-8 rounded-2xl border-2 border-dashed border-primary/30 text-primary hover:border-primary hover:bg-primary/5 transition-all duration-500 flex flex-col items-center justify-center font-bold h-full gap-3 text-center hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <span className="text-2xl">+</span>
+              </div>
+              <span>Explore All<br/>Capabilities</span>
             </Link>
           </StaggerItem>
         </StaggerContainer>

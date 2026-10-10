@@ -1,7 +1,7 @@
 {
   "name": "dyc-server",
   "version": "1.0.0",
-  "description": "Dinesh Yadav & Company - Backend API Server",
+  "description": "DY&C - Backend API Server",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -20,6 +21,7 @@
     "mongoose": "^8.0.0",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^10.0.16",
     "slugify": "^1.6.6"
   }
 }

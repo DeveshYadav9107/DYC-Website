@@ -3,7 +3,7 @@
 
 const siteConfig = {
   company: {
-    name: 'Dinesh Yadav & Company', // CONFIRMED
+    name: 'DY&C', // CONFIRMED
     shortName: 'DYC',
     tagline: 'We help businesses run smarter with the right people and the right systems.',
     description: 'SAP expertise, skilled professionals and business-focused ERP solutions designed around enterprise needs.',
