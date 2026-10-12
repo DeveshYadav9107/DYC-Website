@@ -10,9 +10,9 @@ const siteConfig = {
   },
 
   contact: {
-    phone: '+91-9729037456',        // CONFIRMED
+    phone: '+91 95883 09979',        // CONFIRMED
     email: 'info@dycinfo.com',      // CONFIRMED
-    address: 'E-52A, Suncity, Gurgaon', // CONFIRMED
+    address: 'E-52A, Suncity, Rewari', // CONFIRMED
     gst: '06AOZPY8747D1ZX',        // [VERIFY]
   },
 

@@ -8,9 +8,9 @@ const SiteSettingsSchema = new mongoose.Schema({
   faviconUrl:     { type: String },
 
   // Contact
-  phone:          { type: String, default: '+91-9729037456' },
+  phone:          { type: String, default: '+91 95883 09979' },
   email:          { type: String, default: 'info@dycinfo.com' },
-  address:        { type: String, default: 'E-52A, Suncity, Gurgaon' },
+  address:        { type: String, default: 'E-52A, Suncity, Rewari' },
   gst:            { type: String, default: '06AOZPY8747D1ZX' },
   mapEmbedUrl:    { type: String },
 
