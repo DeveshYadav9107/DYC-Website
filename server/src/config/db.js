@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 import env from './env.js';
 
 const connectDB = async () => {
+  if (!env.MONGODB_URI) {
+    console.warn('⚠️ WARNING: MONGODB_URI is not defined in environment variables. Database connection skipped.');
+    return;
+  }
   try {
     const conn = await mongoose.connect(env.MONGODB_URI);
     console.log(`✅ MongoDB Atlas Connected: ${conn.connection.host}`);

@@ -12,7 +12,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const inquiries = await getInquiries();
+        const res = await getInquiries();
+        const inquiries = Array.isArray(res) ? res : (res?.data || []);
         setStats({
           totalInquiries: inquiries.length,
           newInquiries: inquiries.filter(i => i.status === 'new').length,

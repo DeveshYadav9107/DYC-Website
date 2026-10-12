@@ -19,7 +19,9 @@ router.use(authorize('admin', 'editor'));
 
 router.get('/', getInquiries);
 router.get('/:id', getInquiry);
-router.put('/:id/status', updateInquiryStatus);
+router.route('/:id/status')
+  .put(updateInquiryStatus)
+  .patch(updateInquiryStatus);
 router.post('/:id/notes', addInquiryNote);
 router.delete('/:id', deleteInquiry);
 

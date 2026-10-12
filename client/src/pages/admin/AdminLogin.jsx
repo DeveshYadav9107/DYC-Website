@@ -17,15 +17,24 @@ const AdminLogin = () => {
 
     try {
       if (email && password) {
-        const data = await login({ email, password });
-        localStorage.setItem('adminToken', data.token);
-        navigate('/admin');
+        const resData = await login({ email, password });
+        const token = resData?.data?.token || resData?.token;
+        if (token) {
+          localStorage.setItem('adminToken', token);
+          navigate('/admin');
+        } else {
+          setError('Authentication succeeded but token was missing.');
+        }
       } else {
         setError('Please enter both email and password.');
-        setLoading(false);
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid credentials');
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Invalid credentials. Please verify your email and password.'
+      );
+    } finally {
       setLoading(false);
     }
   };

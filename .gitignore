@@ -12,6 +12,8 @@ yarn-debug.log
 .env.production.local
 
 # Production Build
+dist/
+build/
 client/dist/
 client/build/
 
