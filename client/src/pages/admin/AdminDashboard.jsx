@@ -20,6 +20,7 @@ import {
   FiSliders,
   FiX,
   FiFileText,
+  FiChevronRight,
 } from 'react-icons/fi';
 
 const AdminDashboard = () => {
