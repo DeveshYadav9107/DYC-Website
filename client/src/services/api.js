@@ -23,10 +23,33 @@ api.interceptors.request.use(
   }
 );
 
+// Interceptor for unauthorized responses
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response?.status === 401 &&
+      typeof window !== 'undefined' &&
+      window.location.pathname.startsWith('/admin') &&
+      window.location.pathname !== '/admin/login'
+    ) {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      window.location.href = '/admin/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Auth Services
 export const login = async (credentials) => {
   const response = await api.post('/auth/login', credentials);
   return response.data;
+};
+
+export const getMe = async () => {
+  const response = await api.get('/auth/me');
+  return response.data?.data || response.data;
 };
 
 // Inquiry Services
@@ -40,8 +63,23 @@ export const getInquiries = async () => {
   return response.data?.data || response.data || [];
 };
 
+export const getInquiry = async (id) => {
+  const response = await api.get(`/inquiries/${id}`);
+  return response.data?.data || response.data;
+};
+
 export const updateInquiryStatus = async (id, status) => {
   const response = await api.put(`/inquiries/${id}/status`, { status });
+  return response.data;
+};
+
+export const addInquiryNote = async (id, text) => {
+  const response = await api.post(`/inquiries/${id}/notes`, { text });
+  return response.data?.data || response.data;
+};
+
+export const deleteInquiry = async (id) => {
+  const response = await api.delete(`/inquiries/${id}`);
   return response.data;
 };
 

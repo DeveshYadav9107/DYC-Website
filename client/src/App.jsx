@@ -20,13 +20,15 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminInquiries from './pages/admin/AdminInquiries';
 import AdminSettings from './pages/admin/AdminSettings';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
     <HelmetProvider>
-      <Router>
-        <ScrollToTop />
-        <Routes>
+      <AuthProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
           <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
@@ -60,6 +62,7 @@ function App() {
           } />
         </Routes>
       </Router>
+      </AuthProvider>
     </HelmetProvider>
   );
 }

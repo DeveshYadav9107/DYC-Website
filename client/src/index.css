@@ -32,6 +32,27 @@
   
   --shadow-surface: 0 8px 30px rgba(17, 24, 63, 0.04);
   --shadow-surface-hover: 0 12px 40px rgba(17, 24, 63, 0.08);
+
+  /* Admin Dashboard Theme Tokens */
+  --color-admin-bg: #F6F8FC;
+  --color-admin-card: #FFFFFF;
+  --color-admin-sidebar: #FFFFFF;
+  --color-admin-primary: #4F46E5;
+  --color-admin-primary-hover: #4338CA;
+  --color-admin-secondary: #7C3AED;
+  --color-admin-blue-soft: #EEF4FF;
+  --color-admin-lavender-soft: #F2EEFF;
+  --color-admin-cyan-soft: #E8F8FC;
+  --color-admin-pink-soft: #FFF0F5;
+  --color-admin-text: #172033;
+  --color-admin-text-muted: #64748B;
+  --color-admin-border: #E8ECF3;
+  --color-admin-success: #15803D;
+  --color-admin-success-bg: #ECFDF5;
+  --color-admin-warning: #B45309;
+  --color-admin-warning-bg: #FFFBEB;
+  --color-admin-error: #DC2626;
+  --color-admin-error-bg: #FEF2F2;
 }
 
 html {
