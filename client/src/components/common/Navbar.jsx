@@ -48,6 +48,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const servicesDropdownRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
 
   // Detect scroll to adjust header height & shadow smoothly
   useEffect(() => {
@@ -91,6 +92,42 @@ const Navbar = () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  // Prevent background scrolling when mobile menu drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileOpen]);
+
+  // Auto-close mobile drawer when viewport expands to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Debounced dropdown hover handlers to prevent flicker on rapid cursor transitions
+  const handleDropdownEnter = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setServicesOpen(true);
+  };
+
+  const handleDropdownLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setServicesOpen(false);
+    }, 150);
+  };
 
   const isServicesActive = location.pathname.startsWith('/services');
 
@@ -162,8 +199,8 @@ const Navbar = () => {
           <div
             ref={servicesDropdownRef}
             className="relative"
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
+            onMouseEnter={handleDropdownEnter}
+            onMouseLeave={handleDropdownLeave}
           >
             <button
               type="button"
@@ -171,7 +208,7 @@ const Navbar = () => {
               aria-haspopup="true"
               aria-expanded={servicesOpen}
               className={`flex items-center gap-1 px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 cursor-pointer ${
-                isServicesActive
+                isServicesActive || servicesOpen
                   ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold shadow-xs'
                   : 'text-[#172554] hover:text-[#4F46E5] hover:bg-[#F8FAFC]'
               }`}
@@ -194,7 +231,11 @@ const Navbar = () => {
                   transition={{ duration: 0.16, ease: 'easeOut' }}
                   className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 min-w-[280px] lg:min-w-[310px]"
                 >
-                  <div className="bg-white rounded-2xl border border-[#E8ECF3] shadow-[0_12px_36px_rgba(23,37,84,0.12),0_4px_12px_rgba(0,0,0,0.04)] p-2">
+                  <div
+                    role="menu"
+                    aria-label="Services Submenu"
+                    className="bg-white rounded-2xl border border-[#E8ECF3] shadow-[0_12px_36px_rgba(23,37,84,0.12),0_4px_12px_rgba(0,0,0,0.04)] p-2"
+                  >
                     {servicesList.map((service) => {
                       const isActive = location.pathname === service.path;
                       const IconComponent = service.icon;
@@ -321,147 +362,161 @@ const Navbar = () => {
 
       </div>
 
-      {/* ================= 5. MOBILE ACCORDION DRAWER ================= */}
+      {/* ================= 5. MOBILE ACCORDION DRAWER & BACKDROP ================= */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="md:hidden overflow-hidden bg-white border-t border-[#E8ECF3] shadow-xl"
-          >
-            <div className="px-5 pt-3 pb-6 flex flex-col gap-1">
-              {/* Home */}
-              <Link
-                to="/"
-                onClick={() => setMobileOpen(false)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  location.pathname === '/'
-                    ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                    : 'text-[#172554] hover:bg-[#F8FAFC]'
-                }`}
-              >
-                Home
-              </Link>
+          <>
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 top-[56px] sm:top-[64px] bg-slate-900/40 backdrop-blur-xs z-40 md:hidden"
+              aria-hidden="true"
+            />
 
-              {/* About */}
-              <Link
-                to="/about"
-                onClick={() => setMobileOpen(false)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  location.pathname === '/about'
-                    ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                    : 'text-[#172554] hover:bg-[#F8FAFC]'
-                }`}
-              >
-                About
-              </Link>
-
-              {/* Services Accordion */}
-              <div className="rounded-xl overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setMobileServicesOpen((prev) => !prev)}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
-                    isServicesActive
+            {/* Mobile Drawer */}
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="relative z-50 md:hidden overflow-hidden bg-white border-t border-[#E8ECF3] shadow-2xl max-h-[calc(100vh-70px)] overflow-y-auto"
+            >
+              <div className="px-5 pt-3 pb-6 flex flex-col gap-1">
+                {/* Home */}
+                <Link
+                  to="/"
+                  onClick={() => setMobileOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    location.pathname === '/'
                       ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
                       : 'text-[#172554] hover:bg-[#F8FAFC]'
                   }`}
                 >
-                  <span>Services</span>
-                  <FiChevronDown
-                    className={`text-sm transition-transform duration-200 ${
-                      mobileServicesOpen ? 'rotate-180 text-[#4F46E5]' : 'text-[#475569]'
+                  Home
+                </Link>
+
+                {/* About */}
+                <Link
+                  to="/about"
+                  onClick={() => setMobileOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    location.pathname === '/about'
+                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
+                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                  }`}
+                >
+                  About
+                </Link>
+
+                {/* Services Accordion */}
+                <div className="rounded-xl overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setMobileServicesOpen((prev) => !prev)}
+                    className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                      isServicesActive || mobileServicesOpen
+                        ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
+                        : 'text-[#172554] hover:bg-[#F8FAFC]'
                     }`}
-                  />
-                </button>
+                  >
+                    <span>Services</span>
+                    <FiChevronDown
+                      className={`text-sm transition-transform duration-200 ${
+                        mobileServicesOpen ? 'rotate-180 text-[#4F46E5]' : 'text-[#475569]'
+                      }`}
+                    />
+                  </button>
 
-                <AnimatePresence>
-                  {mobileServicesOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="pl-4 pr-2 py-1 flex flex-col gap-1"
-                    >
-                      {servicesList.map((service) => {
-                        const isActive = location.pathname === service.path;
-                        const IconComp = service.icon;
-                        return (
-                          <Link
-                            key={service.path}
-                            to={service.path}
-                            onClick={() => setMobileOpen(false)}
-                            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                              isActive
-                                ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                                : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#172554]'
-                            }`}
-                          >
-                            <IconComp className="text-sm text-[#4F46E5]" />
-                            <span>{service.name}</span>
-                          </Link>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  <AnimatePresence>
+                    {mobileServicesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="pl-4 pr-2 py-1 flex flex-col gap-1"
+                      >
+                        {servicesList.map((service) => {
+                          const isActive = location.pathname === service.path;
+                          const IconComp = service.icon;
+                          return (
+                            <Link
+                              key={service.path}
+                              to={service.path}
+                              onClick={() => setMobileOpen(false)}
+                              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                                isActive
+                                  ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
+                                  : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#172554]'
+                              }`}
+                            >
+                              <IconComp className="text-sm text-[#4F46E5]" />
+                              <span>{service.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
-              {/* SAP */}
-              <Link
-                to="/sap-capabilities"
-                onClick={() => setMobileOpen(false)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  location.pathname === '/sap-capabilities'
-                    ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                    : 'text-[#172554] hover:bg-[#F8FAFC]'
-                }`}
-              >
-                SAP
-              </Link>
+                {/* SAP */}
+                <Link
+                  to="/sap-capabilities"
+                  onClick={() => setMobileOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    location.pathname === '/sap-capabilities'
+                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
+                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                  }`}
+                >
+                  SAP
+                </Link>
 
-              {/* Industries */}
-              <Link
-                to="/industries"
-                onClick={() => setMobileOpen(false)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  location.pathname === '/industries'
-                    ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                    : 'text-[#172554] hover:bg-[#F8FAFC]'
-                }`}
-              >
-                Industries
-              </Link>
+                {/* Industries */}
+                <Link
+                  to="/industries"
+                  onClick={() => setMobileOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    location.pathname === '/industries'
+                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
+                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                  }`}
+                >
+                  Industries
+                </Link>
 
-              {/* Contact */}
-              <Link
-                to="/contact"
-                onClick={() => setMobileOpen(false)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  location.pathname === '/contact'
-                    ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                    : 'text-[#172554] hover:bg-[#F8FAFC]'
-                }`}
-              >
-                Contact
-              </Link>
-
-              {/* Mobile CTA */}
-              <div className="pt-3 mt-2 border-t border-slate-100">
+                {/* Contact */}
                 <Link
                   to="/contact"
                   onClick={() => setMobileOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#172554] hover:bg-[#1E293B] text-white py-3 rounded-full text-sm font-semibold shadow-md active:scale-[0.99] transition-all"
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    location.pathname === '/contact'
+                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
+                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                  }`}
                 >
-                  <span>Talk to an Expert</span>
-                  <FiArrowUpRight className="text-base" />
+                  Contact
                 </Link>
+
+                {/* Mobile CTA */}
+                <div className="pt-3 mt-2 border-t border-slate-100">
+                  <Link
+                    to="/contact"
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full flex items-center justify-center gap-2 bg-[#172554] hover:bg-[#1E293B] text-white py-3 rounded-full text-sm font-semibold shadow-md active:scale-[0.99] transition-all"
+                  >
+                    <span>Talk to an Expert</span>
+                    <FiArrowUpRight className="text-base" />
+                  </Link>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
