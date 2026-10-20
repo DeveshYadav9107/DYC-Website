@@ -8,6 +8,7 @@ const NoteSchema = new mongoose.Schema({
 
 const InquirySchema = new mongoose.Schema({
   // Contact info
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   name: { type: String, required: [true, 'Name is required'] },
   company: { type: String },
   email: { type: String, required: [true, 'Email is required'] },

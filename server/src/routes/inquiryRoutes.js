@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   createInquiry,
+  getMyInquiries,
   getInquiries,
   getInquiry,
   updateInquiryStatus,
@@ -13,9 +14,13 @@ const router = express.Router();
 
 router.post('/', createInquiry);
 
+// Customer enquiries route (protected for any authenticated user)
+router.get('/my', protect, getMyInquiries);
+
 // Protect all admin routes
 router.use(protect);
 router.use(authorize('admin', 'editor'));
+
 
 router.get('/', getInquiries);
 router.get('/:id', getInquiry);

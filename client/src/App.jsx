@@ -13,6 +13,17 @@ import AboutPage from './pages/public/AboutPage';
 import IndustriesPage from './pages/public/IndustriesPage';
 import ServicePage from './pages/public/ServicePage';
 
+// Authentication Pages
+import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage';
+import VerifyOtpPage from './pages/auth/VerifyOtpPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
+
+// Customer Protected Pages
+import MyEnquiriesPage from './pages/customer/MyEnquiriesPage';
+import ProfilePage from './pages/customer/ProfilePage';
+
 // Admin Layout & Pages
 import AdminLayout from './layouts/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
@@ -29,39 +40,73 @@ function App() {
         <Router>
           <ScrollToTop />
           <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
-          <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
-          <Route path="/industries" element={<PublicLayout><IndustriesPage /></PublicLayout>} />
-          <Route path="/sap-capabilities" element={<PublicLayout><SAPCapabilitiesPage /></PublicLayout>} />
-          <Route path="/services/:serviceId" element={<PublicLayout><ServicePage /></PublicLayout>} />
-          <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+            {/* Public Pages */}
+            <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+            <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+            <Route path="/industries" element={<PublicLayout><IndustriesPage /></PublicLayout>} />
+            <Route path="/sap-capabilities" element={<PublicLayout><SAPCapabilitiesPage /></PublicLayout>} />
+            <Route path="/services/:serviceId" element={<PublicLayout><ServicePage /></PublicLayout>} />
+            <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
 
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminDashboard />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/inquiries" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminInquiries />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/settings" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminSettings />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-        </Routes>
-      </Router>
+            {/* Authentication Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/verify-otp" element={<VerifyOtpPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+            {/* Customer Portal Protected Routes */}
+            <Route
+              path="/my-enquiries"
+              element={
+                <ProtectedRoute>
+                  <MyEnquiriesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Routes (Restricted to admin & editor roles) */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute roles={['admin', 'editor']}>
+                  <AdminLayout>
+                    <AdminDashboard />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/inquiries"
+              element={
+                <ProtectedRoute roles={['admin', 'editor']}>
+                  <AdminLayout>
+                    <AdminInquiries />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute roles={['admin', 'editor']}>
+                  <AdminLayout>
+                    <AdminSettings />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Router>
       </AuthProvider>
     </HelmetProvider>
   );

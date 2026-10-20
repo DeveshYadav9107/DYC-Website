@@ -7,55 +7,127 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Interceptor to add auth token to requests
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('adminToken');
+    const token =
+      localStorage.getItem('token') ||
+      localStorage.getItem('adminToken') ||
+      localStorage.getItem('dyc_token');
+
     if (token && token !== 'undefined' && token !== 'null') {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Interceptor for unauthorized responses
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (
-      error.response?.status === 401 &&
-      typeof window !== 'undefined' &&
-      window.location.pathname.startsWith('/admin') &&
-      window.location.pathname !== '/admin/login'
-    ) {
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('adminUser');
-      window.location.href = '/admin/login';
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('user');
+        localStorage.removeItem('adminUser');
+        window.location.href = '/admin/login';
+      } else if (pathname === '/my-enquiries' || pathname === '/profile') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
 );
 
-// Auth Services
+// ================= AUTH SERVICES =================
+
+// Signup Initiation (validates details, sends OTP)
+export const initiateSignup = async (userData) => {
+  const response = await api.post('/auth/signup/initiate', userData);
+  return response.data;
+};
+
+// Signup OTP Verification (verifies code, creates user & issues token)
+export const verifySignupOtp = async (data) => {
+  const response = await api.post('/auth/signup/verify', data);
+  return response.data;
+};
+
+// Login Initiation (validates password, sends OTP)
+export const initiateLogin = async (credentials) => {
+  const response = await api.post('/auth/login', credentials);
+  return response.data;
+};
+
+// Direct or verified login alias
 export const login = async (credentials) => {
   const response = await api.post('/auth/login', credentials);
   return response.data;
 };
 
+// Login OTP Verification (verifies code, establishes session)
+export const verifyLoginOtp = async (data) => {
+  const response = await api.post('/auth/login/verify', data);
+  return response.data;
+};
+
+// Resend OTP for signup, login, or password reset
+export const resendOtp = async (data) => {
+  const response = await api.post('/auth/resend-otp', data);
+  return response.data;
+};
+
+// Forgot Password (sends password reset OTP)
+export const forgotPassword = async (data) => {
+  const response = await api.post('/auth/forgot-password', data);
+  return response.data;
+};
+
+// Reset Password (verifies OTP & sets new password)
+export const resetPassword = async (data) => {
+  const response = await api.post('/auth/reset-password', data);
+  return response.data;
+};
+
+// Authoritative user profile fetch
 export const getMe = async () => {
   const response = await api.get('/auth/me');
   return response.data?.data || response.data;
 };
 
-// Inquiry Services
+// Update Profile
+export const updateProfile = async (profileData) => {
+  const response = await api.put('/auth/profile', profileData);
+  return response.data?.data || response.data;
+};
+
+// Logout
+export const logoutUser = async () => {
+  try {
+    await api.post('/auth/logout');
+  } catch {
+    // Ignore network errors on logout
+  }
+};
+
+// ================= INQUIRY SERVICES =================
 export const submitInquiry = async (inquiryData) => {
   const response = await api.post('/inquiries', inquiryData);
   return response.data;
+};
+
+export const getMyInquiries = async () => {
+  const response = await api.get('/inquiries/my');
+  return response.data?.data || response.data || [];
 };
 
 export const getInquiries = async () => {
@@ -83,7 +155,7 @@ export const deleteInquiry = async (id) => {
   return response.data;
 };
 
-// Settings Services
+// ================= SETTINGS SERVICES =================
 export const getSettings = async () => {
   const response = await api.get('/settings');
   return response.data;

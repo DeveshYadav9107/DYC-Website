@@ -1,8 +1,9 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+const ProtectedRoute = ({ children, requiredRole, roles }) => {
+  const { isAuthenticated, user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -15,8 +16,26 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
+  // Not logged in
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+    const isAccessingAdmin = location.pathname.startsWith('/admin');
+    const redirectUrl = isAccessingAdmin ? '/admin/login' : `/login?returnTo=${encodeURIComponent(location.pathname)}`;
+    return <Navigate to={redirectUrl} replace />;
+  }
+
+  // Role authorization check
+  const allowedRoles = roles || (requiredRole ? [requiredRole] : null);
+  if (allowedRoles && allowedRoles.length > 0) {
+    const userRole = user?.role || 'customer';
+    const isAllowed = allowedRoles.includes(userRole);
+
+    if (!isAllowed) {
+      // If customer attempts to access admin route, redirect to home
+      if (location.pathname.startsWith('/admin')) {
+        return <Navigate to="/" replace />;
+      }
+      return <Navigate to="/" replace />;
+    }
   }
 
   return children;

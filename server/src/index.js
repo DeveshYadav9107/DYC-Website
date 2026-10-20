@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import env from './config/env.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
@@ -23,6 +24,8 @@ const __dirname = path.dirname(__filename);
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 
 // Dynamic CORS configuration (supports comma-separated URLs and localhost)
 const allowedOrigins = env.CLIENT_URL
@@ -76,6 +79,16 @@ app.use(errorHandler);
 
 // Start server
 const PORT = env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`✅ Server running in ${env.NODE_ENV} mode on port ${PORT}`);
 });
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use by another process. Please free port ${PORT} or stop the existing server.`);
+    process.exit(1);
+  } else {
+    console.error('❌ Server error:', err);
+  }
+});
+

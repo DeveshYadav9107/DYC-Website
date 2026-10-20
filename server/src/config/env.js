@@ -11,6 +11,13 @@ const env = {
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
+  EMAIL_HOST: process.env.EMAIL_HOST || process.env.SMTP_HOST || 'smtp.gmail.com',
+  EMAIL_PORT: parseInt(process.env.EMAIL_PORT || process.env.SMTP_PORT || '587', 10),
+  EMAIL_USER: process.env.EMAIL_USER || process.env.SMTP_USER,
+  EMAIL_PASSWORD: process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS || process.env.SMTP_PASS || process.env.SMTP_PASSWORD,
+  EMAIL_FROM: process.env.EMAIL_FROM || process.env.SMTP_FROM || 'Dinesh Yadav & Company <no-reply@dycinfo.com>',
+  EMAIL_SECURE: process.env.EMAIL_SECURE === 'true' || process.env.SMTP_SECURE === 'true',
 };
 
 export default env;
+

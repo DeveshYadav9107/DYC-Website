@@ -24,8 +24,19 @@ const AdminLogin = () => {
         return;
       }
 
-      await login({ email: email.trim(), password });
-      navigate('/admin');
+      const res = await login({ email: email.trim(), password });
+      if (res?.data?.requiresOtp || res?.requiresOtp) {
+        const cleanEmail = email.trim().toLowerCase();
+        const masked = res?.data?.maskedEmail || res?.maskedEmail || cleanEmail;
+        navigate(
+          `/verify-otp?email=${encodeURIComponent(cleanEmail)}&masked=${encodeURIComponent(
+            masked
+          )}&type=login&returnTo=/admin`
+        );
+      } else {
+        navigate('/admin');
+      }
+
     } catch (err) {
       setError(
         err.response?.data?.message ||

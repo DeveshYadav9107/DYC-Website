@@ -4,12 +4,36 @@ import { successResponse } from '../utils/apiResponse.js';
 
 export const createInquiry = async (req, res, next) => {
   try {
-    const inquiry = await Inquiry.create(req.body);
+    const inquiryData = { ...req.body };
+    if (req.user && req.user._id) {
+      inquiryData.user = req.user._id;
+    }
+    const inquiry = await Inquiry.create(inquiryData);
     return successResponse(res, 201, 'Inquiry submitted successfully', inquiry);
   } catch (error) {
     next(error);
   }
 };
+
+export const getMyInquiries = async (req, res, next) => {
+  try {
+    const userEmail = req.user.email?.toLowerCase();
+    const userId = req.user._id;
+
+    const queryConditions = [];
+    if (userId) queryConditions.push({ user: userId });
+    if (userEmail) queryConditions.push({ email: userEmail });
+
+    const inquiries = await Inquiry.find({
+      $or: queryConditions,
+    }).sort({ createdAt: -1 });
+
+    return successResponse(res, 200, 'Your enquiries retrieved successfully', inquiries);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const getInquiries = async (req, res, next) => {
   try {
