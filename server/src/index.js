@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
-// Dynamic CORS configuration (supports comma-separated URLs and localhost)
+// Dynamic CORS configuration (supports comma-separated URLs, Vercel deployments, and localhost)
 const allowedOrigins = env.CLIENT_URL
   ? env.CLIENT_URL.split(',').map(url => url.trim().replace(/\/$/, ''))
   : ['http://localhost:5173'];
@@ -43,6 +43,15 @@ app.use(cors({
     ) {
       return callback(null, true);
     }
+    // Allow any Vercel deployment preview or production domain (*.vercel.app)
+    try {
+      const parsed = new URL(normalizedOrigin);
+      if (parsed.hostname.endsWith('.vercel.app') || parsed.hostname === 'vercel.app') {
+        return callback(null, true);
+      }
+    } catch {
+      // Ignore URL parse error
+    }
     return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
@@ -57,19 +66,51 @@ app.get('/health', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+app.get('/api/v1/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // API Routes
+// 1. Primary versioned API routes
 app.use('/api/v1', routes);
+
+// 2. Compatibility mounts: supports requests sent to /api/... or directly to /auth, /inquiries, /settings
+// so clients hitting the backend without /api/v1 prefix still resolve seamlessly
+app.use('/api', routes);
+app.use('/', routes);
 
 // Serve client static build if available (for unified monorepo deployment)
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
 if (fs.existsSync(clientDistPath)) {
   app.use(express.static(clientDistPath));
   app.get('*', (req, res, next) => {
-    if (req.originalUrl.startsWith('/api')) {
+    if (
+      req.originalUrl.startsWith('/api') ||
+      req.originalUrl.startsWith('/auth') ||
+      req.originalUrl.startsWith('/inquiries') ||
+      req.originalUrl.startsWith('/settings') ||
+      req.originalUrl.startsWith('/health')
+    ) {
       return next();
     }
     res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+} else {
+  // Root endpoint for standalone backend deployment (e.g. on Render, Railway)
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: 'DY&C API Server is running successfully',
+      environment: env.NODE_ENV,
+      timestamp: new Date().toISOString(),
+      endpoints: {
+        health: '/health',
+        apiHealth: '/api/v1/health',
+        auth: '/api/v1/auth',
+        inquiries: '/api/v1/inquiries',
+        settings: '/api/v1/settings',
+      },
+    });
   });
 }
 

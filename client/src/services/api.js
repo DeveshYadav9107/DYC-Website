@@ -1,6 +1,26 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api/v1' : 'http://localhost:5000/api/v1');
+/**
+ * Normalizes the API base URL.
+ * Automatically ensures the URL points to /api/v1 regardless of how VITE_API_URL
+ * was configured in Vercel or environment variables (e.g. with/without /api/v1 or trailing slashes).
+ */
+const normalizeApiUrl = (url) => {
+  if (!url || typeof url !== 'string' || !url.trim()) {
+    return import.meta.env.PROD ? '/api/v1' : 'http://localhost:5000/api/v1';
+  }
+  let clean = url.trim().replace(/\/+$/, '');
+  if (!clean.endsWith('/api/v1')) {
+    if (clean.endsWith('/api')) {
+      clean = `${clean}/v1`;
+    } else {
+      clean = `${clean}/api/v1`;
+    }
+  }
+  return clean;
+};
+
+const API_URL = normalizeApiUrl(import.meta.env.VITE_API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
