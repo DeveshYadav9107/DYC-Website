@@ -1,6 +1,12 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
 import env from '../config/env.js';
 import ApiError from '../utils/apiError.js';
+
+// Force IPv4 over IPv6 on Linux cloud containers like Render (prevents ENETUNREACH)
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 let transporter = null;
 
@@ -11,9 +17,10 @@ const getTransporter = () => {
     host: env.EMAIL_HOST || 'smtp.gmail.com',
     port: env.EMAIL_PORT || 587,
     secure: env.EMAIL_SECURE,
-    connectionTimeout: 4000, // 4-second connection timeout prevents hanging on cloud platforms like Render Free Tier
-    greetingTimeout: 4000,
-    socketTimeout: 5000,
+    family: 4, // Strict IPv4 (never attempt IPv6 which fails on Render)
+    connectionTimeout: 6000,
+    greetingTimeout: 6000,
+    socketTimeout: 8000,
     auth: {
       user: env.EMAIL_USER,
       pass: env.EMAIL_PASSWORD,
@@ -252,10 +259,10 @@ If you did not request this, please ignore this email.
     return { success: true, messageId: info.messageId, provider: 'smtp' };
   } catch (error) {
     console.error(`❌ SMTP delivery to ${to} failed (${error.message}).`);
-    if (error.message.includes('timeout') || error.code === 'ETIMEDOUT') {
+    if (error.message.includes('timeout') || error.code === 'ETIMEDOUT' || error.code === 'ENETUNREACH' || error.message.includes('ENETUNREACH')) {
       throw new ApiError(
         500,
-        'Render Free Tier blocks outbound SMTP port 587. Please set RESEND_API_KEY in your Render dashboard environment variables so real emails can be sent over HTTPS Port 443.'
+        'Render Free Tier blocks direct SMTP connections to Gmail. Please add RESEND_API_KEY in your Render Dashboard (Environment) to send real emails via Port 443.'
       );
     }
     throw new ApiError(500, `Failed to deliver verification email: ${error.message}`);
