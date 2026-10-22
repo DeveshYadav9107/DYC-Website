@@ -191,29 +191,41 @@ If you did not request this, please ignore this email.
 
   // 1. Try Resend HTTP REST API if RESEND_API_KEY is configured (HTTPS port 443 - Never blocked on Render)
   if (env.RESEND_API_KEY) {
+    const resendFrom = (env.RESEND_FROM && !env.RESEND_FROM.includes('@gmail.com'))
+      ? env.RESEND_FROM
+      : 'DY&C <onboarding@resend.dev>';
+
     try {
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Authorization': `Bearer ${env.RESEND_API_KEY.trim()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: env.EMAIL_FROM || 'DY&C <onboarding@resend.dev>',
+          from: resendFrom,
           to: [to],
           subject,
           html,
           text,
         }),
       });
+
       const data = await res.json();
-      if (res.ok) {
-        console.log(`✉️ [Resend API] OTP sent successfully to ${to}. MessageId: ${data.id}`);
-        return { success: true, messageId: data.id, provider: 'resend' };
+      if (!res.ok) {
+        console.error('❌ Resend API returned error:', data);
+        throw new ApiError(
+          res.status || 400,
+          `Email delivery failed: ${data.message || 'Resend API rejected the request. Make sure you are sending to your Resend account email or verify your domain in Resend.'}`
+        );
       }
-      console.warn('⚠️ Resend API returned error:', data);
+
+      console.log(`✉️ [Resend API] OTP sent successfully to ${to}. MessageId: ${data.id}`);
+      return { success: true, messageId: data.id, provider: 'resend' };
     } catch (apiErr) {
-      console.warn('⚠️ Resend API request failed:', apiErr.message);
+      if (apiErr instanceof ApiError) throw apiErr;
+      console.error('❌ Resend API network error:', apiErr.message);
+      throw new ApiError(500, `Resend connection failed: ${apiErr.message}`);
     }
   }
 
