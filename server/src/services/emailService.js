@@ -175,6 +175,14 @@ If you did not request this, please ignore this email.
 © ${new Date().getFullYear()} Dinesh Yadav & Company. All rights reserved.
   `.trim();
 
+  // In development, log the OTP directly to console for instant developer convenience
+  if (env.NODE_ENV !== 'production') {
+    console.log(`\n==================================================`);
+    console.log(`🔑 [DEV MODE OTP] Purpose: ${purpose.toUpperCase()} | To: ${to}`);
+    console.log(`👉 OTP CODE: >>> ${otp} <<<`);
+    console.log(`==================================================\n`);
+  }
+
   try {
     const info = await mailTransporter.sendMail({
       from: env.EMAIL_FROM,
