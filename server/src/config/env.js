@@ -16,7 +16,7 @@ const env = {
   EMAIL_USER: process.env.EMAIL_USER || process.env.SMTP_USER || 'deveshrao130@gmail.com',
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS || process.env.SMTP_PASS || process.env.SMTP_PASSWORD || 'pjufigganibdzkqy',
   EMAIL_FROM: process.env.EMAIL_FROM || process.env.SMTP_FROM || `Dinesh Yadav & Company <${process.env.EMAIL_USER || 'deveshrao130@gmail.com'}>`,
-  EMAIL_SECURE: process.env.EMAIL_SECURE === 'true' || process.env.SMTP_SECURE === 'true',
+  EMAIL_SECURE: process.env.EMAIL_SECURE === 'true' || process.env.SMTP_SECURE === 'true' || parseInt(process.env.EMAIL_PORT || '587', 10) === 465,
   RESEND_API_KEY: process.env.RESEND_API_KEY,
   BREVO_API_KEY: process.env.BREVO_API_KEY,
 };
