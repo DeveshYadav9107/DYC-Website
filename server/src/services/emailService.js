@@ -24,7 +24,7 @@ const getTransporter = () => {
       pass: env.EMAIL_PASSWORD,
     },
     tls: {
-      rejectUnauthorized: env.NODE_ENV === 'production',
+      rejectUnauthorized: false,
     },
   });
 

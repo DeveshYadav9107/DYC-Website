@@ -25,6 +25,10 @@ Configure the following in your hosting provider's dashboard (e.g. Render, Railw
 | `JWT_SECRET` | Strong secret for signing admin JWT tokens | `generate-a-strong-random-key-here-32+chars` |
 | `JWT_EXPIRE` | Admin token lifetime | `7d` |
 | `CLIENT_URL` | Allowed frontend URL(s) for CORS (comma-separated if multiple) | `https://dycinfo.com,https://dyc-web.vercel.app` |
+| `EMAIL_USER` | Gmail address for sending verification OTPs | `deveshrao130@gmail.com` |
+| `EMAIL_PASSWORD` | Google 16-character App Password (not Gmail login password) | `pjufigganibdzkqy` |
+| `EMAIL_HOST` | SMTP server host (optional, defaults to Gmail) | `smtp.gmail.com` |
+| `EMAIL_PORT` | SMTP port (optional, defaults to 587) | `587` |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary account name (optional, for uploads) | `your_cloud_name` |
 | `CLOUDINARY_API_KEY` | Cloudinary API key (optional) | `your_api_key` |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret (optional) | `your_api_secret` |
