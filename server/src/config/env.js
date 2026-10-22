@@ -19,7 +19,6 @@ const env = {
   EMAIL_SECURE: process.env.EMAIL_SECURE === 'true' || process.env.SMTP_SECURE === 'true',
   RESEND_API_KEY: process.env.RESEND_API_KEY,
   BREVO_API_KEY: process.env.BREVO_API_KEY,
-  MASTER_OTP: process.env.MASTER_OTP || '999999',
 };
 
 export default env;

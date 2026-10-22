@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import env from '../config/env.js';
+import ApiError from '../utils/apiError.js';
 
 let transporter = null;
 
@@ -250,14 +251,13 @@ If you did not request this, please ignore this email.
     console.log(`✉️ Email OTP (${purpose}) sent successfully via SMTP to ${to}. MessageId: ${info.messageId}`);
     return { success: true, messageId: info.messageId, provider: 'smtp' };
   } catch (error) {
-    console.error(`⚠️ SMTP delivery to ${to} failed (${error.message}).`);
-    console.log(`ℹ️ [RENDER CLOUD NOTICE] If host firewall blocks SMTP ports 25/465/587, use the OTP logged above in the console or configure RESEND_API_KEY.`);
-    // Return gracefully so user/admin flow is NOT crashed with a 500 Connection Timeout error
-    return {
-      success: true,
-      delivered: false,
-      error: error.message,
-      fallbackUsed: true,
-    };
+    console.error(`❌ SMTP delivery to ${to} failed (${error.message}).`);
+    if (error.message.includes('timeout') || error.code === 'ETIMEDOUT') {
+      throw new ApiError(
+        500,
+        'Render Free Tier blocks outbound SMTP port 587. Please set RESEND_API_KEY in your Render dashboard environment variables so real emails can be sent over HTTPS Port 443.'
+      );
+    }
+    throw new ApiError(500, `Failed to deliver verification email: ${error.message}`);
   }
 };

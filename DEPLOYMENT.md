@@ -29,8 +29,7 @@ Configure the following in your hosting provider's dashboard (e.g. Render, Railw
 | `EMAIL_PASSWORD` | Google 16-character App Password (not Gmail login password) | `pjufigganibdzkqy` |
 | `EMAIL_HOST` | SMTP server host (optional, defaults to Gmail) | `smtp.gmail.com` |
 | `EMAIL_PORT` | SMTP port (optional, defaults to 587) | `587` |
-| `RESEND_API_KEY` | (Recommended for Render Free Tier) Resend HTTP API key (bypasses port 587 block) | `re_123456789...` |
-| `MASTER_OTP` | Cloud emergency fail-safe verification code (default: `999999`) | `999999` |
+| `RESEND_API_KEY` | (Required for Render Free Tier) Resend HTTP API key (bypasses port 587 block) | `re_123456789...` |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary account name (optional, for uploads) | `your_cloud_name` |
 | `CLOUDINARY_API_KEY` | Cloudinary API key (optional) | `your_api_key` |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret (optional) | `your_api_secret` |
