@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { getInquiries, updateInquiryStatus } from '../../services/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { getInquiryStats, updateInquiryStatus } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import {
   FiInbox,
@@ -21,55 +21,64 @@ import {
   FiX,
   FiFileText,
   FiChevronRight,
+  FiSend,
+  FiAward,
+  FiAlertCircle,
+  FiTarget,
+  FiTrendingUp,
 } from 'react-icons/fi';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const [inquiries, setInquiries] = useState([]);
+  const navigate = useNavigate();
+
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
 
-  const fetchDashboardData = useCallback(async () => {
+  const fetchDashboardStats = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await getInquiries();
-      const list = Array.isArray(res) ? res : (res?.data || []);
-      setInquiries(list);
+      const data = await getInquiryStats();
+      setStats(data || null);
     } catch (err) {
-      console.error('Failed to fetch dashboard inquiries', err);
-      setError('Unable to load dashboard data. Please verify your connection or retry.');
+      console.error('Failed to load dashboard metrics', err);
+      setError('Unable to load dashboard metrics. Please verify your connection or retry.');
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+    fetchDashboardStats();
+  }, [fetchDashboardStats]);
 
   // Handle status update from modal
-  const handleStatusUpdate = async (id, newStatus) => {
+  const handleStatusUpdate = async (id, newStage) => {
     setUpdatingStatus(true);
     setStatusMessage(null);
     try {
-      await updateInquiryStatus(id, newStatus);
-      setInquiries((prev) =>
-        prev.map((item) => (item._id === id ? { ...item, status: newStatus } : item))
-      );
+      const updated = await updateInquiryStatus(id, { leadStage: newStage });
+      setStatusMessage({ type: 'success', text: `Lead stage updated to "${newStage}"` });
       if (selectedInquiry && selectedInquiry._id === id) {
-        setSelectedInquiry((prev) => ({ ...prev, status: newStatus }));
+        setSelectedInquiry((prev) => ({
+          ...prev,
+          leadStage: newStage,
+          status: updated?.status || prev.status,
+        }));
       }
-      setStatusMessage({ type: 'success', text: `Status changed to ${newStatus}` });
+      // Refresh statistics after update
+      fetchDashboardStats();
       setTimeout(() => setStatusMessage(null), 3000);
     } catch (err) {
-      console.error('Failed to update status', err);
+      console.error('Failed to update stage', err);
       setStatusMessage({
         type: 'error',
-        text: err.response?.data?.message || 'Failed to update status on server.',
+        text: err.response?.data?.message || 'Failed to update stage on server.',
       });
     } finally {
       setUpdatingStatus(false);
@@ -84,74 +93,108 @@ const AdminDashboard = () => {
     return 'Good evening';
   };
 
-  const adminGreetingName = user?.name ? user.name.split(' ')[0] : 'Admin';
+  const adminGreetingName = user?.name ? user.name.split(' ')[0] : 'Administrator';
 
-  // Real backend calculations
-  const totalCount = inquiries.length;
-  const newCount = inquiries.filter((i) => i.status === 'new').length;
-  const inProgressCount = inquiries.filter((i) =>
-    ['contacted', 'qualified', 'proposal'].includes(i.status)
-  ).length;
-  const resolvedCount = inquiries.filter((i) =>
-    ['converted', 'closed'].includes(i.status)
-  ).length;
+  // Real backend calculations from stats payload
+  const totalCount = stats?.totalEnquiries ?? 0;
+  const newCount = stats?.newEnquiries ?? 0;
+  const followUpsDueCount = stats?.followUpsDue ?? 0;
+  const qualifiedCount = stats?.qualifiedLeads ?? 0;
+  const proposalCount = stats?.proposalsSent ?? 0;
+  const wonCount = stats?.wonLeads ?? 0;
 
-  // Breakdown by classification type
-  const typeCounts = inquiries.reduce((acc, curr) => {
-    const type = curr.type || 'general';
-    acc[type] = (acc[type] || 0) + 1;
-    return acc;
-  }, {});
+  const overdueFollowUps = stats?.followUps?.overdue ?? 0;
+  const todayFollowUps = stats?.followUps?.today ?? 0;
+  const upcomingFollowUps = stats?.followUps?.upcoming ?? 0;
 
-  // Status Badge Component matching exact color palette
-  const renderStatusBadge = (status) => {
-    switch (status) {
+  const urgentCount = stats?.priorities?.urgent ?? 0;
+  const highCount = stats?.priorities?.high ?? 0;
+
+  const recentInquiries = stats?.recentInquiries || [];
+  const typeCounts = stats?.serviceBreakdown || {};
+
+  // Status & Stage Badge Formatter
+  const renderStageBadge = (stage) => {
+    switch (stage) {
       case 'new':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FEF3C7]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FEF3C7]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#B45309] mr-1.5"></span>
-            Pending
+            New Lead
           </span>
         );
       case 'contacted':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EEF4FF] text-[#2563EB] border border-[#DBEAFE]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EEF4FF] text-[#2563EB] border border-[#DBEAFE]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] mr-1.5"></span>
             Contacted
           </span>
         );
       case 'qualified':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F2EEFF] text-[#7C3AED] border border-[#DDD6FE]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F2EEFF] text-[#7C3AED] border border-[#DDD6FE]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#7C3AED] mr-1.5"></span>
             Qualified
           </span>
         );
+      case 'proposal-sent':
       case 'proposal':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#E8F8FC] text-[#0284C7] border border-[#BAE6FD]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#E8F8FC] text-[#0284C7] border border-[#BAE6FD]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7] mr-1.5"></span>
-            Proposal
+            Proposal Sent
           </span>
         );
+      case 'won':
       case 'converted':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#D1FAE5]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ECFDF5] text-[#15803D] border border-[#D1FAE5]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] mr-1.5"></span>
-            Converted
+            Won
           </span>
         );
+      case 'lost':
       case 'closed':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#64748B] mr-1.5"></span>
-            Closed
+            Lost
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]">
-            {status}
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]">
+            {stage || 'New'}
+          </span>
+        );
+    }
+  };
+
+  const renderPriorityBadge = (priority) => {
+    switch (priority) {
+      case 'urgent':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#FEF2F2] text-[#DC2626] border border-[#FEE2E2]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] animate-pulse"></span>
+            Urgent
+          </span>
+        );
+      case 'high':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#FFFBEB] text-[#D97706] border border-[#FEF3C7]">
+            High
+          </span>
+        );
+      case 'low':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium uppercase tracking-wider bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]">
+            Low
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-[#EFF6FF] text-[#3B82F6] border border-[#DBEAFE]">
+            Normal
           </span>
         );
     }
@@ -168,7 +211,7 @@ const AdminDashboard = () => {
       case 'erp-inquiry':
         return 'ERP Advisory';
       default:
-        return 'General Inquiry';
+        return 'General Enquiry';
     }
   };
 
@@ -178,8 +221,8 @@ const AdminDashboard = () => {
       <div className="bg-gradient-to-r from-[#EEF4FF] via-[#F2EEFF] to-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-6 sm:p-7 relative overflow-hidden shadow-xs">
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#FFFFFF]/80 border border-[#E8ECF3] text-[11px] font-medium text-[#4F46E5] mb-2 backdrop-blur-xs">
-              <FiCalendar className="w-3 h-3 text-[#4F46E5]" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#FFFFFF]/90 border border-[#E8ECF3] text-[11px] font-semibold text-[#4F46E5] mb-2 backdrop-blur-xs">
+              <FiCalendar className="w-3.5 h-3.5 text-[#4F46E5]" />
               <span>
                 {new Date().toLocaleDateString('en-US', {
                   weekday: 'short',
@@ -193,13 +236,13 @@ const AdminDashboard = () => {
               {getGreeting()}, {adminGreetingName}
             </h2>
             <p className="text-sm text-[#64748B] mt-1 max-w-xl">
-              Here’s an overview of your DYC website activity and client engagement.
+              Manage your business enquiries, follow-ups, and opportunities from one place.
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             <button
-              onClick={fetchDashboardData}
+              onClick={fetchDashboardStats}
               disabled={loading}
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#E8ECF3] text-xs font-semibold text-[#172033] hover:bg-[#F6F8FC] shadow-xs transition cursor-pointer disabled:opacity-60"
             >
@@ -211,245 +254,420 @@ const AdminDashboard = () => {
               to="/admin/inquiries"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition"
             >
-              <span>Manage Enquiries</span>
+              <span>Enquiries Workspace</span>
               <FiArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </div>
 
-      {/* 2. Dashboard Statistics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        {/* Total Enquiries */}
-        <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E8ECF3] shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+      {/* 2. Primary 6 KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 sm:gap-4">
+        {/* KPI 1: Total Enquiries */}
+        <Link
+          to="/admin/inquiries"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#4F46E5]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#4F46E5] transition">
               Total Enquiries
-            </p>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-bold text-[#172033]">
-                {loading ? '—' : totalCount}
-              </span>
-              <span className="text-[11px] font-medium text-[#64748B]">All-time</span>
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
+              <FiInbox className="w-4 h-4" />
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
-            <FiInbox className="w-5 h-5" />
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+              {loading ? '—' : totalCount}
+            </span>
+            <p className="text-[11px] text-[#64748B] mt-0.5 flex items-center justify-between">
+              <span>All records</span>
+              <span className="text-[#4F46E5] font-semibold text-[10px] group-hover:translate-x-0.5 transition">View →</span>
+            </p>
           </div>
-        </div>
+        </Link>
 
-        {/* New / Pending */}
-        <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E8ECF3] shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-              New / Pending
-            </p>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-bold text-[#172033]">
-                {loading ? '—' : newCount}
-              </span>
-              <span className="text-[11px] font-medium text-[#B45309]">Awaiting review</span>
+        {/* KPI 2: New Enquiries */}
+        <Link
+          to="/admin/inquiries?status=new"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#B45309]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#B45309] transition">
+              New Enquiries
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-[#FFFBEB] text-[#B45309] flex items-center justify-center shrink-0 border border-[#FEF3C7]">
+              <FiClock className="w-4 h-4" />
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-[#FFFBEB] text-[#B45309] flex items-center justify-center shrink-0 border border-[#FEF3C7]">
-            <FiClock className="w-5 h-5" />
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+              {loading ? '—' : newCount}
+            </span>
+            <p className="text-[11px] text-[#B45309] font-medium mt-0.5 flex items-center justify-between">
+              <span>Awaiting review</span>
+              <span className="font-semibold text-[10px] group-hover:translate-x-0.5 transition">Filter →</span>
+            </p>
           </div>
-        </div>
+        </Link>
 
-        {/* In Progress */}
-        <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E8ECF3] shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-              In Progress
-            </p>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-bold text-[#172033]">
-                {loading ? '—' : inProgressCount}
-              </span>
-              <span className="text-[11px] font-medium text-[#7C3AED]">Under discussion</span>
+        {/* KPI 3: Follow-ups Due */}
+        <Link
+          to="/admin/inquiries?followUp=due"
+          className={`p-4 sm:p-5 rounded-2xl border shadow-xs hover:shadow-sm transition group cursor-pointer flex flex-col justify-between ${
+            followUpsDueCount > 0
+              ? 'bg-[#FEF2F2]/60 border-[#FECACA] hover:border-[#DC2626]'
+              : 'bg-[#FFFFFF] border-[#E8ECF3] hover:border-[#DC2626]/40'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#DC2626] transition">
+              Follow-ups Due
+            </span>
+            <div
+              className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                followUpsDueCount > 0
+                  ? 'bg-[#FEE2E2] text-[#DC2626] border-[#FCA5A5]'
+                  : 'bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0]'
+              }`}
+            >
+              <FiAlertCircle className="w-4 h-4" />
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-[#F2EEFF] text-[#7C3AED] flex items-center justify-center shrink-0 border border-[#DDD6FE]">
-            <FiActivity className="w-5 h-5" />
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+              {loading ? '—' : followUpsDueCount}
+            </span>
+            <p className="text-[11px] text-[#DC2626] font-medium mt-0.5 flex items-center justify-between">
+              <span>{overdueFollowUps > 0 ? `${overdueFollowUps} overdue` : 'Scheduled today'}</span>
+              <span className="font-semibold text-[10px] group-hover:translate-x-0.5 transition">Action →</span>
+            </p>
           </div>
-        </div>
+        </Link>
 
-        {/* Resolved / Converted */}
-        <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E8ECF3] shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-              Resolved / Converted
-            </p>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-bold text-[#172033]">
-                {loading ? '—' : resolvedCount}
-              </span>
-              <span className="text-[11px] font-medium text-[#15803D]">Completed</span>
+        {/* KPI 4: Qualified Leads */}
+        <Link
+          to="/admin/inquiries?leadStage=qualified"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#7C3AED]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#7C3AED] transition">
+              Qualified Leads
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-[#F2EEFF] text-[#7C3AED] flex items-center justify-center shrink-0 border border-[#DDD6FE]">
+              <FiTarget className="w-4 h-4" />
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-[#ECFDF5] text-[#15803D] flex items-center justify-center shrink-0 border border-[#D1FAE5]">
-            <FiCheckCircle className="w-5 h-5" />
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+              {loading ? '—' : qualifiedCount}
+            </span>
+            <p className="text-[11px] text-[#7C3AED] font-medium mt-0.5 flex items-center justify-between">
+              <span>Ready for proposal</span>
+              <span className="font-semibold text-[10px] group-hover:translate-x-0.5 transition">Filter →</span>
+            </p>
           </div>
-        </div>
+        </Link>
+
+        {/* KPI 5: Proposals Sent */}
+        <Link
+          to="/admin/inquiries?leadStage=proposal-sent"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#0284C7]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#0284C7] transition">
+              Proposals Sent
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-[#E8F8FC] text-[#0284C7] flex items-center justify-center shrink-0 border border-[#BAE6FD]">
+              <FiSend className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+              {loading ? '—' : proposalCount}
+            </span>
+            <p className="text-[11px] text-[#0284C7] font-medium mt-0.5 flex items-center justify-between">
+              <span>Negotiations</span>
+              <span className="font-semibold text-[10px] group-hover:translate-x-0.5 transition">Filter →</span>
+            </p>
+          </div>
+        </Link>
+
+        {/* KPI 6: Won Leads */}
+        <Link
+          to="/admin/inquiries?leadStage=won"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#15803D]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#15803D] transition">
+              Won Leads
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-[#ECFDF5] text-[#15803D] flex items-center justify-center shrink-0 border border-[#D1FAE5]">
+              <FiAward className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+              {loading ? '—' : wonCount}
+            </span>
+            <p className="text-[11px] text-[#15803D] font-medium mt-0.5 flex items-center justify-between">
+              <span>Converted clients</span>
+              <span className="font-semibold text-[10px] group-hover:translate-x-0.5 transition">Filter →</span>
+            </p>
+          </div>
+        </Link>
       </div>
 
-      {/* 3. Category Breakdown & Fast Links */}
+      {/* 3. Operational Insights: Follow-ups Schedule & Priority Leads */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Classification Distribution */}
-        <div className="lg:col-span-2 bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-5 sm:p-6 shadow-xs">
-          <div className="flex items-center justify-between pb-4 border-b border-[#E8ECF3] mb-4">
-            <div>
-              <h3 className="font-bold text-[#172033] text-sm sm:text-base">
-                Inquiry Breakdown by Service
-              </h3>
-              <p className="text-xs text-[#64748B] mt-0.5">
-                Distribution based on actual incoming requests
-              </p>
-            </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F6F8FC] border border-[#E8ECF3] text-[#64748B]">
-              {totalCount} Total
-            </span>
-          </div>
-
-          {loading ? (
-            <div className="space-y-3 py-4">
-              <div className="h-4 bg-[#F1F5F9] rounded-full animate-pulse w-3/4"></div>
-              <div className="h-4 bg-[#F1F5F9] rounded-full animate-pulse w-1/2"></div>
-              <div className="h-4 bg-[#F1F5F9] rounded-full animate-pulse w-2/3"></div>
-            </div>
-          ) : totalCount === 0 ? (
-            <div className="py-8 text-center text-xs text-[#64748B]">
-              No inquiries recorded yet to calculate breakdown.
-            </div>
-          ) : (
-            <div className="space-y-3.5">
-              {[
-                { key: 'sap-support', label: 'SAP Support & Maintenance', bg: 'bg-[#4F46E5]' },
-                { key: 'sap-resource-request', label: 'SAP Staffing & Resource Requests', bg: 'bg-[#7C3AED]' },
-                { key: 'staffing-request', label: 'Enterprise Professional Staffing', bg: 'bg-[#0284C7]' },
-                { key: 'erp-inquiry', label: 'ERP Transformation & Consulting', bg: 'bg-[#15803D]' },
-                { key: 'general', label: 'General / Advisory Inquiries', bg: 'bg-[#64748B]' },
-              ].map((category) => {
-                const count = typeCounts[category.key] || 0;
-                const percent = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
-                return (
-                  <div key={category.key} className="space-y-1">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-medium text-[#172033]">{category.label}</span>
-                      <span className="font-semibold text-[#64748B]">
-                        {count} <span className="text-[10px] font-normal text-[#94A3B8]">({percent}%)</span>
-                      </span>
-                    </div>
-                    <div className="h-2 w-full bg-[#F6F8FC] rounded-full overflow-hidden border border-[#E8ECF3]">
-                      <div
-                        className={`h-full ${category.bg} rounded-full transition-all duration-500`}
-                        style={{ width: `${percent}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Operational Quick Actions Card */}
+        {/* Left: Follow-up Operations Radar */}
         <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
           <div>
-            <h3 className="font-bold text-[#172033] text-sm sm:text-base">
-              Admin Quick Actions
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E8ECF3] mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center">
+                  <FiClock className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-[#172033] text-sm">
+                    Follow-up Operations
+                  </h3>
+                  <p className="text-[11px] text-[#64748B]">
+                    Status of client scheduling commitments
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                to="/admin/inquiries?followUp=due"
+                className="text-[11px] font-semibold text-[#4F46E5] hover:underline"
+              >
+                View all
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {/* Overdue */}
+              <Link
+                to="/admin/inquiries?followUp=overdue"
+                className="flex items-center justify-between p-3 rounded-xl bg-[#FEF2F2] border border-[#FEE2E2] hover:border-[#DC2626]/30 transition group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626]"></span>
+                  <span className="text-xs font-semibold text-[#991B1B]">Overdue Follow-ups</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-[#DC2626]">{overdueFollowUps}</span>
+                  <FiChevronRight className="w-3.5 h-3.5 text-[#DC2626] group-hover:translate-x-0.5 transition" />
+                </div>
+              </Link>
+
+              {/* Today */}
+              <Link
+                to="/admin/inquiries?followUp=today"
+                className="flex items-center justify-between p-3 rounded-xl bg-[#FFFBEB] border border-[#FEF3C7] hover:border-[#D97706]/30 transition group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>
+                  <span className="text-xs font-semibold text-[#92400E]">Due Today</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-[#D97706]">{todayFollowUps}</span>
+                  <FiChevronRight className="w-3.5 h-3.5 text-[#D97706] group-hover:translate-x-0.5 transition" />
+                </div>
+              </Link>
+
+              {/* Upcoming */}
+              <Link
+                to="/admin/inquiries?followUp=upcoming"
+                className="flex items-center justify-between p-3 rounded-xl bg-[#F0F9FF] border border-[#E0F2FE] hover:border-[#0284C7]/30 transition group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0284C7]"></span>
+                  <span className="text-xs font-semibold text-[#075985]">Upcoming Scheduled</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-[#0284C7]">{upcomingFollowUps}</span>
+                  <FiChevronRight className="w-3.5 h-3.5 text-[#0284C7] group-hover:translate-x-0.5 transition" />
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          <div className="pt-4 mt-4 border-t border-[#E8ECF3] flex items-center justify-between text-xs text-[#64748B]">
+            <span>Urgent/High priority leads:</span>
+            <span className="font-bold text-[#172033]">{urgentCount + highCount} leads</span>
+          </div>
+        </div>
+
+        {/* Center: Service Classification Breakdown */}
+        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E8ECF3] mb-4">
+              <div>
+                <h3 className="font-bold text-[#172033] text-sm">
+                  Service Inquiries Distribution
+                </h3>
+                <p className="text-[11px] text-[#64748B]">
+                  Real distribution from incoming business requests
+                </p>
+              </div>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[#F6F8FC] border border-[#E8ECF3] text-[#172033]">
+                {totalCount} Total
+              </span>
+            </div>
+
+            {loading ? (
+              <div className="space-y-3 py-2">
+                <div className="h-3.5 bg-[#F1F5F9] rounded-full animate-pulse w-3/4"></div>
+                <div className="h-3.5 bg-[#F1F5F9] rounded-full animate-pulse w-1/2"></div>
+                <div className="h-3.5 bg-[#F1F5F9] rounded-full animate-pulse w-2/3"></div>
+              </div>
+            ) : totalCount === 0 ? (
+              <div className="py-8 text-center text-xs text-[#64748B]">
+                No enquiries recorded yet to calculate distribution.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {[
+                  { key: 'sap-support', label: 'SAP Support & Maintenance', bg: 'bg-[#4F46E5]' },
+                  { key: 'sap-resource-request', label: 'SAP Staffing & Resources', bg: 'bg-[#7C3AED]' },
+                  { key: 'staffing-request', label: 'Professional Staffing', bg: 'bg-[#0284C7]' },
+                  { key: 'erp-inquiry', label: 'ERP Transformation', bg: 'bg-[#15803D]' },
+                  { key: 'general', label: 'General Inquiries', bg: 'bg-[#64748B]' },
+                ].map((category) => {
+                  const count = typeCounts[category.key] || 0;
+                  const percent = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+                  return (
+                    <div key={category.key} className="space-y-1">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-medium text-[#172033]">{category.label}</span>
+                        <span className="font-semibold text-[#64748B]">
+                          {count} <span className="text-[10px] font-normal text-[#94A3B8]">({percent}%)</span>
+                        </span>
+                      </div>
+                      <div className="h-2 w-full bg-[#F6F8FC] rounded-full overflow-hidden border border-[#E8ECF3]">
+                        <div
+                          className={`h-full ${category.bg} rounded-full transition-all duration-500`}
+                          style={{ width: `${percent}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="pt-3 mt-3 border-t border-[#E8ECF3] text-right">
+            <Link
+              to="/admin/inquiries"
+              className="text-[11px] font-semibold text-[#4F46E5] hover:underline"
+            >
+              Filter by service type →
+            </Link>
+          </div>
+        </div>
+
+        {/* Right: Quick Lead Actions */}
+        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <h3 className="font-bold text-[#172033] text-sm">
+              Quick Lead Shortcuts
             </h3>
-            <p className="text-xs text-[#64748B] mt-0.5 mb-4">
-              Direct access to system tools
+            <p className="text-[11px] text-[#64748B] mt-0.5 mb-3.5">
+              Instant filters for your daily sales & consulting review
             </p>
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               <Link
-                to="/admin/inquiries"
-                className="flex items-center gap-3 p-3 rounded-xl border border-[#E8ECF3] hover:border-[#4F46E5]/30 hover:bg-[#EEF4FF]/30 transition group"
+                to="/admin/inquiries?priority=urgent"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E8ECF3] hover:border-[#DC2626]/30 hover:bg-[#FEF2F2]/30 transition group"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center shrink-0">
-                  <FiInbox className="w-4 h-4" />
+                <div className="w-7 h-7 rounded-lg bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center shrink-0">
+                  <FiAlertTriangle className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-[#172033] block group-hover:text-[#DC2626]">
+                    Urgent Priority Leads
+                  </span>
+                  <span className="text-[10px] text-[#64748B] block truncate">
+                    {urgentCount} critical enquiries requiring fast response
+                  </span>
+                </div>
+                <FiChevronRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-[#DC2626] group-hover:translate-x-0.5 transition" />
+              </Link>
+
+              <Link
+                to="/admin/inquiries?assignedTo=unassigned"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E8ECF3] hover:border-[#4F46E5]/30 hover:bg-[#EEF4FF]/30 transition group"
+              >
+                <div className="w-7 h-7 rounded-lg bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center shrink-0">
+                  <FiUser className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-xs font-semibold text-[#172033] block group-hover:text-[#4F46E5]">
-                    Process Enquiries
+                    Unassigned Enquiries
                   </span>
-                  <span className="text-[11px] text-[#64748B] block truncate">
-                    Review messages & update workflow
+                  <span className="text-[10px] text-[#64748B] block truncate">
+                    Assign ownership to team members
                   </span>
                 </div>
-                <FiChevronRight className="w-4 h-4 text-[#94A3B8] group-hover:text-[#4F46E5] group-hover:translate-x-0.5 transition" />
+                <FiChevronRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-[#4F46E5] group-hover:translate-x-0.5 transition" />
               </Link>
 
               <Link
-                to="/admin/settings"
-                className="flex items-center gap-3 p-3 rounded-xl border border-[#E8ECF3] hover:border-[#7C3AED]/30 hover:bg-[#F2EEFF]/30 transition group"
+                to="/admin/inquiries"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E8ECF3] hover:border-[#7C3AED]/30 hover:bg-[#F2EEFF]/30 transition group"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#F2EEFF] text-[#7C3AED] flex items-center justify-center shrink-0">
-                  <FiSliders className="w-4 h-4" />
+                <div className="w-7 h-7 rounded-lg bg-[#F2EEFF] text-[#7C3AED] flex items-center justify-center shrink-0">
+                  <FiFileText className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-xs font-semibold text-[#172033] block group-hover:text-[#7C3AED]">
-                    Site Configuration
+                    Export Database CSV
                   </span>
-                  <span className="text-[11px] text-[#64748B] block truncate">
-                    Manage contact info & SEO defaults
+                  <span className="text-[10px] text-[#64748B] block truncate">
+                    Download sanitized spreadsheet export
                   </span>
                 </div>
-                <FiChevronRight className="w-4 h-4 text-[#94A3B8] group-hover:text-[#7C3AED] group-hover:translate-x-0.5 transition" />
+                <FiChevronRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-[#7C3AED] group-hover:translate-x-0.5 transition" />
               </Link>
-
-              <a
-                href="/"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-3 p-3 rounded-xl border border-[#E8ECF3] hover:bg-[#F6F8FC] transition group"
-              >
-                <div className="w-8 h-8 rounded-lg bg-[#F6F8FC] text-[#64748B] flex items-center justify-center shrink-0">
-                  <FiLayers className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-[#172033] block">
-                    Public Website
-                  </span>
-                  <span className="text-[11px] text-[#64748B] block truncate">
-                    Open client-facing pages
-                  </span>
-                </div>
-                <span className="text-xs text-[#94A3B8]">↗</span>
-              </a>
             </div>
           </div>
 
-          <div className="pt-4 mt-4 border-t border-[#E8ECF3]">
-            <p className="text-[11px] text-[#64748B] flex items-center gap-1.5">
+          <div className="pt-3 mt-3 border-t border-[#E8ECF3] flex items-center justify-between text-[11px] text-[#64748B]">
+            <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#15803D]"></span>
-              Backend API connected to MongoDB Atlas
-            </p>
+              MongoDB Atlas Live
+            </span>
+            <Link to="/admin/settings" className="hover:text-[#172033] font-medium">
+              Settings →
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* 4. Recent Enquiries Section */}
+      {/* 4. Recent Enquiries Workspace */}
       <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] shadow-xs overflow-hidden">
         {/* Table Header */}
         <div className="p-5 sm:px-6 sm:py-4 border-b border-[#E8ECF3] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h3 className="font-bold text-[#172033] text-sm sm:text-base">
-              Recent Website Enquiries
+              Latest Incoming Enquiries
             </h3>
             <p className="text-xs text-[#64748B] mt-0.5">
-              Latest form submissions from client contacts
+              Direct form submissions from your prospective enterprise clients
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <Link
               to="/admin/inquiries"
-              className="text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] hover:underline transition"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] hover:underline transition"
             >
-              View all ({totalCount}) →
+              <span>Open full workspace ({totalCount})</span>
+              <FiChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
@@ -462,7 +680,7 @@ const AdminDashboard = () => {
             </div>
             <p className="text-sm font-semibold text-[#172033]">{error}</p>
             <button
-              onClick={fetchDashboardData}
+              onClick={fetchDashboardStats}
               className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4F46E5] text-white text-xs font-medium cursor-pointer"
             >
               <FiRefreshCw className="w-3.5 h-3.5" />
@@ -486,7 +704,7 @@ const AdminDashboard = () => {
         )}
 
         {/* Empty State */}
-        {!loading && !error && inquiries.length === 0 && (
+        {!loading && !error && recentInquiries.length === 0 && (
           <div className="p-12 text-center">
             <div className="w-12 h-12 rounded-2xl bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center mx-auto mb-3">
               <FiInbox className="w-6 h-6" />
@@ -499,24 +717,25 @@ const AdminDashboard = () => {
         )}
 
         {/* Table View */}
-        {!loading && !error && inquiries.length > 0 && (
+        {!loading && !error && recentInquiries.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-[#F8FAFC] border-b border-[#E8ECF3] text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
-                  <th className="py-3.5 px-4 sm:px-6">Customer</th>
+                  <th className="py-3.5 px-4 sm:px-6">Customer & Company</th>
                   <th className="py-3.5 px-4">Service Type</th>
-                  <th className="py-3.5 px-4">Date Received</th>
-                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4">Priority</th>
+                  <th className="py-3.5 px-4">Lead Stage</th>
+                  <th className="py-3.5 px-4">Follow-up</th>
                   <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E8ECF3] text-xs">
-                {inquiries.slice(0, 6).map((inquiry) => (
+                {recentInquiries.map((inquiry) => (
                   <tr
                     key={inquiry._id}
                     className="hover:bg-[#F8FAFC]/80 transition group cursor-pointer"
-                    onClick={() => setSelectedInquiry(inquiry)}
+                    onClick={() => navigate(`/admin/inquiries?id=${inquiry._id}`)}
                   >
                     {/* Customer */}
                     <td className="py-3.5 px-4 sm:px-6">
@@ -537,34 +756,45 @@ const AdminDashboard = () => {
 
                     {/* Service Type */}
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F6F8FC] border border-[#E8ECF3] text-[#172033]">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F6F8FC] border border-[#E8ECF3] text-[#172033]">
                         {formatTypeLabel(inquiry.type)}
                       </span>
                     </td>
 
-                    {/* Date */}
-                    <td className="py-3.5 px-4 text-[#64748B]">
-                      {new Date(inquiry.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                    {/* Priority */}
+                    <td className="py-3.5 px-4">
+                      {renderPriorityBadge(inquiry.priority)}
                     </td>
 
-                    {/* Status Badge */}
+                    {/* Stage Badge */}
                     <td className="py-3.5 px-4">
-                      {renderStatusBadge(inquiry.status)}
+                      {renderStageBadge(inquiry.leadStage || inquiry.status)}
+                    </td>
+
+                    {/* Follow-up Indicator */}
+                    <td className="py-3.5 px-4">
+                      {inquiry.followUpStatus === 'scheduled' && inquiry.nextFollowUpAt ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2563EB]">
+                          <FiClock className="w-3 h-3" />
+                          {new Date(inquiry.nextFollowUpAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </span>
+                      ) : (
+                        <span className="text-[#94A3B8] text-[11px]">—</span>
+                      )}
                     </td>
 
                     {/* Action */}
                     <td className="py-3.5 px-4 sm:px-6 text-right" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => setSelectedInquiry(inquiry)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#4F46E5] hover:bg-[#EEF4FF] transition cursor-pointer"
+                      <Link
+                        to={`/admin/inquiries?id=${inquiry._id}`}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#4F46E5] hover:bg-[#EEF4FF] transition"
                       >
                         <FiEye className="w-3.5 h-3.5" />
-                        <span>View</span>
-                      </button>
+                        <span>Open</span>
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -573,178 +803,6 @@ const AdminDashboard = () => {
           </div>
         )}
       </div>
-
-      {/* Inquiry Detail Modal */}
-      {selectedInquiry && (
-        <div className="fixed inset-0 z-50 bg-[#172033]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#FFFFFF] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#E8ECF3] shadow-2xl p-6 sm:p-7">
-            {/* Header */}
-            <div className="flex justify-between items-start border-b border-[#E8ECF3] pb-4 mb-5">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-                    Enquiry Details
-                  </span>
-                  {renderStatusBadge(selectedInquiry.status)}
-                </div>
-                <h3 className="text-xl font-bold text-[#172033]">{selectedInquiry.name}</h3>
-                <p className="text-xs text-[#64748B] mt-0.5">
-                  Submitted on {new Date(selectedInquiry.createdAt).toLocaleString()}
-                </p>
-              </div>
-
-              <button
-                onClick={() => setSelectedInquiry(null)}
-                className="p-1.5 rounded-lg text-[#64748B] hover:text-[#172033] hover:bg-[#F6F8FC] transition"
-                aria-label="Close"
-              >
-                <FiX className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Status message */}
-            {statusMessage && (
-              <div
-                className={`mb-4 p-3 rounded-xl text-xs font-medium ${
-                  statusMessage.type === 'success'
-                    ? 'bg-[#ECFDF5] text-[#15803D] border border-[#D1FAE5]'
-                    : 'bg-[#FEF2F2] text-[#DC2626] border border-[#FEE2E2]'
-                }`}
-              >
-                {statusMessage.text}
-              </div>
-            )}
-
-            {/* Customer Details Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 bg-[#F8FAFC] p-4 rounded-xl border border-[#E8ECF3] mb-5 text-xs">
-              <div>
-                <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
-                  Email
-                </span>
-                <a
-                  href={`mailto:${selectedInquiry.email}`}
-                  className="font-medium text-[#4F46E5] hover:underline break-all inline-flex items-center gap-1"
-                >
-                  <FiMail className="w-3.5 h-3.5" />
-                  <span>{selectedInquiry.email || '—'}</span>
-                </a>
-              </div>
-
-              <div>
-                <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
-                  Phone
-                </span>
-                <a
-                  href={`tel:${selectedInquiry.phone}`}
-                  className="font-medium text-[#172033] hover:text-[#4F46E5] inline-flex items-center gap-1"
-                >
-                  <FiPhone className="w-3.5 h-3.5" />
-                  <span>{selectedInquiry.phone || '—'}</span>
-                </a>
-              </div>
-
-              <div>
-                <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
-                  Company / Organization
-                </span>
-                <div className="font-medium text-[#172033] inline-flex items-center gap-1">
-                  <FiBriefcase className="w-3.5 h-3.5 text-[#64748B]" />
-                  <span>{selectedInquiry.company || 'Not specified'}</span>
-                </div>
-              </div>
-
-              <div>
-                <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
-                  Classification
-                </span>
-                <span className="font-medium text-[#172033]">
-                  {formatTypeLabel(selectedInquiry.type)}
-                </span>
-              </div>
-            </div>
-
-            {/* Specific SAP / ERP Details if present */}
-            {(selectedInquiry.sapModule || selectedInquiry.requiredRole || selectedInquiry.sapSystem || selectedInquiry.urgency) && (
-              <div className="mb-5 p-4 rounded-xl bg-[#EEF4FF]/50 border border-[#DBEAFE] text-xs">
-                <h4 className="font-bold text-[#172033] mb-2 flex items-center gap-1.5">
-                  <FiLayers className="w-3.5 h-3.5 text-[#4F46E5]" />
-                  <span>Technical Requirements</span>
-                </h4>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {selectedInquiry.sapModule && (
-                    <p><span className="text-[#64748B]">Module:</span> <strong className="text-[#172033]">{selectedInquiry.sapModule}</strong></p>
-                  )}
-                  {selectedInquiry.requiredRole && (
-                    <p><span className="text-[#64748B]">Role:</span> <strong className="text-[#172033]">{selectedInquiry.requiredRole}</strong></p>
-                  )}
-                  {selectedInquiry.experienceRequired && (
-                    <p><span className="text-[#64748B]">Experience:</span> <strong className="text-[#172033]">{selectedInquiry.experienceRequired}</strong></p>
-                  )}
-                  {selectedInquiry.urgency && (
-                    <p><span className="text-[#64748B]">Urgency:</span> <strong className="text-[#172033] uppercase">{selectedInquiry.urgency}</strong></p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Status Workflow Selector */}
-            <div className="mb-5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
-                Workflow Status
-              </label>
-              <div className="flex flex-wrap items-center gap-2">
-                {[
-                  { value: 'new', label: 'Pending / New' },
-                  { value: 'contacted', label: 'Contacted' },
-                  { value: 'qualified', label: 'Qualified' },
-                  { value: 'proposal', label: 'Proposal' },
-                  { value: 'converted', label: 'Converted' },
-                  { value: 'closed', label: 'Closed' },
-                ].map((st) => (
-                  <button
-                    key={st.value}
-                    disabled={updatingStatus}
-                    onClick={() => handleStatusUpdate(selectedInquiry._id, st.value)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                      selectedInquiry.status === st.value
-                        ? 'bg-[#4F46E5] text-white shadow-xs'
-                        : 'bg-[#F6F8FC] border border-[#E8ECF3] text-[#64748B] hover:text-[#172033] hover:bg-[#FFFFFF]'
-                    }`}
-                  >
-                    {st.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Client Message */}
-            <div className="mb-6">
-              <span className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
-                Message & Requirement Details
-              </span>
-              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E8ECF3] text-xs text-[#172033] whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
-                {selectedInquiry.message || selectedInquiry.requirement || 'No message text provided.'}
-              </div>
-            </div>
-
-            {/* Footer Buttons */}
-            <div className="flex items-center justify-between pt-4 border-t border-[#E8ECF3]">
-              <Link
-                to="/admin/inquiries"
-                className="text-xs font-semibold text-[#4F46E5] hover:underline"
-              >
-                Go to full enquiry manager →
-              </Link>
-              <button
-                onClick={() => setSelectedInquiry(null)}
-                className="px-4 py-2 rounded-xl bg-[#F6F8FC] hover:bg-[#E8ECF3] text-[#172033] text-xs font-semibold transition cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

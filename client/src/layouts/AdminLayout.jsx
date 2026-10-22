@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import siteConfig from '../config/siteConfig';
 import { useAuth } from '../context/AuthContext';
-import { getInquiries } from '../services/api';
+import { getInquiries, getInquiryStats } from '../services/api';
 import {
   FiGrid,
   FiInbox,
@@ -23,25 +23,35 @@ const AdminLayout = ({ children }) => {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [newInquiriesCount, setNewInquiriesCount] = useState(0);
+  const [followUpsDueCount, setFollowUpsDueCount] = useState(0);
 
   // Close mobile drawer on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  // Fetch count of new enquiries for sidebar badge & notification
+  // Fetch count of new enquiries & follow-ups due for sidebar badge & notification
   useEffect(() => {
     let isMounted = true;
     const fetchBadgeData = async () => {
       try {
-        const data = await getInquiries();
-        const list = Array.isArray(data) ? data : (data?.data || []);
-        const newCount = list.filter((item) => item.status === 'new').length;
-        if (isMounted) {
-          setNewInquiriesCount(newCount);
+        const stats = await getInquiryStats();
+        if (isMounted && stats) {
+          setNewInquiriesCount(stats.newEnquiries || 0);
+          setFollowUpsDueCount(stats.followUpsDue || 0);
         }
       } catch (err) {
-        // Silently handle if unauthenticated or offline
+        // Fallback to getInquiries if stats fails
+        try {
+          const data = await getInquiries();
+          const list = Array.isArray(data) ? data : (data?.inquiries || data?.data || []);
+          const newCount = list.filter((item) => item.status === 'new' || item.leadStage === 'new').length;
+          if (isMounted) {
+            setNewInquiriesCount(newCount);
+          }
+        } catch {
+          // Silently handle if unauthenticated or offline
+        }
       }
     };
 

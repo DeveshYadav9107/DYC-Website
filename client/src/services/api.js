@@ -139,7 +139,7 @@ export const logoutUser = async () => {
   }
 };
 
-// ================= INQUIRY SERVICES =================
+// ================= INQUIRY & LEAD SERVICES =================
 export const submitInquiry = async (inquiryData) => {
   const response = await api.post('/inquiries', inquiryData);
   return response.data;
@@ -150,8 +150,18 @@ export const getMyInquiries = async () => {
   return response.data?.data || response.data || [];
 };
 
-export const getInquiries = async () => {
-  const response = await api.get('/inquiries');
+export const getInquiryStats = async () => {
+  const response = await api.get('/inquiries/stats');
+  return response.data?.data || response.data;
+};
+
+export const getAssignableTeam = async () => {
+  const response = await api.get('/inquiries/team');
+  return response.data?.data || response.data || [];
+};
+
+export const getInquiries = async (params = {}) => {
+  const response = await api.get('/inquiries', { params });
   return response.data?.data || response.data || [];
 };
 
@@ -160,9 +170,21 @@ export const getInquiry = async (id) => {
   return response.data?.data || response.data;
 };
 
-export const updateInquiryStatus = async (id, status) => {
-  const response = await api.put(`/inquiries/${id}/status`, { status });
-  return response.data;
+// Flexible status & lead stage updater (supports string status or object { status, leadStage, priority, reason })
+export const updateInquiryStatus = async (id, payload) => {
+  const body = typeof payload === 'string' ? { status: payload } : payload;
+  const response = await api.put(`/inquiries/${id}/status`, body);
+  return response.data?.data || response.data;
+};
+
+export const assignInquiry = async (id, assignedTo) => {
+  const response = await api.post(`/inquiries/${id}/assign`, { assignedTo });
+  return response.data?.data || response.data;
+};
+
+export const manageFollowUp = async (id, followUpData) => {
+  const response = await api.post(`/inquiries/${id}/follow-up`, followUpData);
+  return response.data?.data || response.data;
 };
 
 export const addInquiryNote = async (id, text) => {
@@ -172,6 +194,14 @@ export const addInquiryNote = async (id, text) => {
 
 export const deleteInquiry = async (id) => {
   const response = await api.delete(`/inquiries/${id}`);
+  return response.data;
+};
+
+export const exportInquiriesCsv = async (params = {}) => {
+  const response = await api.get('/inquiries/export', {
+    params,
+    responseType: 'blob',
+  });
   return response.data;
 };
 
