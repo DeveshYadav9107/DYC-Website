@@ -298,14 +298,13 @@ const ContactPage = () => {
     <div className="bg-[#F8FAFC] min-h-screen text-[#1E293B]">
       {/* Header Banner - Light Theme with contact-banner.png */}
       <div className="bg-white text-slate-900 py-20 md:py-28 px-6 relative overflow-hidden border-b border-slate-200">
-        {/* Background Image with Light Crisp Overlay */}
-        <div className="absolute inset-0 z-0">
+        {/* Background Image - Full Intensity */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
           <img
             src="/images/contact-banner.png"
             alt="Contact Us Banner"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-right md:object-center"
           />
-          <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px]"></div>
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10 pt-4">
