@@ -119,7 +119,7 @@ export const createProposal = async (req, res, next) => {
       exclusions: Array.isArray(exclusions) ? exclusions.filter(Boolean) : [],
       clientResponsibilities: Array.isArray(clientResponsibilities) ? clientResponsibilities.filter(Boolean) : [],
       validUntil: new Date(validUntil),
-      closingNotes: closingNotes || 'Thank you for considering Dinesh Yadav & Company for your enterprise solutions.',
+      closingNotes: closingNotes || 'Thank you for considering DY&C for your enterprise solutions.',
       internalNotes: internalNotes || '',
       status: 'draft',
       statusHistory: [{

@@ -296,20 +296,29 @@ const ContactPage = () => {
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen text-[#1E293B]">
-      {/* Header Banner */}
-      <div className="bg-[#0B1528] text-white py-20 md:py-28 px-6 relative overflow-hidden border-b border-slate-800">
-        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#10B981_1px,transparent_1px)] [background-size:24px_24px]"></div>
+      {/* Header Banner - Light Theme with contact-banner.png */}
+      <div className="bg-white text-slate-900 py-20 md:py-28 px-6 relative overflow-hidden border-b border-slate-200">
+        {/* Background Image with Light Crisp Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/images/contact-banner.png"
+            alt="Contact Us Banner"
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px]"></div>
+        </div>
+
         <div className="max-w-7xl mx-auto relative z-10 pt-4">
           <Reveal>
             <div className="max-w-3xl">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 mb-4 shadow-xs">
                 Enterprise Intake & Proposal Desk
               </span>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+              <h1 className="text-3xl md:text-5xl font-extrabold text-[#102A43] tracking-tight mb-4">
                 Discuss Your Requirements
               </h1>
-              <p className="text-lg text-slate-300 leading-relaxed font-normal">
-                Submit your business requirements to Dinesh Yadav & Company. Our functional leads and technical specialists will review your intake and formulate a tailored service proposal.
+              <p className="text-lg text-slate-600 leading-relaxed font-normal">
+                Submit your business requirements to DY&C. Our functional leads and technical specialists will review your intake and formulate a tailored service proposal.
               </p>
             </div>
           </Reveal>
@@ -377,7 +386,7 @@ const ContactPage = () => {
                   </span>
                   <h3 className="text-2xl font-bold text-slate-900 mb-2">Requirement Submitted Successfully!</h3>
                   <p className="text-slate-600 max-w-lg mx-auto text-sm leading-relaxed mb-8">
-                    Thank you for reaching out to Dinesh Yadav & Company. Your intake has been registered under reference{' '}
+                    Thank you for reaching out to DY&C. Your intake has been registered under reference{' '}
                     <strong className="text-slate-900">{submissionResult.enquiryNumber}</strong>. Our enterprise team will evaluate your scope and formulate a commercial proposal.
                   </p>
 
@@ -1067,7 +1076,7 @@ const ContactPage = () => {
                     <button
                       type="submit"
                       disabled={submissionResult.loading}
-                      className="w-full py-3.5 px-6 rounded-xl font-bold text-sm text-white bg-[#0B1528] hover:bg-emerald-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full py-3.5 px-6 rounded-xl font-bold text-sm text-white bg-[#102A43] hover:bg-emerald-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {submissionResult.loading ? (
                         <>
@@ -1079,7 +1088,7 @@ const ContactPage = () => {
                       )}
                     </button>
                     <p className="text-[11px] text-slate-400 text-center mt-2">
-                      🔒 Your commercial requirements are treated strictly confidential under DYC enterprise policies.
+                      🔒 Your commercial requirements are treated strictly confidential under DY&C enterprise policies.
                     </p>
                   </div>
                 </form>
@@ -1097,7 +1106,7 @@ const ContactPage = () => {
                 <div className="flex items-start gap-3">
                   <span className="text-slate-400 mt-0.5">📍</span>
                   <div>
-                    <strong className="text-slate-800 block mb-0.5">Dinesh Yadav & Company</strong>
+                    <strong className="text-slate-800 block mb-0.5">DY&C</strong>
                     <p className="leading-relaxed">{siteConfig.contact.address}</p>
                   </div>
                 </div>
@@ -1118,26 +1127,26 @@ const ContactPage = () => {
               </div>
             </div>
 
-            <div className="bg-[#0B1528] text-white rounded-2xl p-6 shadow-sm border border-slate-800">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block mb-1">
+            <div className="bg-emerald-50/50 text-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block mb-1">
                 Enterprise Standards
               </span>
-              <h3 className="text-base font-bold text-white mb-2">Service Commitments</h3>
-              <div className="space-y-3 text-xs text-slate-300">
+              <h3 className="text-base font-bold text-[#102A43] mb-2">Service Commitments</h3>
+              <div className="space-y-3 text-xs text-slate-600">
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-emerald-600 font-bold">✓</span>
                   <span>Structured Proposals with transparent line items</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-emerald-600 font-bold">✓</span>
                   <span>Verified technical vetting for all SAP consultants</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-emerald-600 font-bold">✓</span>
                   <span>Statutory compliance for industrial staffing</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span className="text-emerald-600 font-bold">✓</span>
                   <span>SLA-backed Application Management Support</span>
                 </div>
               </div>

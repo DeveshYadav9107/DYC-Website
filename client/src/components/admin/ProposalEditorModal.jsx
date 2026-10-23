@@ -77,7 +77,7 @@ const ProposalEditorModal = ({ isOpen, onClose, inquiry, initialProposal, onSave
       'Provide required test environments and timely sign-off on deliverables within 5 business days.',
     ],
     validUntil: '',
-    closingNotes: 'Thank you for choosing Dinesh Yadav & Company. We look forward to delivering enterprise excellence for your organization.',
+    closingNotes: 'Thank you for choosing DY&C. We look forward to delivering enterprise excellence for your organization.',
     internalNotes: '',
   });
 
@@ -206,7 +206,7 @@ const ProposalEditorModal = ({ isOpen, onClose, inquiry, initialProposal, onSave
           address: '',
         },
         clientRequirementSummary: inquiry.message || inquiry.requirement || '',
-        solutionSummary: `Tailored enterprise engagement formulated by Dinesh Yadav & Company to fulfill client requirements in ${formatCategoryTitle(inquiry.type)}.`,
+        solutionSummary: `Tailored enterprise engagement formulated by DY&C to fulfill client requirements in ${formatCategoryTitle(inquiry.type)}.`,
         scopeOfWork: defaultScope,
         deliverables: defaultDeliverables,
         resourceRequirements: defaultResourceReq || inquiry.duration || '',
@@ -239,7 +239,7 @@ const ProposalEditorModal = ({ isOpen, onClose, inquiry, initialProposal, onSave
           'Provide required test environments and timely sign-off on deliverables within 5 business days.',
         ],
         validUntil: thirtyDaysFromNow,
-        closingNotes: 'Thank you for choosing Dinesh Yadav & Company. We look forward to delivering enterprise excellence for your organization.',
+        closingNotes: 'Thank you for choosing DY&C. We look forward to delivering enterprise excellence for your organization.',
         internalNotes: '',
       });
     }

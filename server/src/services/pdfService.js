@@ -14,7 +14,7 @@ export const generateProposalPdf = async (proposal) => {
         bufferPages: true,
         info: {
           Title: `DYC Proposal - ${proposal.proposalNumber}`,
-          Author: 'Dinesh Yadav & Company (DY&C)',
+          Author: 'DY&C',
           Subject: proposal.title,
           Keywords: 'DYC, Proposal, SAP, Staffing, ERP',
           CreationDate: new Date(),
@@ -86,7 +86,7 @@ export const generateProposalPdf = async (proposal) => {
         .font('Helvetica')
         .fontSize(14)
         .fillColor(textColor)
-        .text('  |  Dinesh Yadav & Company');
+        .text('  |  DY&C');
 
       doc
         .font('Helvetica')
@@ -481,7 +481,7 @@ export const generateProposalPdf = async (proposal) => {
           .fontSize(7.5)
           .fillColor(mutedColor)
           .text(
-            'Dinesh Yadav & Company • Commercial In Confidence • Validated Enterprise Solution',
+            'DY&C • Commercial In Confidence • Validated Enterprise Solution',
             40,
             796,
             { width: 380, align: 'left' }
