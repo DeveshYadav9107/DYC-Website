@@ -37,12 +37,10 @@ const ResetPasswordPage = () => {
   const newPasswordId = useId();
   const confirmPasswordId = useId();
 
-  // If email is missing, redirect to forgot-password
+  // Automated reset via OTP is deprecated: redirect to recovery info page
   useEffect(() => {
-    if (!email) {
-      navigate('/forgot-password', { replace: true });
-    }
-  }, [email, navigate]);
+    navigate('/forgot-password', { replace: true });
+  }, [navigate]);
 
   // Cooldown timer
   useEffect(() => {

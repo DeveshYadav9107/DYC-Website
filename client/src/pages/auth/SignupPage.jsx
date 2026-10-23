@@ -37,7 +37,7 @@ const SignupPage = () => {
   const passwordId = useId();
   const confirmPasswordId = useId();
 
-  const { initiateSignup } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   // Password strength score 0 to 4
@@ -116,22 +116,16 @@ const SignupPage = () => {
         phone: formData.phone.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
+        confirmPassword: formData.confirmPassword,
       };
 
-      const res = await initiateSignup(payload);
-      const masked = res?.data?.maskedEmail || res?.maskedEmail || payload.email;
-
-      // Navigate to OTP verification page
-      navigate(
-        `/verify-otp?email=${encodeURIComponent(payload.email)}&masked=${encodeURIComponent(
-          masked
-        )}&type=signup`
-      );
+      await signup(payload);
+      navigate('/', { replace: true });
     } catch (err) {
       setServerError(
         err.response?.data?.message ||
         err.response?.data?.error ||
-        'Failed to initiate registration. Please verify your details or try again.'
+        'Failed to create account. Please verify your details or try again.'
       );
     } finally {
       setLoading(false);
@@ -393,11 +387,11 @@ const SignupPage = () => {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Sending Verification Code...</span>
+                <span>Creating account...</span>
               </>
             ) : (
               <>
-                <span>Continue to Email Verification</span>
+                <span>Create Account</span>
                 <FiArrowRight className="w-4 h-4" />
               </>
             )}

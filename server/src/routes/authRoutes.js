@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  signup,
   initiateSignup,
   verifySignupOtp,
   login,
@@ -20,7 +21,8 @@ import {
 
 const router = express.Router();
 
-// Signup flow
+// Signup flow (password-based direct registration)
+router.post('/signup', authLimiter, signup);
 router.post('/signup/initiate', authLimiter, initiateSignup);
 router.post('/signup/verify', otpVerifyLimiter, verifySignupOtp);
 

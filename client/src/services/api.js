@@ -70,29 +70,32 @@ api.interceptors.response.use(
 
 // ================= AUTH SERVICES =================
 
-// Signup Initiation (validates details, sends OTP)
-export const initiateSignup = async (userData) => {
-  const response = await api.post('/auth/signup/initiate', userData);
+// Direct Signup (creates user in MongoDB and issues token directly)
+export const signup = async (userData) => {
+  const response = await api.post('/auth/signup', userData);
   return response.data;
 };
 
-// Signup OTP Verification (verifies code, creates user & issues token)
+// Signup alias for backwards compatibility
+export const initiateSignup = async (userData) => {
+  const response = await api.post('/auth/signup', userData);
+  return response.data;
+};
+
+// Signup OTP verification (deprecated backwards compatibility)
 export const verifySignupOtp = async (data) => {
   const response = await api.post('/auth/signup/verify', data);
   return response.data;
 };
 
-// Login Initiation (validates password, sends OTP)
-export const initiateLogin = async (credentials) => {
-  const response = await api.post('/auth/login', credentials);
-  return response.data;
-};
-
-// Direct or verified login alias
+// Direct Login (verifies password and issues token directly)
 export const login = async (credentials) => {
   const response = await api.post('/auth/login', credentials);
   return response.data;
 };
+
+// Login alias for backwards compatibility
+export const initiateLogin = login;
 
 // Login OTP Verification (verifies code, establishes session)
 export const verifyLoginOtp = async (data) => {

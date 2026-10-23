@@ -42,11 +42,8 @@ const getTransporter = () => {
  *  4. Cloud console log fallback (Never blocks users if cloud host firewall blocks SMTP)
  */
 export const sendOtpEmail = async ({ to, otp, purpose, firstName = '' }) => {
-  // Always log OTP to server console (CRUCIAL for cloud environments like Render Free Tier where SMTP ports are blocked)
-  console.log(`\n=============================================================`);
-  console.log(`🔑 [OTP DISPATCH] Purpose: ${purpose.toUpperCase()} | Recipient: ${to}`);
-  console.log(`👉 YOUR OTP CODE IS: >>> ${otp} <<<`);
-  console.log(`=============================================================\n`);
+  // Safe diagnostic log without logging secrets or plaintext OTP
+  console.log(`📧 [Email Dispatch] Purpose: ${purpose.toUpperCase()}`);
 
   let subject = '';
   let heading = '';

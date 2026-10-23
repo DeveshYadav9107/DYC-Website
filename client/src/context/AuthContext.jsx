@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   getMe as apiGetMe,
+  signup as apiSignup,
   initiateSignup as apiInitiateSignup,
   verifySignupOtp as apiVerifySignupOtp,
+  login as apiLogin,
   initiateLogin as apiInitiateLogin,
   verifyLoginOtp as apiVerifyLoginOtp,
   resendOtp as apiResendOtp,
@@ -105,12 +107,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 1. Initiate Signup
-  const initiateSignup = async (formData) => {
-    return await apiInitiateSignup(formData);
+  // 1. Direct Signup
+  const signup = async (formData) => {
+    const res = await apiSignup(formData);
+    const authToken = res?.data?.token || res?.token;
+    const authUser = res?.data?.user || res?.user;
+    if (authToken && authUser) {
+      setSession(authToken, authUser);
+    }
+    return res;
   };
 
-  // 2. Verify Signup OTP
+  // Backwards-compatible alias
+  const initiateSignup = signup;
+
+  // 2. Verify Signup OTP (Deprecated)
   const verifySignupOtp = async ({ email, otp }) => {
     const res = await apiVerifySignupOtp({ email, otp });
     const authToken = res?.data?.token || res?.token;
@@ -121,12 +132,21 @@ export const AuthProvider = ({ children }) => {
     return res;
   };
 
-  // 3. Initiate Login
-  const initiateLogin = async (credentials) => {
-    return await apiInitiateLogin(credentials);
+  // 3. Direct Login (Email + Password)
+  const login = async (credentials) => {
+    const res = await apiLogin(credentials);
+    const authToken = res?.data?.token || res?.token;
+    const authUser = res?.data?.user || res?.user;
+    if (authToken && authUser) {
+      setSession(authToken, authUser);
+    }
+    return res;
   };
 
-  // 4. Verify Login OTP
+  // Backwards-compatible alias
+  const initiateLogin = login;
+
+  // 4. Verify Login OTP (Deprecated)
   const verifyLoginOtp = async ({ email, otp }) => {
     const res = await apiVerifyLoginOtp({ email, otp });
     const authToken = res?.data?.token || res?.token;
@@ -137,34 +157,22 @@ export const AuthProvider = ({ children }) => {
     return res;
   };
 
-  // 5. Backwards-compatible Login method (used by AdminLogin or direct calls)
-  const login = async (credentials) => {
-    const res = await apiInitiateLogin(credentials);
-    // If backend directly returns token (e.g. if OTP was passed or bypassed)
-    const authToken = res?.data?.token || res?.token;
-    const authUser = res?.data?.user || res?.user;
-    if (authToken && authUser) {
-      setSession(authToken, authUser);
-    }
-    return res;
-  };
-
-  // 6. Resend OTP
+  // 5. Resend OTP (Deprecated)
   const resendOtp = async ({ email, purpose }) => {
     return await apiResendOtp({ email, purpose });
   };
 
-  // 7. Forgot Password
+  // 6. Forgot Password
   const forgotPassword = async ({ email }) => {
     return await apiForgotPassword({ email });
   };
 
-  // 8. Reset Password
+  // 7. Reset Password
   const resetPassword = async ({ email, otp, newPassword }) => {
     return await apiResetPassword({ email, otp, newPassword });
   };
 
-  // 9. Update Profile
+  // 8. Update Profile
   const updateProfile = async (profileData) => {
     const updated = await apiUpdateProfile(profileData);
     if (updated) {
@@ -174,7 +182,7 @@ export const AuthProvider = ({ children }) => {
     return updated;
   };
 
-  // 10. Logout
+  // 9. Logout
   const logout = async () => {
     try {
       await apiLogoutUser();
@@ -195,11 +203,12 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: Boolean(token && user),
     isAdmin: Boolean(user && (user.role === 'admin' || user.role === 'editor')),
     loading,
+    signup,
     initiateSignup,
     verifySignupOtp,
+    login,
     initiateLogin,
     verifyLoginOtp,
-    login,
     resendOtp,
     forgotPassword,
     resetPassword,

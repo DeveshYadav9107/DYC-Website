@@ -34,12 +34,10 @@ const VerifyOtpPage = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [countdown, setCountdown] = useState(60);
 
-  // If email is missing, redirect back
+  // OTP is deprecated: automatically redirect to login
   useEffect(() => {
-    if (!email) {
-      navigate(flowType === 'login' ? '/login' : '/signup', { replace: true });
-    }
-  }, [email, flowType, navigate]);
+    navigate('/login', { replace: true });
+  }, [navigate]);
 
   // Focus first input on mount
   useEffect(() => {

@@ -22,7 +22,7 @@ const LoginPage = () => {
   const emailId = useId();
   const passwordId = useId();
 
-  const { initiateLogin } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,19 +47,8 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const res = await initiateLogin({ email: cleanEmail, password });
-
-      if (res?.data?.requiresOtp || res?.requiresOtp) {
-        const masked = res?.data?.maskedEmail || res?.maskedEmail || cleanEmail;
-        navigate(
-          `/verify-otp?email=${encodeURIComponent(cleanEmail)}&masked=${encodeURIComponent(
-            masked
-          )}&type=login&returnTo=${encodeURIComponent(returnTo)}`
-        );
-      } else if (res?.data?.token || res?.token) {
-        // Direct login if token returned
-        navigate(returnTo, { replace: true });
-      }
+      await login({ email: cleanEmail, password });
+      navigate(returnTo, { replace: true });
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -80,7 +69,7 @@ const LoginPage = () => {
             Welcome back
           </h1>
           <p className="text-xs sm:text-sm text-[#64748B] mt-1.5 leading-relaxed">
-            Enter your credentials to receive a one-time login verification code in your email.
+            Enter your email address and password to sign in to your account.
           </p>
         </div>
 
@@ -181,11 +170,11 @@ const LoginPage = () => {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Verifying credentials...</span>
+                <span>Signing in...</span>
               </>
             ) : (
               <>
-                <span>Sign In with Email OTP</span>
+                <span>Sign In</span>
                 <FiArrowRight className="w-4 h-4" />
               </>
             )}
