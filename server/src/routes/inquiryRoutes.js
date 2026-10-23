@@ -13,6 +13,7 @@ import {
   deleteInquiry,
   exportInquiries,
 } from '../controllers/inquiryController.js';
+import { getProposals } from '../controllers/proposalController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -49,6 +50,12 @@ router.post('/:id/follow-up', manageFollowUp);
 
 // Private internal notes (staff-only)
 router.post('/:id/notes', addInquiryNote);
+
+// Proposals associated with this inquiry
+router.get('/:id/proposals', (req, res, next) => {
+  req.query.inquiryId = req.params.id;
+  return getProposals(req, res, next);
+});
 
 // Permanent deletion
 router.delete('/:id', deleteInquiry);

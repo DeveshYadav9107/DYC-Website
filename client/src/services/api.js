@@ -208,6 +208,66 @@ export const exportInquiriesCsv = async (params = {}) => {
   return response.data;
 };
 
+// ================= PROPOSAL SERVICES =================
+export const getProposals = async (params = {}) => {
+  const response = await api.get('/proposals', { params });
+  return response.data?.data || response.data;
+};
+
+export const getProposal = async (id) => {
+  const response = await api.get(`/proposals/${id}`);
+  return response.data?.data || response.data;
+};
+
+export const getInquiryProposals = async (inquiryId) => {
+  const response = await api.get(`/inquiries/${inquiryId}/proposals`);
+  return response.data?.data?.proposals || response.data?.data || response.data || [];
+};
+
+export const createProposal = async (proposalData) => {
+  const response = await api.post('/proposals', proposalData);
+  return response.data?.data || response.data;
+};
+
+export const updateProposal = async (id, proposalData) => {
+  const response = await api.put(`/proposals/${id}`, proposalData);
+  return response.data?.data || response.data;
+};
+
+export const reviseProposal = async (id, data = {}) => {
+  const response = await api.post(`/proposals/${id}/revise`, data);
+  return response.data?.data || response.data;
+};
+
+export const updateProposalStatus = async (id, payload) => {
+  const body = typeof payload === 'string' ? { status: payload } : payload;
+  const response = await api.patch(`/proposals/${id}/status`, body);
+  return response.data?.data || response.data;
+};
+
+export const downloadProposalPdf = async (id, proposalNumber = 'proposal') => {
+  const response = await api.get(`/proposals/${id}/pdf`, {
+    responseType: 'blob',
+  });
+  
+  // Trigger browser download of PDF
+  const blob = new Blob([response.data], { type: 'application/pdf' });
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.setAttribute('download', `${proposalNumber}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode.removeChild(link);
+  window.URL.revokeObjectURL(downloadUrl);
+  return true;
+};
+
+export const deleteProposal = async (id) => {
+  const response = await api.delete(`/proposals/${id}`);
+  return response.data;
+};
+
 // ================= SETTINGS SERVICES =================
 export const getSettings = async () => {
   const response = await api.get('/settings');

@@ -24,6 +24,12 @@ const ActivitySchema = new mongoose.Schema({
       'note_added',
       'approved',
       'rejected',
+      'proposal_created',
+      'proposal_updated',
+      'proposal_sent',
+      'proposal_accepted',
+      'proposal_declined',
+      'proposal_revised',
     ],
     required: true,
   },
@@ -35,12 +41,16 @@ const ActivitySchema = new mongoose.Schema({
 });
 
 const InquirySchema = new mongoose.Schema({
+  // Unique human-readable enquiry reference
+  enquiryNumber: { type: String, trim: true },
+
   // Contact info
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   name: { type: String, required: [true, 'Name is required'], trim: true },
   company: { type: String, trim: true },
   email: { type: String, required: [true, 'Email is required'], trim: true, lowercase: true },
   phone: { type: String, trim: true },
+  designation: { type: String, trim: true },
 
   // Classification
   type: {
@@ -53,27 +63,60 @@ const InquirySchema = new mongoose.Schema({
   requirement: { type: String, trim: true },
   message: { type: String, trim: true },
 
-  // SAP Resource Request fields
+  // Phase 2: Manpower & Staffing Specific Fields
+  staffingPositions: [{
+    roleTitle: { type: String, trim: true },
+    count: { type: Number, default: 1 },
+    skillLevel: { type: String, trim: true },
+    employmentType: { type: String, trim: true },
+    location: { type: String, trim: true },
+  }],
+  skillLevel: { type: String, trim: true },
+  employmentType: { type: String, trim: true },
+  budgetRange: { type: String, trim: true },
+  deploymentPreference: { type: String, trim: true },
+  startDate: { type: String, trim: true },
+  duration: { type: String, trim: true },
+
+  // Phase 2: SAP Resource Request Specific Fields
+  sapRole: { type: String, trim: true },
   sapModule: { type: String, trim: true },
-  requiredRole: { type: String, trim: true },
+  sapResourceCategory: { type: String, trim: true }, // functional, technical, techno-functional
   experienceRequired: { type: String, trim: true },
+  experienceLevel: { type: String, trim: true },
   numberOfProfessionals: { type: Number },
+  numberOfConsultants: { type: Number },
+  sapEnvironment: { type: String, trim: true }, // ECC 6.0, S/4HANA Cloud, S/4HANA On-Premise, etc.
+  requiredRole: { type: String, trim: true },
   location: { type: String, trim: true },
   engagementType: { type: String, trim: true },
   joiningTimeline: { type: String, trim: true },
 
-  // SAP Support fields
+  // Phase 2: SAP Support & Maintenance Specific Fields
+  supportType: { type: String, trim: true }, // AMS, incident, enhancements, upgrade, migration, integration
+  supportCoverage: { type: String, trim: true }, // 8x5, 16x5, 24x7
+  businessImpact: { type: String, trim: true },
   sapSystem: { type: String, trim: true },
   issueType: { type: String, trim: true },
-  urgency: { type: String, enum: ['low', 'medium', 'high', 'critical'] },
+  urgency: { type: String, enum: ['low', 'medium', 'high', 'critical', 'urgent'] },
   preferredContact: { type: String, trim: true },
 
-  // ERP Inquiry fields
-  businessType: { type: String, trim: true },
+  // Phase 2: ERP Solutions Specific Fields
+  industry: { type: String, trim: true },
   currentSystem: { type: String, trim: true },
+  currentSoftware: { type: String, trim: true },
+  departmentsInvolved: [{ type: String, trim: true }],
   requiredERPArea: { type: String, trim: true },
+  desiredFunctionality: [{ type: String, trim: true }],
+  integrationNeeds: { type: String, trim: true },
   numberOfUsers: { type: Number },
+  userSize: { type: String, trim: true },
   timeline: { type: String, trim: true },
+  businessType: { type: String, trim: true },
+  businessObjectives: { type: String, trim: true },
+
+  // Catch-all flexible structured store for domain-specific attributes
+  structuredRequirements: { type: mongoose.Schema.Types.Mixed },
 
   // Lead Lifecycle & Workflow
   status: {
@@ -113,8 +156,15 @@ const InquirySchema = new mongoose.Schema({
   source: { type: String, default: 'website', trim: true },
 }, { timestamps: true });
 
-// Backward compatibility & stage-status synchronization hook
+// Pre-save hook: Auto-generate human-readable enquiryNumber and sync stage-status
 InquirySchema.pre('save', function (next) {
+  // Generate human-friendly reference if absent
+  if (!this.enquiryNumber) {
+    const year = new Date().getFullYear();
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    this.enquiryNumber = `DYC-ENQ-${year}-${rand}`;
+  }
+
   // If leadStage is changed, sync status
   if (this.isModified('leadStage') && !this.isModified('status')) {
     const stageToStatusMap = {
@@ -150,7 +200,7 @@ InquirySchema.pre('save', function (next) {
     this.timeline = [{
       type: 'created',
       description: `Enquiry received via website (${this.type || 'general'})`,
-      performedByName: 'Website Visitor',
+      performedByName: this.name || 'Website Visitor',
       createdAt: this.createdAt || new Date(),
     }];
   }
@@ -160,6 +210,7 @@ InquirySchema.pre('save', function (next) {
 
 // Indexes for fast querying, filtering, and sorting
 InquirySchema.index({ type: 1, status: 1, leadStage: 1, priority: 1, createdAt: -1 });
+InquirySchema.index({ enquiryNumber: 1 });
 InquirySchema.index({ nextFollowUpAt: 1, followUpStatus: 1 });
 InquirySchema.index({ assignedTo: 1 });
 InquirySchema.index({ email: 1, user: 1 });

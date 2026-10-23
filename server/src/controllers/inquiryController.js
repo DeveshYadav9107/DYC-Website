@@ -24,13 +24,36 @@ const sanitizeCsvCell = (val) => {
 export const createInquiry = async (req, res, next) => {
   try {
     const inquiryData = { ...req.body };
+
+    // Prevent mass-assignment of privileged/internal fields
+    delete inquiryData.assignedTo;
+    delete inquiryData.assignedAt;
+    delete inquiryData.assignedBy;
+    delete inquiryData.notes;
+    delete inquiryData.approvedBy;
+    delete inquiryData.approvedAt;
+    delete inquiryData.rejectedBy;
+    delete inquiryData.rejectedAt;
+    delete inquiryData.followUpStatus;
+    delete inquiryData.nextFollowUpAt;
+    delete inquiryData.followUpNotes;
+    delete inquiryData.followUpCompletedAt;
+    delete inquiryData.followUpCompletedBy;
+
+    // Public enquiries always start at initial stage
+    inquiryData.leadStage = 'new';
+    inquiryData.status = 'new';
+    
+    // Priority validation
+    if (inquiryData.priority && !['low', 'normal', 'high', 'urgent'].includes(inquiryData.priority)) {
+      inquiryData.priority = 'normal';
+    } else {
+      inquiryData.priority = inquiryData.priority || 'normal';
+    }
+
     if (req.user && req.user._id) {
       inquiryData.user = req.user._id;
     }
-
-    inquiryData.leadStage = inquiryData.leadStage || 'new';
-    inquiryData.status = inquiryData.status || 'new';
-    inquiryData.priority = inquiryData.priority || 'normal';
 
     const initialTimeline = [{
       type: 'created',

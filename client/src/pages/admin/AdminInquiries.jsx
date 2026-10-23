@@ -44,7 +44,10 @@ import {
   FiSliders,
   FiCheckSquare,
   FiXCircle,
+  FiFileText,
 } from 'react-icons/fi';
+import ProposalEditorModal from '../../components/admin/ProposalEditorModal';
+import InquiryProposalsTab from '../../components/admin/InquiryProposalsTab';
 
 const AdminInquiries = () => {
   const { user } = useAuth();
@@ -82,6 +85,10 @@ const AdminInquiries = () => {
   const [newNoteText, setNewNoteText] = useState('');
   const [followUpForm, setFollowUpForm] = useState({ date: '', note: '' });
   const [followUpOutcome, setFollowUpOutcome] = useState('');
+
+  // Proposal Generator Modal State
+  const [isProposalEditorOpen, setIsProposalEditorOpen] = useState(false);
+  const [editingProposal, setEditingProposal] = useState(null);
 
   // Debounce search query
   useEffect(() => {
@@ -1024,6 +1031,7 @@ const AdminInquiries = () => {
             <div className="px-5 sm:px-6 border-b border-[#E8ECF3] flex items-center gap-2 sm:gap-4 overflow-x-auto bg-[#FFFFFF] shrink-0 text-xs font-semibold">
               {[
                 { id: 'overview', label: 'Overview & Requirements', icon: FiInbox },
+                { id: 'proposals', label: 'Proposals & Quotations', icon: FiFileText },
                 { id: 'actions', label: 'Lead Stage & Ownership', icon: FiTarget },
                 { id: 'followup', label: 'Follow-up Scheduler', icon: FiClock },
                 { id: 'notes', label: `Private Notes (${selectedInquiry.notes?.length || 0})`, icon: FiMessageSquare },
@@ -1116,8 +1124,88 @@ const AdminInquiries = () => {
                     </div>
                   </div>
 
-                  {/* Specialized Technical Information if present */}
+                  {/* Structured Technical & Business Requirements */}
+                  {/* Category A: Manpower & Staffing Positions Table */}
+                  {selectedInquiry.staffingPositions && selectedInquiry.staffingPositions.length > 0 && (
+                    <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/40 border border-emerald-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-2">
+                          <FiLayers className="w-4 h-4 text-emerald-700" />
+                          <span>Industrial & Technical Staffing Positions</span>
+                        </h4>
+                        <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
+                          {selectedInquiry.staffingPositions.length} Roles Requested
+                        </span>
+                      </div>
+
+                      <div className="overflow-x-auto border border-emerald-200/80 rounded-xl bg-white">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="bg-emerald-50/70 text-[10px] uppercase font-bold text-emerald-800 border-b border-emerald-200">
+                              <th className="p-2.5">Position / Role Title</th>
+                              <th className="p-2.5">Headcount</th>
+                              <th className="p-2.5">Skill Level</th>
+                              <th className="p-2.5">Employment Type</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-emerald-100">
+                            {selectedInquiry.staffingPositions.map((pos, pIdx) => (
+                              <tr key={pIdx} className="hover:bg-emerald-50/30">
+                                <td className="p-2.5 font-semibold text-slate-900">{pos.roleTitle}</td>
+                                <td className="p-2.5 font-mono text-emerald-900 font-bold">{pos.count}</td>
+                                <td className="p-2.5">
+                                  <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium">
+                                    {pos.skillLevel}
+                                  </span>
+                                </td>
+                                <td className="p-2.5 text-slate-600">{pos.employmentType}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
+                        {selectedInquiry.workLocation && (
+                          <div>
+                            <span className="text-slate-400 block text-[10px] uppercase">Work Location</span>
+                            <strong className="text-slate-800">{selectedInquiry.workLocation}</strong>
+                          </div>
+                        )}
+                        {selectedInquiry.deploymentPreference && (
+                          <div>
+                            <span className="text-slate-400 block text-[10px] uppercase">Deployment</span>
+                            <strong className="text-slate-800">{selectedInquiry.deploymentPreference}</strong>
+                          </div>
+                        )}
+                        {selectedInquiry.startDate && (
+                          <div>
+                            <span className="text-slate-400 block text-[10px] uppercase">Start Date</span>
+                            <strong className="text-slate-800">{selectedInquiry.startDate}</strong>
+                          </div>
+                        )}
+                        {selectedInquiry.budgetRange && (
+                          <div>
+                            <span className="text-slate-400 block text-[10px] uppercase">Budget / Rate</span>
+                            <strong className="text-emerald-700">{selectedInquiry.budgetRange}</strong>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Category B, C, D, E & Legacy Specification Cards */}
                   {(selectedInquiry.sapModule ||
+                    selectedInquiry.sapRole ||
+                    selectedInquiry.sapResourceCategory ||
+                    selectedInquiry.sapEnvironment ||
+                    selectedInquiry.supportType ||
+                    selectedInquiry.supportCoverage ||
+                    selectedInquiry.businessImpact ||
+                    selectedInquiry.industry ||
+                    selectedInquiry.currentSoftware ||
+                    (selectedInquiry.departmentsInvolved && selectedInquiry.departmentsInvolved.length > 0) ||
+                    selectedInquiry.userSize ||
                     selectedInquiry.requiredRole ||
                     selectedInquiry.experienceRequired ||
                     selectedInquiry.numberOfProfessionals ||
@@ -1132,103 +1220,116 @@ const AdminInquiries = () => {
                     selectedInquiry.requiredERPArea ||
                     selectedInquiry.numberOfUsers ||
                     selectedInquiry.timeline) && (
-                    <div className="p-4 sm:p-5 rounded-2xl bg-[#EEF4FF]/40 border border-[#DBEAFE]">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#172033] mb-3 flex items-center gap-2">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#EEF4FF]/40 border border-[#DBEAFE] space-y-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#172033] flex items-center gap-2">
                         <FiLayers className="w-4 h-4 text-[#4F46E5]" />
-                        <span>Technical & Resource Specification</span>
+                        <span>Structured Technical & Enterprise Requirements</span>
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-                        {selectedInquiry.sapModule && (
+                        {selectedInquiry.sapRole && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">SAP Module</span>
-                            <strong className="text-[#172033]">{selectedInquiry.sapModule}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">SAP Role</span>
+                            <strong className="text-[#172033]">{selectedInquiry.sapRole}</strong>
                           </div>
                         )}
-                        {selectedInquiry.requiredRole && (
+                        {(selectedInquiry.sapModule || selectedInquiry.requiredRole) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Role Required</span>
-                            <strong className="text-[#172033]">{selectedInquiry.requiredRole}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">SAP Module / Area</span>
+                            <strong className="text-[#172033]">{selectedInquiry.sapModule || selectedInquiry.requiredRole}</strong>
                           </div>
                         )}
-                        {selectedInquiry.experienceRequired && (
+                        {selectedInquiry.sapResourceCategory && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Experience</span>
-                            <strong className="text-[#172033]">{selectedInquiry.experienceRequired}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Resource Category</span>
+                            <strong className="text-[#172033]">{selectedInquiry.sapResourceCategory}</strong>
                           </div>
                         )}
-                        {selectedInquiry.numberOfProfessionals && (
+                        {(selectedInquiry.experienceLevel || selectedInquiry.experienceRequired) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Professionals</span>
-                            <strong className="text-[#172033]">{selectedInquiry.numberOfProfessionals}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Experience Level</span>
+                            <strong className="text-[#172033]">{selectedInquiry.experienceLevel || selectedInquiry.experienceRequired}</strong>
                           </div>
                         )}
-                        {selectedInquiry.location && (
+                        {(selectedInquiry.numberOfConsultants || selectedInquiry.numberOfProfessionals) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Work Location</span>
-                            <strong className="text-[#172033]">{selectedInquiry.location}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Consultants / Headcount</span>
+                            <strong className="text-[#172033]">{selectedInquiry.numberOfConsultants || selectedInquiry.numberOfProfessionals}</strong>
                           </div>
                         )}
-                        {selectedInquiry.engagementType && (
+                        {(selectedInquiry.sapEnvironment || selectedInquiry.sapSystem) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Engagement Type</span>
-                            <strong className="text-[#172033]">{selectedInquiry.engagementType}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">SAP Environment / Version</span>
+                            <strong className="text-[#172033]">{selectedInquiry.sapEnvironment || selectedInquiry.sapSystem}</strong>
                           </div>
                         )}
-                        {selectedInquiry.joiningTimeline && (
+                        {selectedInquiry.supportType && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Joining Timeline</span>
-                            <strong className="text-[#172033]">{selectedInquiry.joiningTimeline}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Support Scope</span>
+                            <strong className="text-[#172033]">{selectedInquiry.supportType}</strong>
                           </div>
                         )}
-                        {selectedInquiry.sapSystem && (
+                        {selectedInquiry.supportCoverage && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">SAP System</span>
-                            <strong className="text-[#172033]">{selectedInquiry.sapSystem}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">SLA / Support Window</span>
+                            <strong className="text-[#172033]">{selectedInquiry.supportCoverage}</strong>
                           </div>
                         )}
-                        {selectedInquiry.issueType && (
+                        {selectedInquiry.businessImpact && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Issue Type</span>
-                            <strong className="text-[#172033]">{selectedInquiry.issueType}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Business Impact</span>
+                            <strong className="text-[#172033]">{selectedInquiry.businessImpact}</strong>
                           </div>
                         )}
-                        {selectedInquiry.urgency && (
+                        {(selectedInquiry.industry || selectedInquiry.businessType) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Urgency</span>
-                            <strong className="text-[#172033] uppercase">{selectedInquiry.urgency}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Industry Sector</span>
+                            <strong className="text-[#172033]">{selectedInquiry.industry || selectedInquiry.businessType}</strong>
                           </div>
                         )}
-                        {selectedInquiry.businessType && (
+                        {(selectedInquiry.currentSoftware || selectedInquiry.currentSystem) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Business Type</span>
-                            <strong className="text-[#172033]">{selectedInquiry.businessType}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Current Software / ERP</span>
+                            <strong className="text-[#172033]">{selectedInquiry.currentSoftware || selectedInquiry.currentSystem}</strong>
                           </div>
                         )}
-                        {selectedInquiry.currentSystem && (
+                        {(selectedInquiry.userSize || selectedInquiry.numberOfUsers) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Current ERP</span>
-                            <strong className="text-[#172033]">{selectedInquiry.currentSystem}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Estimated System Users</span>
+                            <strong className="text-[#172033]">{selectedInquiry.userSize || selectedInquiry.numberOfUsers}</strong>
                           </div>
                         )}
-                        {selectedInquiry.requiredERPArea && (
+                        {selectedInquiry.deploymentPreference && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">ERP Domain</span>
-                            <strong className="text-[#172033]">{selectedInquiry.requiredERPArea}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Deployment Preference</span>
+                            <strong className="text-[#172033]">{selectedInquiry.deploymentPreference}</strong>
                           </div>
                         )}
-                        {selectedInquiry.numberOfUsers && (
+                        {(selectedInquiry.duration || selectedInquiry.timeline) && (
                           <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Number of Users</span>
-                            <strong className="text-[#172033]">{selectedInquiry.numberOfUsers}</strong>
-                          </div>
-                        )}
-                        {selectedInquiry.timeline && (
-                          <div>
-                            <span className="text-[#64748B] block text-[10px] uppercase">Target Timeline</span>
-                            <strong className="text-[#172033]">{selectedInquiry.timeline}</strong>
+                            <span className="text-[#64748B] block text-[10px] uppercase">Target Duration</span>
+                            <strong className="text-[#172033]">{selectedInquiry.duration || selectedInquiry.timeline}</strong>
                           </div>
                         )}
                       </div>
+
+                      {/* Departments in Scope Chips if present */}
+                      {selectedInquiry.departmentsInvolved && selectedInquiry.departmentsInvolved.length > 0 && (
+                        <div className="pt-2 border-t border-[#DBEAFE]/80">
+                          <span className="text-[#64748B] block text-[10px] uppercase mb-1.5 font-semibold">
+                            Departments / Business Units In Scope
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {selectedInquiry.departmentsInvolved.map((dept, dIdx) => (
+                              <span
+                                key={dIdx}
+                                className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#FFFFFF] border border-[#BFDBFE] text-[#1E40AF]"
+                              >
+                                {dept}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1242,14 +1343,27 @@ const AdminInquiries = () => {
                     </div>
                   </div>
 
-                  {/* Existing Quick Approve / Reject Actions (Section 5) */}
+                  {/* Existing Quick Approve / Reject Actions + Create Proposal CTA */}
                   <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E8ECF3] flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div>
-                      <span className="font-bold text-[#172033] block">Approval Workflow Actions</span>
-                      <span className="text-[#64748B] text-[11px]">Direct qualification or rejection of proposal</span>
+                      <span className="font-bold text-[#172033] block">Commercial & Workflow Actions</span>
+                      <span className="text-[#64748B] text-[11px]">Generate formal proposals or update qualification status</span>
                     </div>
 
                     <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDetailTab('proposals');
+                          setEditingProposal(null);
+                          setIsProposalEditorOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0B1528] text-white hover:bg-emerald-600 font-semibold transition cursor-pointer shadow-sm"
+                      >
+                        <FiFileText className="w-3.5 h-3.5" />
+                        <span>Create Proposal</span>
+                      </button>
+
                       <button
                         disabled={actionLoading}
                         onClick={() => handleStageChange('qualified', 'approved')}
@@ -1270,6 +1384,35 @@ const AdminInquiries = () => {
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* TAB 2: PROPOSALS & QUOTATIONS */}
+              {detailTab === 'proposals' && (
+                <InquiryProposalsTab
+                  inquiry={selectedInquiry}
+                  onOpenCreate={() => {
+                    setEditingProposal(null);
+                    setIsProposalEditorOpen(true);
+                  }}
+                  onOpenEdit={(prop) => {
+                    setEditingProposal(prop);
+                    setIsProposalEditorOpen(true);
+                  }}
+                  onInquiryUpdated={async () => {
+                    try {
+                      const refreshed = await getInquiry(selectedInquiry._id);
+                      if (refreshed) {
+                        setSelectedInquiry(refreshed);
+                        setInquiries((prev) =>
+                          prev.map((item) => (item._id === selectedInquiry._id ? { ...item, ...refreshed } : item))
+                        );
+                      }
+                    } catch (err) {
+                      console.error('Failed to refresh inquiry after proposal update', err);
+                    }
+                  }}
+                  showFeedback={showFeedback}
+                />
               )}
 
               {/* TAB 2: LEAD STAGE & OWNERSHIP */}
@@ -1617,6 +1760,30 @@ const AdminInquiries = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Proposal Generator & Commercial Editor Modal */}
+      {isProposalEditorOpen && selectedInquiry && (
+        <ProposalEditorModal
+          isOpen={isProposalEditorOpen}
+          onClose={() => setIsProposalEditorOpen(false)}
+          inquiry={selectedInquiry}
+          initialProposal={editingProposal}
+          onSaved={async (saved) => {
+            showFeedback('success', `Proposal ${saved.proposalNumber || ''} saved successfully.`);
+            try {
+              const refreshed = await getInquiry(selectedInquiry._id);
+              if (refreshed) {
+                setSelectedInquiry(refreshed);
+                setInquiries((prev) =>
+                  prev.map((item) => (item._id === selectedInquiry._id ? { ...item, ...refreshed } : item))
+                );
+              }
+            } catch (err) {
+              console.error('Failed to refresh inquiry after saving proposal', err);
+            }
+          }}
+        />
       )}
     </div>
   );
