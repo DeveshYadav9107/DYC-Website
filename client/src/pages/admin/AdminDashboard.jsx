@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getInquiryStats, updateInquiryStatus } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -125,14 +125,14 @@ const AdminDashboard = () => {
         );
       case 'contacted':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EEF4FF] text-[#2563EB] border border-[#DBEAFE]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF0E8] text-[#2563EB] border border-[#DBEAFE]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] mr-1.5"></span>
             Contacted
           </span>
         );
       case 'qualified':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F2EEFF] text-[#7C3AED] border border-[#DDD6FE]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF0E8] text-[#7C3AED] border border-[#DDD6FE]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#7C3AED] mr-1.5"></span>
             Qualified
           </span>
@@ -218,11 +218,11 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       {/* 1. Welcome Section */}
-      <div className="bg-gradient-to-r from-[#EEF4FF] via-[#F2EEFF] to-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-6 sm:p-7 relative overflow-hidden shadow-xs">
+      <div className="bg-gradient-to-r from-[#EAF0E8] via-[#EAF0E8] to-[#FFFFFF] rounded-2xl border border-[#E7E0D3] p-6 sm:p-7 relative overflow-hidden shadow-xs">
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#FFFFFF]/90 border border-[#E8ECF3] text-[11px] font-semibold text-[#4F46E5] mb-2 backdrop-blur-xs">
-              <FiCalendar className="w-3.5 h-3.5 text-[#4F46E5]" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#FFFFFF]/90 border border-[#E7E0D3] text-[11px] font-semibold text-[#174B39] mb-2 backdrop-blur-xs">
+              <FiCalendar className="w-3.5 h-3.5 text-[#174B39]" />
               <span>
                 {new Date().toLocaleDateString('en-US', {
                   weekday: 'short',
@@ -232,7 +232,7 @@ const AdminDashboard = () => {
                 })}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#172033]">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#252720]">
               {getGreeting()}, {adminGreetingName}
             </h2>
             <p className="text-sm text-[#64748B] mt-1 max-w-xl">
@@ -244,7 +244,7 @@ const AdminDashboard = () => {
             <button
               onClick={fetchDashboardStats}
               disabled={loading}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#E8ECF3] text-xs font-semibold text-[#172033] hover:bg-[#F6F8FC] shadow-xs transition cursor-pointer disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#E7E0D3] text-xs font-semibold text-[#252720] hover:bg-[#FDFBF7] shadow-xs transition cursor-pointer disabled:opacity-60"
             >
               <FiRefreshCw className={`w-3.5 h-3.5 text-[#64748B] ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
@@ -252,7 +252,7 @@ const AdminDashboard = () => {
 
             <Link
               to="/admin/inquiries"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold shadow-xs transition"
             >
               <span>Enquiries Workspace</span>
               <FiArrowRight className="w-3.5 h-3.5" />
@@ -266,23 +266,23 @@ const AdminDashboard = () => {
         {/* KPI 1: Total Enquiries */}
         <Link
           to="/admin/inquiries"
-          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#4F46E5]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E7E0D3] shadow-xs hover:border-[#174B39]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#4F46E5] transition">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#174B39] transition">
               Total Enquiries
             </span>
-            <div className="w-8 h-8 rounded-lg bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
+            <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#2563EB] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
               <FiInbox className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#252720]">
               {loading ? '—' : totalCount}
             </span>
             <p className="text-[11px] text-[#64748B] mt-0.5 flex items-center justify-between">
               <span>All records</span>
-              <span className="text-[#4F46E5] font-semibold text-[10px] group-hover:translate-x-0.5 transition">View →</span>
+              <span className="text-[#174B39] font-semibold text-[10px] group-hover:translate-x-0.5 transition">View →</span>
             </p>
           </div>
         </Link>
@@ -290,7 +290,7 @@ const AdminDashboard = () => {
         {/* KPI 2: New Enquiries */}
         <Link
           to="/admin/inquiries?status=new"
-          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#B45309]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E7E0D3] shadow-xs hover:border-[#B45309]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#B45309] transition">
@@ -301,7 +301,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#252720]">
               {loading ? '—' : newCount}
             </span>
             <p className="text-[11px] text-[#B45309] font-medium mt-0.5 flex items-center justify-between">
@@ -317,7 +317,7 @@ const AdminDashboard = () => {
           className={`p-4 sm:p-5 rounded-2xl border shadow-xs hover:shadow-sm transition group cursor-pointer flex flex-col justify-between ${
             followUpsDueCount > 0
               ? 'bg-[#FEF2F2]/60 border-[#FECACA] hover:border-[#DC2626]'
-              : 'bg-[#FFFFFF] border-[#E8ECF3] hover:border-[#DC2626]/40'
+              : 'bg-[#FFFFFF] border-[#E7E0D3] hover:border-[#DC2626]/40'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -335,7 +335,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#252720]">
               {loading ? '—' : followUpsDueCount}
             </span>
             <p className="text-[11px] text-[#DC2626] font-medium mt-0.5 flex items-center justify-between">
@@ -348,18 +348,18 @@ const AdminDashboard = () => {
         {/* KPI 4: Qualified Leads */}
         <Link
           to="/admin/inquiries?leadStage=qualified"
-          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#7C3AED]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E7E0D3] shadow-xs hover:border-[#7C3AED]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#7C3AED] transition">
               Qualified Leads
             </span>
-            <div className="w-8 h-8 rounded-lg bg-[#F2EEFF] text-[#7C3AED] flex items-center justify-center shrink-0 border border-[#DDD6FE]">
+            <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#7C3AED] flex items-center justify-center shrink-0 border border-[#DDD6FE]">
               <FiTarget className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#252720]">
               {loading ? '—' : qualifiedCount}
             </span>
             <p className="text-[11px] text-[#7C3AED] font-medium mt-0.5 flex items-center justify-between">
@@ -372,7 +372,7 @@ const AdminDashboard = () => {
         {/* KPI 5: Proposals Sent */}
         <Link
           to="/admin/inquiries?leadStage=proposal-sent"
-          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#0284C7]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E7E0D3] shadow-xs hover:border-[#0284C7]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#0284C7] transition">
@@ -383,7 +383,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#252720]">
               {loading ? '—' : proposalCount}
             </span>
             <p className="text-[11px] text-[#0284C7] font-medium mt-0.5 flex items-center justify-between">
@@ -396,7 +396,7 @@ const AdminDashboard = () => {
         {/* KPI 6: Won Leads */}
         <Link
           to="/admin/inquiries?leadStage=won"
-          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] shadow-xs hover:border-[#15803D]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
+          className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E7E0D3] shadow-xs hover:border-[#15803D]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#15803D] transition">
@@ -407,7 +407,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#172033]">
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#252720]">
               {loading ? '—' : wonCount}
             </span>
             <p className="text-[11px] text-[#15803D] font-medium mt-0.5 flex items-center justify-between">
@@ -421,15 +421,15 @@ const AdminDashboard = () => {
       {/* 3. Operational Insights: Follow-ups Schedule & Priority Leads */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Left: Follow-up Operations Radar */}
-        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-[#E8ECF3] mb-4">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E0D3] mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center">
                   <FiClock className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#172033] text-sm">
+                  <h3 className="font-bold text-[#252720] text-sm">
                     Follow-up Operations
                   </h3>
                   <p className="text-[11px] text-[#64748B]">
@@ -440,7 +440,7 @@ const AdminDashboard = () => {
 
               <Link
                 to="/admin/inquiries?followUp=due"
-                className="text-[11px] font-semibold text-[#4F46E5] hover:underline"
+                className="text-[11px] font-semibold text-[#174B39] hover:underline"
               >
                 View all
               </Link>
@@ -494,25 +494,25 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="pt-4 mt-4 border-t border-[#E8ECF3] flex items-center justify-between text-xs text-[#64748B]">
+          <div className="pt-4 mt-4 border-t border-[#E7E0D3] flex items-center justify-between text-xs text-[#64748B]">
             <span>Urgent/High priority leads:</span>
-            <span className="font-bold text-[#172033]">{urgentCount + highCount} leads</span>
+            <span className="font-bold text-[#252720]">{urgentCount + highCount} leads</span>
           </div>
         </div>
 
         {/* Center: Service Classification Breakdown */}
-        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-[#E8ECF3] mb-4">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E0D3] mb-4">
               <div>
-                <h3 className="font-bold text-[#172033] text-sm">
+                <h3 className="font-bold text-[#252720] text-sm">
                   Service Inquiries Distribution
                 </h3>
                 <p className="text-[11px] text-[#64748B]">
                   Real distribution from incoming business requests
                 </p>
               </div>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[#F6F8FC] border border-[#E8ECF3] text-[#172033]">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[#FDFBF7] border border-[#E7E0D3] text-[#252720]">
                 {totalCount} Total
               </span>
             </div>
@@ -530,7 +530,7 @@ const AdminDashboard = () => {
             ) : (
               <div className="space-y-3">
                 {[
-                  { key: 'sap-support', label: 'SAP Support & Maintenance', bg: 'bg-[#4F46E5]' },
+                  { key: 'sap-support', label: 'SAP Support & Maintenance', bg: 'bg-[#174B39]' },
                   { key: 'sap-resource-request', label: 'SAP Staffing & Resources', bg: 'bg-[#7C3AED]' },
                   { key: 'staffing-request', label: 'Professional Staffing', bg: 'bg-[#0284C7]' },
                   { key: 'erp-inquiry', label: 'ERP Transformation', bg: 'bg-[#15803D]' },
@@ -541,12 +541,12 @@ const AdminDashboard = () => {
                   return (
                     <div key={category.key} className="space-y-1">
                       <div className="flex justify-between items-center text-xs">
-                        <span className="font-medium text-[#172033]">{category.label}</span>
+                        <span className="font-medium text-[#252720]">{category.label}</span>
                         <span className="font-semibold text-[#64748B]">
                           {count} <span className="text-[10px] font-normal text-[#94A3B8]">({percent}%)</span>
                         </span>
                       </div>
-                      <div className="h-2 w-full bg-[#F6F8FC] rounded-full overflow-hidden border border-[#E8ECF3]">
+                      <div className="h-2 w-full bg-[#FDFBF7] rounded-full overflow-hidden border border-[#E7E0D3]">
                         <div
                           className={`h-full ${category.bg} rounded-full transition-all duration-500`}
                           style={{ width: `${percent}%` }}
@@ -559,10 +559,10 @@ const AdminDashboard = () => {
             )}
           </div>
 
-          <div className="pt-3 mt-3 border-t border-[#E8ECF3] text-right">
+          <div className="pt-3 mt-3 border-t border-[#E7E0D3] text-right">
             <Link
               to="/admin/inquiries"
-              className="text-[11px] font-semibold text-[#4F46E5] hover:underline"
+              className="text-[11px] font-semibold text-[#174B39] hover:underline"
             >
               Filter by service type →
             </Link>
@@ -570,9 +570,9 @@ const AdminDashboard = () => {
         </div>
 
         {/* Right: Quick Lead Actions */}
-        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
           <div>
-            <h3 className="font-bold text-[#172033] text-sm">
+            <h3 className="font-bold text-[#252720] text-sm">
               Quick Lead Shortcuts
             </h3>
             <p className="text-[11px] text-[#64748B] mt-0.5 mb-3.5">
@@ -582,13 +582,13 @@ const AdminDashboard = () => {
             <div className="space-y-2">
               <Link
                 to="/admin/inquiries?priority=urgent"
-                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E8ECF3] hover:border-[#DC2626]/30 hover:bg-[#FEF2F2]/30 transition group"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E7E0D3] hover:border-[#DC2626]/30 hover:bg-[#FEF2F2]/30 transition group"
               >
                 <div className="w-7 h-7 rounded-lg bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center shrink-0">
                   <FiAlertTriangle className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-[#172033] block group-hover:text-[#DC2626]">
+                  <span className="text-xs font-semibold text-[#252720] block group-hover:text-[#DC2626]">
                     Urgent Priority Leads
                   </span>
                   <span className="text-[10px] text-[#64748B] block truncate">
@@ -600,31 +600,31 @@ const AdminDashboard = () => {
 
               <Link
                 to="/admin/inquiries?assignedTo=unassigned"
-                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E8ECF3] hover:border-[#4F46E5]/30 hover:bg-[#EEF4FF]/30 transition group"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E7E0D3] hover:border-[#174B39]/30 hover:bg-[#EAF0E8]/30 transition group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center shrink-0">
                   <FiUser className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-[#172033] block group-hover:text-[#4F46E5]">
+                  <span className="text-xs font-semibold text-[#252720] block group-hover:text-[#174B39]">
                     Unassigned Enquiries
                   </span>
                   <span className="text-[10px] text-[#64748B] block truncate">
                     Assign ownership to team members
                   </span>
                 </div>
-                <FiChevronRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-[#4F46E5] group-hover:translate-x-0.5 transition" />
+                <FiChevronRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-[#174B39] group-hover:translate-x-0.5 transition" />
               </Link>
 
               <Link
                 to="/admin/inquiries"
-                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E8ECF3] hover:border-[#7C3AED]/30 hover:bg-[#F2EEFF]/30 transition group"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-[#E7E0D3] hover:border-[#7C3AED]/30 hover:bg-[#EAF0E8]/30 transition group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#F2EEFF] text-[#7C3AED] flex items-center justify-center shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[#EAF0E8] text-[#7C3AED] flex items-center justify-center shrink-0">
                   <FiFileText className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-[#172033] block group-hover:text-[#7C3AED]">
+                  <span className="text-xs font-semibold text-[#252720] block group-hover:text-[#7C3AED]">
                     Export Database CSV
                   </span>
                   <span className="text-[10px] text-[#64748B] block truncate">
@@ -636,12 +636,12 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="pt-3 mt-3 border-t border-[#E8ECF3] flex items-center justify-between text-[11px] text-[#64748B]">
+          <div className="pt-3 mt-3 border-t border-[#E7E0D3] flex items-center justify-between text-[11px] text-[#64748B]">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#15803D]"></span>
               MongoDB Atlas Live
             </span>
-            <Link to="/admin/settings" className="hover:text-[#172033] font-medium">
+            <Link to="/admin/settings" className="hover:text-[#252720] font-medium">
               Settings →
             </Link>
           </div>
@@ -649,11 +649,11 @@ const AdminDashboard = () => {
       </div>
 
       {/* 4. Recent Enquiries Workspace */}
-      <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] shadow-xs overflow-hidden">
+      <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] shadow-xs overflow-hidden">
         {/* Table Header */}
-        <div className="p-5 sm:px-6 sm:py-4 border-b border-[#E8ECF3] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="p-5 sm:px-6 sm:py-4 border-b border-[#E7E0D3] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h3 className="font-bold text-[#172033] text-sm sm:text-base">
+            <h3 className="font-bold text-[#252720] text-sm sm:text-base">
               Latest Incoming Enquiries
             </h3>
             <p className="text-xs text-[#64748B] mt-0.5">
@@ -664,7 +664,7 @@ const AdminDashboard = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/admin/inquiries"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA] hover:underline transition"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#174B39] hover:text-[#103728] hover:underline transition"
             >
               <span>Open full workspace ({totalCount})</span>
               <FiChevronRight className="w-3.5 h-3.5" />
@@ -678,10 +678,10 @@ const AdminDashboard = () => {
             <div className="w-12 h-12 rounded-full bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center mx-auto mb-3">
               <FiAlertTriangle className="w-6 h-6" />
             </div>
-            <p className="text-sm font-semibold text-[#172033]">{error}</p>
+            <p className="text-sm font-semibold text-[#252720]">{error}</p>
             <button
               onClick={fetchDashboardStats}
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4F46E5] text-white text-xs font-medium cursor-pointer"
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#174B39] text-white text-xs font-medium cursor-pointer"
             >
               <FiRefreshCw className="w-3.5 h-3.5" />
               <span>Retry Loading</span>
@@ -706,10 +706,10 @@ const AdminDashboard = () => {
         {/* Empty State */}
         {!loading && !error && recentInquiries.length === 0 && (
           <div className="p-12 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center mx-auto mb-3">
               <FiInbox className="w-6 h-6" />
             </div>
-            <h4 className="text-sm font-semibold text-[#172033]">No enquiries received yet</h4>
+            <h4 className="text-sm font-semibold text-[#252720]">No enquiries received yet</h4>
             <p className="text-xs text-[#64748B] max-w-sm mx-auto mt-1">
               When prospective clients submit forms on your public website, they will appear here in real time.
             </p>
@@ -721,7 +721,7 @@ const AdminDashboard = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#F8FAFC] border-b border-[#E8ECF3] text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
+                <tr className="bg-[#F8FAFC] border-b border-[#E7E0D3] text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
                   <th className="py-3.5 px-4 sm:px-6">Customer & Company</th>
                   <th className="py-3.5 px-4">Service Type</th>
                   <th className="py-3.5 px-4">Priority</th>
@@ -730,7 +730,7 @@ const AdminDashboard = () => {
                   <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E8ECF3] text-xs">
+              <tbody className="divide-y divide-[#E7E0D3] text-xs">
                 {recentInquiries.map((inquiry) => (
                   <tr
                     key={inquiry._id}
@@ -740,11 +740,11 @@ const AdminDashboard = () => {
                     {/* Customer */}
                     <td className="py-3.5 px-4 sm:px-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[#EEF4FF] text-[#4F46E5] font-bold text-xs flex items-center justify-center shrink-0 border border-[#E0E7FF]">
+                        <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#174B39] font-bold text-xs flex items-center justify-center shrink-0 border border-[#E0E7FF]">
                           {(inquiry.name || 'C').charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-semibold text-[#172033] group-hover:text-[#4F46E5] transition truncate">
+                          <p className="font-semibold text-[#252720] group-hover:text-[#174B39] transition truncate">
                             {inquiry.name}
                           </p>
                           <p className="text-[11px] text-[#64748B] truncate">
@@ -756,7 +756,7 @@ const AdminDashboard = () => {
 
                     {/* Service Type */}
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F6F8FC] border border-[#E8ECF3] text-[#172033]">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-[#FDFBF7] border border-[#E7E0D3] text-[#252720]">
                         {formatTypeLabel(inquiry.type)}
                       </span>
                     </td>
@@ -790,7 +790,7 @@ const AdminDashboard = () => {
                     <td className="py-3.5 px-4 sm:px-6 text-right" onClick={(e) => e.stopPropagation()}>
                       <Link
                         to={`/admin/inquiries?id=${inquiry._id}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#4F46E5] hover:bg-[#EEF4FF] transition"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#174B39] hover:bg-[#EAF0E8] transition"
                       >
                         <FiEye className="w-3.5 h-3.5" />
                         <span>Open</span>

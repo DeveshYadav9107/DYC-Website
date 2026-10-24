@@ -41,20 +41,26 @@ const SAPCapabilitiesPage = () => {
   ];
 
   return (
-    <div className="bg-bg-primary min-h-screen text-text-primary">
+    <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
       {/* Header */}
-      <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
+      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
         
         {/* Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 opacity-100">
+        <div className="absolute inset-0 z-0 opacity-15">
           <img src="/images/sap-banner.png" alt="SAP Capabilities Banner" className="w-full h-full object-cover object-right" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-bg-tertiary/80 via-bg-tertiary/30 to-transparent z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/90 to-transparent z-0"></div>
 
-        <div className="max-w-7xl mx-auto relative z-10 pt-10">
+        <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">
           <Reveal>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">SAP <span className="text-primary">Capabilities</span></h1>
-            <p className="text-xl text-text-secondary max-w-3xl leading-relaxed">
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-bold tracking-[0.2em] uppercase mb-6 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
+              <span>Enterprise Systems</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 tracking-tight text-[#252720]">
+              SAP <span className="text-[#174B39] italic">Capabilities</span> & Ecosystem Architecture
+            </h1>
+            <p className="text-lg sm:text-xl text-[#66665D] max-w-3xl leading-relaxed font-sans">
               We provide comprehensive SAP expertise across the entire enterprise landscape. From legacy ECC systems to modern S/4HANA transformations, our certified consultants deliver end-to-end solutions.
             </p>
           </Reveal>
@@ -62,18 +68,20 @@ const SAPCapabilitiesPage = () => {
       </div>
 
       {/* Modules List */}
-      <div className="max-w-7xl mx-auto px-6 py-24 space-y-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 space-y-20 sm:space-y-24">
         {categories.map((category, idx) => (
-          <div key={idx} className="grid md:grid-cols-12 gap-12 items-start border-t border-border-light pt-16 first:border-0 first:pt-0">
+          <div key={idx} className="grid md:grid-cols-12 gap-10 md:gap-14 items-start border-t border-[#E7E0D3] pt-16 first:border-0 first:pt-0">
             <Reveal className="md:col-span-5">
-              <div className="sticky top-32">
-                <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
-                  <span className="w-8 h-px bg-primary"></span>
-                  Domain {idx + 1}
+              <div className="sticky top-28">
+                <div className="text-[#B88A3B] font-bold uppercase tracking-widest text-xs mb-3 flex items-center gap-2.5">
+                  <span className="w-8 h-px bg-[#B88A3B]"></span>
+                  Domain 0{idx + 1}
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4 tracking-tight">{category.title}</h2>
-                <p className="text-xl text-text-secondary font-medium mb-6">{category.desc}</p>
-                <p className="text-text-secondary leading-relaxed mb-8">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#252720] mb-3 tracking-tight">
+                  {category.title}
+                </h2>
+                <p className="text-lg text-[#174B39] font-medium mb-5">{category.desc}</p>
+                <p className="text-[#66665D] leading-relaxed text-sm sm:text-base">
                   {category.paragraph}
                 </p>
               </div>
@@ -82,9 +90,10 @@ const SAPCapabilitiesPage = () => {
             <div className="md:col-span-7">
               <StaggerContainer className="grid sm:grid-cols-2 gap-4">
                 {category.modules.map((mod, i) => (
-                  <StaggerItem key={i} className="bg-surface border border-border rounded-xl p-6 hover:border-primary/50 transition-colors shadow-sm group">
-                    <h3 className="font-bold text-xl text-[#102A43] mb-2 group-hover:text-primary transition-colors">{mod.name}</h3>
-                    <p className="text-text-secondary text-sm leading-relaxed">{mod.full}</p>
+                  <StaggerItem key={i} className="bg-white border border-[#E7E0D3] rounded-2xl p-6 hover:border-[#174B39]/50 transition-all duration-300 shadow-[0_4px_16px_rgba(37,39,32,0.03)] group hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(23,75,57,0.08)]">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#B88A3B] mb-1.5 block">Module</span>
+                    <h3 className="font-serif font-bold text-xl text-[#252720] mb-1.5 group-hover:text-[#174B39] transition-colors">{mod.name}</h3>
+                    <p className="text-[#66665D] text-xs sm:text-sm leading-relaxed">{mod.full}</p>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
@@ -94,13 +103,15 @@ const SAPCapabilitiesPage = () => {
       </div>
 
       {/* CTA */}
-      <div className="bg-bg-tertiary border-t border-border-light py-32 px-6 text-center">
+      <div className="bg-[#FDFBF7] border-t border-[#E7E0D3] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 text-center">
         <Reveal>
-          <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Need a specific SAP expert?</h2>
-          <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+          <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#252720] mb-5 tracking-tight">
+            Need a Specific SAP Expert?
+          </h2>
+          <p className="text-lg md:text-xl text-[#66665D] max-w-2xl mx-auto mb-10 leading-relaxed font-sans">
             Whether you need a single ABAP developer or a full functional team for an S/4HANA rollout, we can deploy the right talent quickly.
           </p>
-          <Link to="/contact" className="btn-primary inline-block px-8 py-4 text-lg">
+          <Link to="/contact" className="btn-primary inline-block px-8 py-4 text-base sm:text-lg font-semibold">
             Request SAP Resources
           </Link>
         </Reveal>

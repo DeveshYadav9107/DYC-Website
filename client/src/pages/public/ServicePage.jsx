@@ -1,6 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import Reveal from '../../components/animations/Reveal';
 import { StaggerContainer, StaggerItem } from '../../components/animations/Stagger';
+import { FiCheck } from 'react-icons/fi';
 
 const servicesData = {
   'staffing': {
@@ -31,7 +32,7 @@ const servicesData = {
     title: 'SAP Support & Maintenance',
     subtitle: 'Ensure your SAP landscape runs smoothly with our dedicated application management and support services.',
     features: [
-      { title: 'Application Management Services (AMS)', desc: '24/7 dedicated support desk for L1, L2, and L3 issue resolution.' },
+      { title: 'Application Management Services (AMS)', desc: 'Dedicated enterprise support desk for L1, L2, and L3 issue resolution.' },
       { title: 'System Upgrades', desc: 'Seamless patch applications, enhancement packs (EhP), and version upgrades.' },
       { title: 'Performance Optimization', desc: 'Continuous monitoring and tuning to ensure maximum system uptime and speed.' },
       { title: 'Custom Enhancements', desc: 'Development of custom Z-reports, workflows, and user exits as your needs evolve.' }
@@ -57,31 +58,33 @@ const ServicePage = () => {
   const { serviceId } = useParams();
   const service = servicesData[serviceId];
 
-  // If URL is invalid, redirect to home or a 404
+  // If URL is invalid, redirect to home
   if (!service) {
     return <Navigate to="/" replace />;
   }
 
   return (
-    <div className="bg-bg-primary min-h-screen text-text-primary">
+    <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
       {/* Header */}
-      <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
+      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
         
         {/* Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 opacity-100">
+        <div className="absolute inset-0 z-0 opacity-15">
           <img src={service.image} alt={service.title} className="w-full h-full object-cover object-right" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-bg-tertiary/80 via-bg-tertiary/30 to-transparent z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/90 to-transparent z-0"></div>
 
-        <div className="max-w-7xl mx-auto relative z-10 pt-10">
+        <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">
           <Reveal>
             <div className="max-w-3xl">
-              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-4 inline-flex items-center gap-2 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm border border-border">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                Service Detail
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-bold tracking-[0.2em] uppercase mb-6 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
+                <span>Service Capability</span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-text-primary">{service.title}</h1>
-              <p className="text-xl md:text-2xl text-text-secondary leading-relaxed">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 tracking-tight text-[#252720]">
+                {service.title}
+              </h1>
+              <p className="text-lg sm:text-xl text-[#66665D] leading-relaxed font-sans">
                 {service.subtitle}
               </p>
             </div>
@@ -90,18 +93,30 @@ const ServicePage = () => {
       </div>
 
       {/* Features Grid */}
-      <div className="max-w-7xl mx-auto px-6 py-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-16 text-center tracking-tight">What We Offer</h2>
+          <div className="text-center mb-16">
+            <span className="text-[#B88A3B] font-bold uppercase tracking-widest text-xs mb-3 inline-block">
+              Engagement Highlights
+            </span>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#252720] tracking-tight">
+              What We Offer
+            </h2>
+          </div>
         </Reveal>
         
-        <StaggerContainer className="grid md:grid-cols-2 gap-8">
+        <StaggerContainer className="grid md:grid-cols-2 gap-6 sm:gap-8">
           {service.features.map((feat, idx) => (
-            <StaggerItem key={idx} className="bg-surface border border-border shadow-surface rounded-2xl p-8 flex gap-6 group hover:border-primary/50 hover:shadow-surface-hover hover:-translate-y-1 transition-all">
-              <div className="text-primary text-2xl mt-1 group-hover:scale-125 transition-transform">✓</div>
+            <StaggerItem 
+              key={idx} 
+              className="bg-white border border-[#E7E0D3] shadow-[0_4px_16px_rgba(37,39,32,0.03)] rounded-2xl p-7 sm:p-8 flex gap-5 group hover:border-[#174B39]/50 hover:shadow-[0_12px_32px_rgba(23,75,57,0.08)] hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="w-9 h-9 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#174B39] group-hover:text-white transition-colors duration-300">
+                <FiCheck className="text-sm text-[#174B39] group-hover:text-white transition-colors" />
+              </div>
               <div>
-                <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-primary transition-colors">{feat.title}</h3>
-                <p className="text-text-secondary leading-relaxed">{feat.desc}</p>
+                <h3 className="font-serif font-bold text-xl text-[#252720] mb-2 group-hover:text-[#174B39] transition-colors">{feat.title}</h3>
+                <p className="text-[#66665D] leading-relaxed text-sm sm:text-base">{feat.desc}</p>
               </div>
             </StaggerItem>
           ))}
@@ -109,16 +124,18 @@ const ServicePage = () => {
       </div>
 
       {/* Dynamic CTA */}
-      <div className="bg-bg-tertiary border-t border-border-light py-32 px-6 text-center">
+      <div className="bg-[#FDFBF7] border-t border-[#E7E0D3] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 text-center">
         <Reveal>
-          <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Ready to get started?</h2>
-          <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+          <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#252720] mb-5 tracking-tight">
+            Ready to Get Started?
+          </h2>
+          <p className="text-lg md:text-xl text-[#66665D] max-w-2xl mx-auto mb-10 leading-relaxed font-sans">
             Our team is ready to assist you with your {service.title.toLowerCase()} needs. 
-            Contact us today for a free consultation.
+            Contact us today for a structured consultation.
           </p>
           <Link 
             to={`/contact?type=${service.inquiryType}`} 
-            className="btn-primary inline-block px-8 py-4 text-lg"
+            className="btn-primary inline-block px-8 py-4 text-base sm:text-lg font-semibold"
           >
             Request {service.title}
           </Link>

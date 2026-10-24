@@ -20,26 +20,24 @@ const Stats = () => {
       label: 'Certified Consultants',
     },
     {
-      value: '100', // Placeholder
+      value: '100',
       suffix: '%',
-      label: 'Client Satisfaction',
+      label: 'Committed Delivery',
     },
   ];
 
   return (
-    <section className="py-24 bg-surface text-text-primary relative overflow-hidden border-b border-border-light">
-      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(11,92,171,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(11,92,171,0.5)_1px,transparent_1px)] bg-[size:2rem_2rem]"></div>
-      
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+    <section className="py-20 sm:py-24 bg-[#F8F5EE] text-[#252720] relative overflow-hidden border-b border-[#E7E0D3]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Reveal>
           <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
             {stats.map((stat, idx) => (
               <StaggerItem key={idx} className="flex flex-col items-center group cursor-default">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-2 tracking-tighter flex items-center justify-center transition-transform group-hover:scale-105 group-hover:text-primary-bright">
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#174B39] mb-2 tracking-tight flex items-center justify-center transition-transform group-hover:scale-105">
                   <span>{stat.value}</span>
-                  <span>{stat.suffix}</span>
+                  <span className="text-[#B88A3B]">{stat.suffix}</span>
                 </div>
-                <div className="text-text-secondary font-medium md:text-lg">{stat.label}</div>
+                <div className="text-[#66665D] font-medium text-sm sm:text-base">{stat.label}</div>
               </StaggerItem>
             ))}
           </StaggerContainer>

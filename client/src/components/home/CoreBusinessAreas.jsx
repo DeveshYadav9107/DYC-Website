@@ -31,22 +31,28 @@ const CoreBusinessAreas = () => {
   ];
 
   return (
-    <section className="py-32 bg-bg-primary px-6 border-b border-border-light">
+    <section className="py-24 sm:py-32 bg-[#F8F5EE] px-4 sm:px-6 lg:px-8 border-b border-[#E7E0D3]">
       <div className="max-w-7xl mx-auto">
         <Reveal>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 sm:mb-20 gap-6">
             <div className="max-w-2xl">
-              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
-                <span className="w-8 h-px bg-primary"></span>
+              <div className="text-[#B88A3B] font-bold uppercase tracking-widest text-xs mb-3 flex items-center gap-2.5">
+                <span className="w-8 h-px bg-[#B88A3B]"></span>
                 Core Capabilities
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">What We Do</h2>
-              <p className="text-xl text-text-secondary leading-relaxed">
+              <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#252720] mb-4 tracking-tight">
+                What We Do
+              </h2>
+              <p className="text-lg md:text-xl text-[#66665D] leading-relaxed">
                 Comprehensive enterprise solutions spanning people, processes, and technology.
               </p>
             </div>
-            <a href="#services" className="text-primary font-semibold hover:text-primary-dark transition-colors flex items-center gap-2 group">
-              View All Services <span aria-hidden="true" className="group-hover:translate-x-1 transition-transform">→</span>
+            <a 
+              href="#services" 
+              className="text-[#174B39] font-bold hover:text-[#103728] transition-colors flex items-center gap-2 group text-base"
+            >
+              <span>View All Services</span> 
+              <span aria-hidden="true" className="group-hover:translate-x-1.5 transition-transform text-[#B88A3B]">→</span>
             </a>
           </div>
         </Reveal>
@@ -55,29 +61,33 @@ const CoreBusinessAreas = () => {
           {areas.map((area, idx) => (
             <StaggerItem key={idx}>
               <Link to={area.link} className="block group h-full">
-                <div className="relative rounded-2xl overflow-hidden h-[400px] flex flex-col justify-end p-8 border border-border hover:border-primary/30 transition-all duration-500 shadow-surface group-hover:-translate-y-2 group-hover:shadow-surface-hover">
+                <div className="relative rounded-2xl overflow-hidden h-[420px] flex flex-col justify-end p-7 sm:p-8 border border-[#E7E0D3] hover:border-[#174B39]/50 transition-all duration-500 shadow-[0_4px_20px_rgba(37,39,32,0.04)] group-hover:-translate-y-2 group-hover:shadow-[0_12px_32px_rgba(23,75,57,0.1)] bg-white">
                   
                   {/* Background Image */}
                   <img 
                     src={area.image} 
                     alt={area.title} 
-                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-108 transition-transform duration-1000"
                   />
                   
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/90 to-transparent"></div>
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/85 to-transparent"></div>
+                  <div className="absolute inset-0 bg-[#174B39]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
 
                   {/* Content */}
                   <div className="relative z-10 mt-auto">
-                    <h3 className="text-2xl font-bold text-text-primary mb-3 tracking-tight group-hover:text-primary transition-colors">
+                    <span className="text-[11px] font-bold text-[#B88A3B] uppercase tracking-wider mb-2 block">
+                      Enterprise Practice
+                    </span>
+                    <h3 className="text-2xl font-serif font-bold text-[#252720] mb-2.5 tracking-tight group-hover:text-[#174B39] transition-colors">
                       {area.title}
                     </h3>
-                    <p className="text-text-secondary leading-relaxed mb-6">
+                    <p className="text-[#66665D] text-sm sm:text-base leading-relaxed mb-5">
                       {area.desc}
                     </p>
-                    <div className="text-primary font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                      Learn more <span aria-hidden="true">→</span>
+                    <div className="text-[#174B39] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                      <span>Learn more</span> 
+                      <span aria-hidden="true" className="text-[#B88A3B]">→</span>
                     </div>
                   </div>
                 </div>

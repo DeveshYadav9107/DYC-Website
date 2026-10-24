@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+﻿import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   getInquiries,
@@ -416,14 +416,14 @@ const AdminInquiries = () => {
         );
       case 'contacted':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EEF4FF] text-[#2563EB] border border-[#DBEAFE]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF0E8] text-[#2563EB] border border-[#DBEAFE]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] mr-1.5"></span>
             Contacted
           </span>
         );
       case 'qualified':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F2EEFF] text-[#7C3AED] border border-[#DDD6FE]">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAF0E8] text-[#7C3AED] border border-[#DDD6FE]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#7C3AED] mr-1.5"></span>
             Qualified
           </span>
@@ -581,7 +581,7 @@ const AdminInquiries = () => {
       {/* Header & Export Action */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#172033]">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#252720]">
             Lead & Enquiry Management
           </h2>
           <p className="text-sm text-[#64748B] mt-1">
@@ -593,7 +593,7 @@ const AdminInquiries = () => {
           <button
             onClick={fetchInquiriesList}
             disabled={loading}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#E8ECF3] text-xs font-semibold text-[#172033] hover:bg-[#F6F8FC] shadow-xs transition cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#E7E0D3] text-xs font-semibold text-[#252720] hover:bg-[#FDFBF7] shadow-xs transition cursor-pointer disabled:opacity-60"
             title="Refresh List"
           >
             <FiRefreshCw className={`w-3.5 h-3.5 text-[#64748B] ${loading ? 'animate-spin' : ''}`} />
@@ -603,7 +603,7 @@ const AdminInquiries = () => {
           <button
             onClick={handleExportCSV}
             disabled={pagination.total === 0}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold shadow-xs transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             <FiDownload className="w-3.5 h-3.5" />
             <span>Export CSV</span>
@@ -612,7 +612,7 @@ const AdminInquiries = () => {
       </div>
 
       {/* Filter Tabs & Advanced Search Panel */}
-      <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] p-4 sm:p-5 shadow-xs space-y-4">
+      <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] p-4 sm:p-5 shadow-xs space-y-4">
         {/* Stage Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
@@ -632,8 +632,8 @@ const AdminInquiries = () => {
               }}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
                 stageFilter === tab.id
-                  ? 'bg-[#4F46E5] text-white shadow-xs'
-                  : 'text-[#64748B] hover:bg-[#F6F8FC] hover:text-[#172033]'
+                  ? 'bg-[#174B39] text-white shadow-xs'
+                  : 'text-[#64748B] hover:bg-[#FDFBF7] hover:text-[#252720]'
               }`}
             >
               {tab.label}
@@ -642,7 +642,7 @@ const AdminInquiries = () => {
         </div>
 
         {/* Search, Filters Dropdowns, and Sort Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 pt-3 border-t border-[#E8ECF3]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 pt-3 border-t border-[#E7E0D3]">
           {/* 1. Search Box */}
           <div className="lg:col-span-2 relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
@@ -653,12 +653,12 @@ const AdminInquiries = () => {
               placeholder="Search by name, email, company, requirement, ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-8 py-2 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition placeholder:text-[#94A3B8]"
+              className="w-full pl-10 pr-8 py-2 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition placeholder:text-[#94A3B8]"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#94A3B8] hover:text-[#172033]"
+                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#94A3B8] hover:text-[#252720]"
               >
                 <FiX className="w-4 h-4" />
               </button>
@@ -673,7 +673,7 @@ const AdminInquiries = () => {
                 setPriorityFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 text-xs font-medium text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none transition cursor-pointer"
+              className="w-full px-3 py-2 text-xs font-medium text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition cursor-pointer"
             >
               <option value="all">All Priorities</option>
               <option value="urgent">Urgent</option>
@@ -691,7 +691,7 @@ const AdminInquiries = () => {
                 setFollowUpFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 text-xs font-medium text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none transition cursor-pointer"
+              className="w-full px-3 py-2 text-xs font-medium text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition cursor-pointer"
             >
               <option value="all">All Follow-ups</option>
               <option value="due">Follow-ups Due</option>
@@ -711,7 +711,7 @@ const AdminInquiries = () => {
                 setAssignedFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 text-xs font-medium text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none transition cursor-pointer"
+              className="w-full px-3 py-2 text-xs font-medium text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition cursor-pointer"
             >
               <option value="all">All Team Members</option>
               <option value="unassigned">Unassigned Only</option>
@@ -731,7 +731,7 @@ const AdminInquiries = () => {
                 setTypeFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-3 py-2 text-xs font-medium text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none transition cursor-pointer"
+              className="w-full px-3 py-2 text-xs font-medium text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition cursor-pointer"
             >
               <option value="all">All Service Types</option>
               <option value="sap-support">SAP Support</option>
@@ -745,13 +745,13 @@ const AdminInquiries = () => {
 
         {/* Clear Filters Indicator Bar */}
         {hasActiveFilters && (
-          <div className="flex items-center justify-between pt-2 border-t border-[#E8ECF3] text-xs">
+          <div className="flex items-center justify-between pt-2 border-t border-[#E7E0D3] text-xs">
             <span className="text-[#64748B]">
               Active filters applied. Showing {pagination.total} matching leads.
             </span>
             <button
               onClick={handleClearFilters}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#4F46E5] hover:underline cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#174B39] hover:underline cursor-pointer"
             >
               <FiX className="w-3.5 h-3.5" />
               <span>Clear All Filters</span>
@@ -761,17 +761,17 @@ const AdminInquiries = () => {
       </div>
 
       {/* Main Data Table View */}
-      <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] shadow-xs overflow-hidden">
+      <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] shadow-xs overflow-hidden">
         {/* Error State */}
         {error && (
           <div className="p-8 text-center">
             <div className="w-12 h-12 rounded-full bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center mx-auto mb-3">
               <FiAlertTriangle className="w-6 h-6" />
             </div>
-            <p className="text-sm font-semibold text-[#172033]">{error}</p>
+            <p className="text-sm font-semibold text-[#252720]">{error}</p>
             <button
               onClick={fetchInquiriesList}
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4F46E5] text-white text-xs font-medium cursor-pointer"
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#174B39] text-white text-xs font-medium cursor-pointer"
             >
               <FiRefreshCw className="w-3.5 h-3.5" />
               <span>Retry Loading</span>
@@ -796,10 +796,10 @@ const AdminInquiries = () => {
         {/* Empty State */}
         {!loading && !error && inquiries.length === 0 && (
           <div className="p-12 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center mx-auto mb-3">
               <FiInbox className="w-6 h-6" />
             </div>
-            <h4 className="text-sm font-semibold text-[#172033]">No enquiries match your selection</h4>
+            <h4 className="text-sm font-semibold text-[#252720]">No enquiries match your selection</h4>
             <p className="text-xs text-[#64748B] max-w-sm mx-auto mt-1">
               {hasActiveFilters
                 ? 'Try resetting some of your search terms or filter criteria.'
@@ -808,7 +808,7 @@ const AdminInquiries = () => {
             {hasActiveFilters && (
               <button
                 onClick={handleClearFilters}
-                className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#F6F8FC] border border-[#E8ECF3] text-xs font-semibold text-[#4F46E5] hover:bg-[#EEF4FF] transition cursor-pointer"
+                className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FDFBF7] border border-[#E7E0D3] text-xs font-semibold text-[#174B39] hover:bg-[#EAF0E8] transition cursor-pointer"
               >
                 <span>Clear All Filters</span>
               </button>
@@ -822,7 +822,7 @@ const AdminInquiries = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#F8FAFC] border-b border-[#E8ECF3] text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
+                  <tr className="bg-[#F8FAFC] border-b border-[#E7E0D3] text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
                     <th className="py-3.5 px-4 sm:px-6">Customer & Company</th>
                     <th className="py-3.5 px-4">Contact</th>
                     <th className="py-3.5 px-4">Classification</th>
@@ -833,7 +833,7 @@ const AdminInquiries = () => {
                     <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E8ECF3] text-xs">
+                <tbody className="divide-y divide-[#E7E0D3] text-xs">
                   {inquiries.map((inquiry) => (
                     <tr
                       key={inquiry._id}
@@ -843,11 +843,11 @@ const AdminInquiries = () => {
                       {/* Customer & Company */}
                       <td className="py-3.5 px-4 sm:px-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-[#EEF4FF] text-[#4F46E5] font-bold text-xs flex items-center justify-center shrink-0 border border-[#E0E7FF]">
+                          <div className="w-9 h-9 rounded-xl bg-[#EAF0E8] text-[#174B39] font-bold text-xs flex items-center justify-center shrink-0 border border-[#E0E7FF]">
                             {(inquiry.name || 'C').charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-[#172033] group-hover:text-[#4F46E5] transition truncate">
+                            <p className="font-semibold text-[#252720] group-hover:text-[#174B39] transition truncate">
                               {inquiry.name}
                             </p>
                             <p className="text-[11px] text-[#64748B] truncate">
@@ -859,7 +859,7 @@ const AdminInquiries = () => {
 
                       {/* Contact Info */}
                       <td className="py-3.5 px-4">
-                        <p className="text-[#172033] font-medium truncate max-w-[180px]">
+                        <p className="text-[#252720] font-medium truncate max-w-[180px]">
                           {inquiry.email}
                         </p>
                         <p className="text-[11px] text-[#64748B]">
@@ -869,11 +869,11 @@ const AdminInquiries = () => {
 
                       {/* Classification */}
                       <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#F6F8FC] border border-[#E8ECF3] text-[#172033]">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#FDFBF7] border border-[#E7E0D3] text-[#252720]">
                           {formatTypeLabel(inquiry.type)}
                         </span>
                         {inquiry.sapModule && (
-                          <span className="block mt-0.5 text-[10px] font-semibold text-[#4F46E5]">
+                          <span className="block mt-0.5 text-[10px] font-semibold text-[#174B39]">
                             {inquiry.sapModule}
                           </span>
                         )}
@@ -893,10 +893,10 @@ const AdminInquiries = () => {
                       <td className="py-3.5 px-4">
                         {inquiry.assignedTo ? (
                           <div className="flex items-center gap-1.5">
-                            <div className="w-5 h-5 rounded-full bg-[#EEF4FF] text-[#4F46E5] text-[10px] font-bold flex items-center justify-center shrink-0">
+                            <div className="w-5 h-5 rounded-full bg-[#EAF0E8] text-[#174B39] text-[10px] font-bold flex items-center justify-center shrink-0">
                               {inquiry.assignedTo.name?.charAt(0).toUpperCase() || 'A'}
                             </div>
-                            <span className="font-medium text-[#172033] truncate max-w-[120px]">
+                            <span className="font-medium text-[#252720] truncate max-w-[120px]">
                               {inquiry.assignedTo.name}
                             </span>
                           </div>
@@ -915,7 +915,7 @@ const AdminInquiries = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleOpenDetail(inquiry)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#4F46E5] hover:bg-[#EEF4FF] transition cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#174B39] hover:bg-[#EAF0E8] transition cursor-pointer"
                           >
                             <FiEye className="w-3.5 h-3.5" />
                             <span>Manage</span>
@@ -937,18 +937,18 @@ const AdminInquiries = () => {
             </div>
 
             {/* Pagination Controls Bar */}
-            <div className="p-4 border-t border-[#E8ECF3] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
+            <div className="p-4 border-t border-[#E7E0D3] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
               <div className="flex items-center gap-3">
                 <span>
                   Showing{' '}
-                  <strong className="text-[#172033]">
+                  <strong className="text-[#252720]">
                     {(pagination.page - 1) * pagination.limit + 1}
                   </strong>{' '}
                   to{' '}
-                  <strong className="text-[#172033]">
+                  <strong className="text-[#252720]">
                     {Math.min(pagination.page * pagination.limit, pagination.total)}
                   </strong>{' '}
-                  of <strong className="text-[#172033]">{pagination.total}</strong> records
+                  of <strong className="text-[#252720]">{pagination.total}</strong> records
                 </span>
 
                 <select
@@ -957,7 +957,7 @@ const AdminInquiries = () => {
                     setPageSize(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="px-2 py-1 text-xs border border-[#E8ECF3] rounded-lg bg-[#FFFFFF] outline-none"
+                  className="px-2 py-1 text-xs border border-[#E7E0D3] rounded-lg bg-[#FFFFFF] outline-none"
                 >
                   <option value={10}>10 / page</option>
                   <option value={25}>25 / page</option>
@@ -969,20 +969,20 @@ const AdminInquiries = () => {
                 <button
                   disabled={pagination.page <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#E8ECF3] bg-[#FFFFFF] hover:bg-[#F6F8FC] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer font-medium"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#E7E0D3] bg-[#FFFFFF] hover:bg-[#FDFBF7] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer font-medium"
                 >
                   <FiChevronLeft className="w-3.5 h-3.5" />
                   <span>Previous</span>
                 </button>
 
-                <span className="px-2 font-semibold text-[#172033]">
+                <span className="px-2 font-semibold text-[#252720]">
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
 
                 <button
                   disabled={pagination.page >= pagination.totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#E8ECF3] bg-[#FFFFFF] hover:bg-[#F6F8FC] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer font-medium"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#E7E0D3] bg-[#FFFFFF] hover:bg-[#FDFBF7] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer font-medium"
                 >
                   <span>Next</span>
                   <FiChevronRight className="w-3.5 h-3.5" />
@@ -995,10 +995,10 @@ const AdminInquiries = () => {
 
       {/* Comprehensive Lead Detail Workspace Modal */}
       {selectedInquiry && (
-        <div className="fixed inset-0 z-50 bg-[#172033]/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
-          <div className="bg-[#FFFFFF] rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col border border-[#E8ECF3] shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-[#252720]/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+          <div className="bg-[#FFFFFF] rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col border border-[#E7E0D3] shadow-2xl overflow-hidden">
             {/* Modal Header */}
-            <div className="p-5 sm:p-6 border-b border-[#E8ECF3] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
+            <div className="p-5 sm:p-6 border-b border-[#E7E0D3] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">
@@ -1007,19 +1007,19 @@ const AdminInquiries = () => {
                   {renderStageBadge(selectedInquiry.leadStage || selectedInquiry.status)}
                   {renderPriorityBadge(selectedInquiry.priority)}
                 </div>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-[#172033]">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#252720]">
                   {selectedInquiry.name}
                 </h3>
                 <p className="text-xs text-[#64748B] mt-0.5">
                   Received on {new Date(selectedInquiry.createdAt).toLocaleString()} via{' '}
-                  <span className="font-semibold text-[#172033] capitalize">{selectedInquiry.source || 'Website'}</span>
+                  <span className="font-semibold text-[#252720] capitalize">{selectedInquiry.source || 'Website'}</span>
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleCloseDetail}
-                  className="p-2 rounded-xl text-[#64748B] hover:text-[#172033] hover:bg-[#E8ECF3] transition cursor-pointer"
+                  className="p-2 rounded-xl text-[#64748B] hover:text-[#252720] hover:bg-[#E7E0D3] transition cursor-pointer"
                   aria-label="Close"
                 >
                   <FiX className="w-5 h-5" />
@@ -1028,7 +1028,7 @@ const AdminInquiries = () => {
             </div>
 
             {/* Navigation Tabs inside modal */}
-            <div className="px-5 sm:px-6 border-b border-[#E8ECF3] flex items-center gap-2 sm:gap-4 overflow-x-auto bg-[#FFFFFF] shrink-0 text-xs font-semibold">
+            <div className="px-5 sm:px-6 border-b border-[#E7E0D3] flex items-center gap-2 sm:gap-4 overflow-x-auto bg-[#FFFFFF] shrink-0 text-xs font-semibold">
               {[
                 { id: 'overview', label: 'Overview & Requirements', icon: FiInbox },
                 { id: 'proposals', label: 'Proposals & Quotations', icon: FiFileText },
@@ -1044,8 +1044,8 @@ const AdminInquiries = () => {
                     onClick={() => setDetailTab(tab.id)}
                     className={`py-3.5 px-2 border-b-2 font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
                       detailTab === tab.id
-                        ? 'border-[#4F46E5] text-[#4F46E5]'
-                        : 'border-transparent text-[#64748B] hover:text-[#172033]'
+                        ? 'border-[#174B39] text-[#174B39]'
+                        : 'border-transparent text-[#64748B] hover:text-[#252720]'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -1061,14 +1061,14 @@ const AdminInquiries = () => {
               {detailTab === 'overview' && (
                 <div className="space-y-5">
                   {/* Customer Information Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-[#F8FAFC] p-4 sm:p-5 rounded-2xl border border-[#E8ECF3] text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-[#F8FAFC] p-4 sm:p-5 rounded-2xl border border-[#E7E0D3] text-xs">
                     <div>
                       <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
                         Email Address
                       </span>
                       <a
                         href={`mailto:${selectedInquiry.email}`}
-                        className="font-medium text-[#4F46E5] hover:underline break-all inline-flex items-center gap-1.5"
+                        className="font-medium text-[#174B39] hover:underline break-all inline-flex items-center gap-1.5"
                       >
                         <FiMail className="w-3.5 h-3.5" />
                         <span>{selectedInquiry.email || '—'}</span>
@@ -1081,7 +1081,7 @@ const AdminInquiries = () => {
                       </span>
                       <a
                         href={`tel:${selectedInquiry.phone}`}
-                        className="font-medium text-[#172033] hover:text-[#4F46E5] inline-flex items-center gap-1.5"
+                        className="font-medium text-[#252720] hover:text-[#174B39] inline-flex items-center gap-1.5"
                       >
                         <FiPhone className="w-3.5 h-3.5" />
                         <span>{selectedInquiry.phone || 'Not provided'}</span>
@@ -1092,7 +1092,7 @@ const AdminInquiries = () => {
                       <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
                         Company / Organization
                       </span>
-                      <div className="font-medium text-[#172033] inline-flex items-center gap-1.5">
+                      <div className="font-medium text-[#252720] inline-flex items-center gap-1.5">
                         <FiBriefcase className="w-3.5 h-3.5 text-[#64748B]" />
                         <span>{selectedInquiry.company || 'Not provided'}</span>
                       </div>
@@ -1102,7 +1102,7 @@ const AdminInquiries = () => {
                       <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
                         Service Category
                       </span>
-                      <span className="font-semibold text-[#172033]">
+                      <span className="font-semibold text-[#252720]">
                         {formatTypeLabel(selectedInquiry.type)}
                       </span>
                     </div>
@@ -1118,7 +1118,7 @@ const AdminInquiries = () => {
                       <span className="font-semibold text-[#64748B] uppercase text-[10px] block mb-1">
                         Assigned Owner
                       </span>
-                      <span className="font-medium text-[#172033]">
+                      <span className="font-medium text-[#252720]">
                         {selectedInquiry.assignedTo ? selectedInquiry.assignedTo.name : 'Unassigned'}
                       </span>
                     </div>
@@ -1220,94 +1220,94 @@ const AdminInquiries = () => {
                     selectedInquiry.requiredERPArea ||
                     selectedInquiry.numberOfUsers ||
                     selectedInquiry.timeline) && (
-                    <div className="p-4 sm:p-5 rounded-2xl bg-[#EEF4FF]/40 border border-[#DBEAFE] space-y-3">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#172033] flex items-center gap-2">
-                        <FiLayers className="w-4 h-4 text-[#4F46E5]" />
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#EAF0E8]/40 border border-[#DBEAFE] space-y-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#252720] flex items-center gap-2">
+                        <FiLayers className="w-4 h-4 text-[#174B39]" />
                         <span>Structured Technical & Enterprise Requirements</span>
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
                         {selectedInquiry.sapRole && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">SAP Role</span>
-                            <strong className="text-[#172033]">{selectedInquiry.sapRole}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.sapRole}</strong>
                           </div>
                         )}
                         {(selectedInquiry.sapModule || selectedInquiry.requiredRole) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">SAP Module / Area</span>
-                            <strong className="text-[#172033]">{selectedInquiry.sapModule || selectedInquiry.requiredRole}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.sapModule || selectedInquiry.requiredRole}</strong>
                           </div>
                         )}
                         {selectedInquiry.sapResourceCategory && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Resource Category</span>
-                            <strong className="text-[#172033]">{selectedInquiry.sapResourceCategory}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.sapResourceCategory}</strong>
                           </div>
                         )}
                         {(selectedInquiry.experienceLevel || selectedInquiry.experienceRequired) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Experience Level</span>
-                            <strong className="text-[#172033]">{selectedInquiry.experienceLevel || selectedInquiry.experienceRequired}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.experienceLevel || selectedInquiry.experienceRequired}</strong>
                           </div>
                         )}
                         {(selectedInquiry.numberOfConsultants || selectedInquiry.numberOfProfessionals) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Consultants / Headcount</span>
-                            <strong className="text-[#172033]">{selectedInquiry.numberOfConsultants || selectedInquiry.numberOfProfessionals}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.numberOfConsultants || selectedInquiry.numberOfProfessionals}</strong>
                           </div>
                         )}
                         {(selectedInquiry.sapEnvironment || selectedInquiry.sapSystem) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">SAP Environment / Version</span>
-                            <strong className="text-[#172033]">{selectedInquiry.sapEnvironment || selectedInquiry.sapSystem}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.sapEnvironment || selectedInquiry.sapSystem}</strong>
                           </div>
                         )}
                         {selectedInquiry.supportType && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Support Scope</span>
-                            <strong className="text-[#172033]">{selectedInquiry.supportType}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.supportType}</strong>
                           </div>
                         )}
                         {selectedInquiry.supportCoverage && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">SLA / Support Window</span>
-                            <strong className="text-[#172033]">{selectedInquiry.supportCoverage}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.supportCoverage}</strong>
                           </div>
                         )}
                         {selectedInquiry.businessImpact && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Business Impact</span>
-                            <strong className="text-[#172033]">{selectedInquiry.businessImpact}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.businessImpact}</strong>
                           </div>
                         )}
                         {(selectedInquiry.industry || selectedInquiry.businessType) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Industry Sector</span>
-                            <strong className="text-[#172033]">{selectedInquiry.industry || selectedInquiry.businessType}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.industry || selectedInquiry.businessType}</strong>
                           </div>
                         )}
                         {(selectedInquiry.currentSoftware || selectedInquiry.currentSystem) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Current Software / ERP</span>
-                            <strong className="text-[#172033]">{selectedInquiry.currentSoftware || selectedInquiry.currentSystem}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.currentSoftware || selectedInquiry.currentSystem}</strong>
                           </div>
                         )}
                         {(selectedInquiry.userSize || selectedInquiry.numberOfUsers) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Estimated System Users</span>
-                            <strong className="text-[#172033]">{selectedInquiry.userSize || selectedInquiry.numberOfUsers}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.userSize || selectedInquiry.numberOfUsers}</strong>
                           </div>
                         )}
                         {selectedInquiry.deploymentPreference && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Deployment Preference</span>
-                            <strong className="text-[#172033]">{selectedInquiry.deploymentPreference}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.deploymentPreference}</strong>
                           </div>
                         )}
                         {(selectedInquiry.duration || selectedInquiry.timeline) && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Target Duration</span>
-                            <strong className="text-[#172033]">{selectedInquiry.duration || selectedInquiry.timeline}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.duration || selectedInquiry.timeline}</strong>
                           </div>
                         )}
                       </div>
@@ -1335,18 +1335,18 @@ const AdminInquiries = () => {
 
                   {/* Original Customer Message */}
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#172033] mb-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#252720] mb-2">
                       Original Message & Client Requirements
                     </h4>
-                    <div className="p-4 sm:p-5 rounded-2xl bg-[#F8FAFC] border border-[#E8ECF3] text-xs text-[#172033] whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#F8FAFC] border border-[#E7E0D3] text-xs text-[#252720] whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
                       {selectedInquiry.message || selectedInquiry.requirement || 'No detailed message was included in this enquiry.'}
                     </div>
                   </div>
 
                   {/* Existing Quick Approve / Reject Actions + Create Proposal CTA */}
-                  <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E8ECF3] flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E7E0D3] flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div>
-                      <span className="font-bold text-[#172033] block">Commercial & Workflow Actions</span>
+                      <span className="font-bold text-[#252720] block">Commercial & Workflow Actions</span>
                       <span className="text-[#64748B] text-[11px]">Generate formal proposals or update qualification status</span>
                     </div>
 
@@ -1419,8 +1419,8 @@ const AdminInquiries = () => {
               {detailTab === 'actions' && (
                 <div className="space-y-6">
                   {/* Lead Stage Progression */}
-                  <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E8ECF3]">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#172033] mb-3">
+                  <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E7E0D3]">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#252720] mb-3">
                       Lead Lifecycle Stage
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -1438,8 +1438,8 @@ const AdminInquiries = () => {
                           onClick={() => handleStageChange(st.id)}
                           className={`p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between ${
                             (selectedInquiry.leadStage || selectedInquiry.status) === st.id
-                              ? 'bg-[#4F46E5] text-white border-[#4F46E5] shadow-xs'
-                              : 'bg-white border-[#E8ECF3] text-[#172033] hover:border-[#4F46E5]/40'
+                              ? 'bg-[#174B39] text-white border-[#174B39] shadow-xs'
+                              : 'bg-white border-[#E7E0D3] text-[#252720] hover:border-[#174B39]/40'
                           }`}
                         >
                           <span className="font-bold text-xs">{st.label}</span>
@@ -1458,8 +1458,8 @@ const AdminInquiries = () => {
                   </div>
 
                   {/* Priority Selector */}
-                  <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E8ECF3]">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#172033] mb-3">
+                  <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E7E0D3]">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#252720] mb-3">
                       Lead Priority
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -1475,8 +1475,8 @@ const AdminInquiries = () => {
                           onClick={() => handlePriorityChange(pr.id)}
                           className={`p-3 rounded-xl border text-left transition cursor-pointer flex flex-col justify-between ${
                             selectedInquiry.priority === pr.id
-                              ? 'bg-[#172033] text-white border-[#172033] shadow-xs'
-                              : 'bg-white border-[#E8ECF3] text-[#172033] hover:border-[#172033]/40'
+                              ? 'bg-[#252720] text-white border-[#252720] shadow-xs'
+                              : 'bg-white border-[#E7E0D3] text-[#252720] hover:border-[#252720]/40'
                           }`}
                         >
                           <span className="font-bold text-xs uppercase">{pr.label}</span>
@@ -1493,8 +1493,8 @@ const AdminInquiries = () => {
                   </div>
 
                   {/* Team Assignment Selector */}
-                  <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E8ECF3]">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#172033] mb-1.5">
+                  <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E7E0D3]">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#252720] mb-1.5">
                       Assigned Lead Owner
                     </label>
                     <p className="text-xs text-[#64748B] mb-3">
@@ -1506,7 +1506,7 @@ const AdminInquiries = () => {
                         value={selectedInquiry.assignedTo?._id || selectedInquiry.assignedTo || 'unassigned'}
                         onChange={(e) => handleAssignMember(e.target.value)}
                         disabled={actionLoading}
-                        className="w-full sm:w-80 px-3.5 py-2.5 text-xs font-semibold text-[#172033] bg-white border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none transition cursor-pointer"
+                        className="w-full sm:w-80 px-3.5 py-2.5 text-xs font-semibold text-[#252720] bg-white border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition cursor-pointer"
                       >
                         <option value="unassigned">— Unassigned (Open Pool) —</option>
                         {teamMembers.map((member) => (
@@ -1534,7 +1534,7 @@ const AdminInquiries = () => {
               {detailTab === 'followup' && (
                 <div className="space-y-6">
                   {/* Current Follow-up Status Box */}
-                  <div className="p-5 rounded-2xl bg-[#F8FAFC] border border-[#E8ECF3]">
+                  <div className="p-5 rounded-2xl bg-[#F8FAFC] border border-[#E7E0D3]">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block mb-1">
                       Current Follow-up Status
                     </span>
@@ -1549,7 +1549,7 @@ const AdminInquiries = () => {
                           )}
                         </div>
                         {selectedInquiry.followUpNote && (
-                          <p className="text-xs text-[#172033] font-medium mt-1.5 italic">
+                          <p className="text-xs text-[#252720] font-medium mt-1.5 italic">
                             "{selectedInquiry.followUpNote}"
                           </p>
                         )}
@@ -1571,14 +1571,14 @@ const AdminInquiries = () => {
                   </div>
 
                   {/* Schedule New / Reschedule Form */}
-                  <form onSubmit={handleScheduleFollowUp} className="p-5 rounded-2xl bg-white border border-[#E8ECF3] space-y-4">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#172033]">
+                  <form onSubmit={handleScheduleFollowUp} className="p-5 rounded-2xl bg-white border border-[#E7E0D3] space-y-4">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#252720]">
                       {selectedInquiry.followUpStatus === 'scheduled' ? 'Reschedule Follow-up' : 'Schedule Next Follow-up'}
                     </h4>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="block text-xs font-semibold text-[#172033] mb-1">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1">
                           Follow-up Date & Time *
                         </label>
                         <input
@@ -1586,12 +1586,12 @@ const AdminInquiries = () => {
                           required
                           value={followUpForm.date}
                           onChange={(e) => setFollowUpForm({ ...followUpForm, date: e.target.value })}
-                          className="w-full px-3 py-2 text-xs border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none"
+                          className="w-full px-3 py-2 text-xs border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-[#172033] mb-1">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1">
                           Objective / Follow-up Note
                         </label>
                         <input
@@ -1599,7 +1599,7 @@ const AdminInquiries = () => {
                           placeholder="e.g. Call client regarding proposal feedback"
                           value={followUpForm.note}
                           onChange={(e) => setFollowUpForm({ ...followUpForm, note: e.target.value })}
-                          className="w-full px-3 py-2 text-xs border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none"
+                          className="w-full px-3 py-2 text-xs border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none"
                         />
                       </div>
                     </div>
@@ -1607,7 +1607,7 @@ const AdminInquiries = () => {
                     <button
                       type="submit"
                       disabled={!followUpForm.date || actionLoading}
-                      className="px-4 py-2 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold transition disabled:opacity-50 cursor-pointer"
+                      className="px-4 py-2 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold transition disabled:opacity-50 cursor-pointer"
                     >
                       {actionLoading ? 'Saving...' : 'Confirm Follow-up'}
                     </button>
@@ -1631,12 +1631,12 @@ const AdminInquiries = () => {
                       selectedInquiry.notes.map((note, idx) => (
                         <div
                           key={note._id || idx}
-                          className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E8ECF3] text-xs space-y-1.5"
+                          className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E7E0D3] text-xs space-y-1.5"
                         >
-                          <p className="text-[#172033] leading-relaxed whitespace-pre-wrap">{note.text}</p>
-                          <div className="flex items-center justify-between text-[10px] text-[#64748B] pt-1 border-t border-[#E8ECF3]/60">
-                            <span className="font-semibold text-[#172033] flex items-center gap-1">
-                              <FiUser className="w-3 h-3 text-[#4F46E5]" />
+                          <p className="text-[#252720] leading-relaxed whitespace-pre-wrap">{note.text}</p>
+                          <div className="flex items-center justify-between text-[10px] text-[#64748B] pt-1 border-t border-[#E7E0D3]/60">
+                            <span className="font-semibold text-[#252720] flex items-center gap-1">
+                              <FiUser className="w-3 h-3 text-[#174B39]" />
                               {note.authorName || (note.addedBy?.name || 'Administrator')}
                             </span>
                             <span>{note.addedAt ? new Date(note.addedAt).toLocaleString() : 'Recently'}</span>
@@ -1652,7 +1652,7 @@ const AdminInquiries = () => {
 
                   {/* Add Note Form */}
                   <form onSubmit={handleAddNote} className="space-y-2">
-                    <label className="block text-xs font-semibold text-[#172033]">
+                    <label className="block text-xs font-semibold text-[#252720]">
                       Add New Internal Note
                     </label>
                     <textarea
@@ -1661,7 +1661,7 @@ const AdminInquiries = () => {
                       value={newNoteText}
                       onChange={(e) => setNewNoteText(e.target.value)}
                       maxLength={2000}
-                      className="w-full p-3 text-xs bg-white border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] outline-none transition"
+                      className="w-full p-3 text-xs bg-white border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition"
                     />
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] text-[#94A3B8]">
@@ -1670,7 +1670,7 @@ const AdminInquiries = () => {
                       <button
                         type="submit"
                         disabled={!newNoteText.trim() || actionLoading}
-                        className="px-4 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 cursor-pointer"
+                        className="px-4 py-2 bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 cursor-pointer"
                       >
                         {actionLoading ? 'Saving...' : 'Add Private Note'}
                       </button>
@@ -1686,17 +1686,17 @@ const AdminInquiries = () => {
                     Complete immutable chronological audit log of lifecycle actions and assignments.
                   </p>
 
-                  <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#E8ECF3]">
+                  <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#E7E0D3]">
                     {selectedInquiry.timeline && selectedInquiry.timeline.length > 0 ? (
                       selectedInquiry.timeline
                         .slice()
                         .reverse()
                         .map((act, idx) => (
                           <div key={act._id || idx} className="relative">
-                            <span className="absolute -left-[23px] top-1 w-3 h-3 rounded-full bg-[#4F46E5] ring-4 ring-white" />
-                            <div className="bg-[#F8FAFC] p-3 rounded-xl border border-[#E8ECF3] text-xs">
-                              <p className="font-semibold text-[#172033]">{act.description}</p>
-                              <div className="flex items-center justify-between text-[10px] text-[#64748B] mt-1 pt-1 border-t border-[#E8ECF3]/60">
+                            <span className="absolute -left-[23px] top-1 w-3 h-3 rounded-full bg-[#174B39] ring-4 ring-white" />
+                            <div className="bg-[#F8FAFC] p-3 rounded-xl border border-[#E7E0D3] text-xs">
+                              <p className="font-semibold text-[#252720]">{act.description}</p>
+                              <div className="flex items-center justify-between text-[10px] text-[#64748B] mt-1 pt-1 border-t border-[#E7E0D3]/60">
                                 <span>Actor: {act.performedByName || 'System'}</span>
                                 <span>{new Date(act.createdAt).toLocaleString()}</span>
                               </div>
@@ -1712,7 +1712,7 @@ const AdminInquiries = () => {
             </div>
 
             {/* Modal Actions Footer */}
-            <div className="p-4 sm:px-6 border-t border-[#E8ECF3] bg-[#F8FAFC] flex items-center justify-between shrink-0">
+            <div className="p-4 sm:px-6 border-t border-[#E7E0D3] bg-[#F8FAFC] flex items-center justify-between shrink-0">
               <button
                 onClick={() => setDeleteConfirmId(selectedInquiry._id)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[#DC2626] hover:bg-[#FEF2F2] transition cursor-pointer"
@@ -1723,7 +1723,7 @@ const AdminInquiries = () => {
 
               <button
                 onClick={handleCloseDetail}
-                className="px-5 py-2 rounded-xl bg-white border border-[#E8ECF3] text-[#172033] hover:bg-[#F6F8FC] text-xs font-semibold transition cursor-pointer shadow-xs"
+                className="px-5 py-2 rounded-xl bg-white border border-[#E7E0D3] text-[#252720] hover:bg-[#FDFBF7] text-xs font-semibold transition cursor-pointer shadow-xs"
               >
                 Close
               </button>
@@ -1734,19 +1734,19 @@ const AdminInquiries = () => {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 z-60 bg-[#172033]/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#FFFFFF] rounded-2xl max-w-sm w-full p-6 border border-[#E8ECF3] shadow-2xl text-center">
+        <div className="fixed inset-0 z-60 bg-[#252720]/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[#FFFFFF] rounded-2xl max-w-sm w-full p-6 border border-[#E7E0D3] shadow-2xl text-center">
             <div className="w-12 h-12 rounded-full bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center mx-auto mb-3">
               <FiAlertTriangle className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-[#172033]">Permanently Delete Enquiry?</h4>
+            <h4 className="text-base font-bold text-[#252720]">Permanently Delete Enquiry?</h4>
             <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed">
               This action cannot be undone. All contact details, private notes, and audit timeline for this enquiry will be permanently removed.
             </p>
             <div className="flex items-center justify-center gap-3 mt-6">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="px-4 py-2 rounded-xl bg-[#F6F8FC] hover:bg-[#E8ECF3] text-xs font-semibold text-[#172033] transition cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#FDFBF7] hover:bg-[#E7E0D3] text-xs font-semibold text-[#252720] transition cursor-pointer"
               >
                 Cancel
               </button>

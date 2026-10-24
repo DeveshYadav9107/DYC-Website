@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
+import { FiArrowLeft } from 'react-icons/fi';
 
 const AuthLayout = ({
   children,
@@ -21,20 +21,20 @@ const AuthLayout = ({
   }, [isAuthenticated, loading, navigate, location.search]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between font-sans selection:bg-[#EEF2FF] selection:text-[#4F46E5]">
+    <div className="min-h-screen bg-[#F8F5EE] flex flex-col justify-between font-sans selection:bg-[#EAF0E8] selection:text-[#174B39]">
       {/* Top Mobile Bar */}
-      <header className="lg:hidden w-full bg-white border-b border-[#E2E8F0] px-4 py-3 flex items-center justify-between">
+      <header className="lg:hidden w-full bg-[#FDFBF7] border-b border-[#E7E0D3] px-4 py-3 flex items-center justify-between">
         <Link to="/" className="inline-flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#11183F] flex items-center justify-center text-white font-black text-sm">
-            <span className="text-[#10B981]">D</span>
+          <div className="w-8 h-8 rounded-lg bg-[#174B39] flex items-center justify-center text-white font-black text-sm">
+            <span className="text-[#D7B875]">D</span>
           </div>
-          <span className="text-base font-extrabold tracking-tight text-[#11183F]">
+          <span className="text-base font-serif font-bold tracking-tight text-[#252720]">
             DY&C
           </span>
         </Link>
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748B] hover:text-[#11183F] transition"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#66665D] hover:text-[#174B39] transition"
         >
           <FiArrowLeft className="text-xs" />
           <span>Home</span>
@@ -43,10 +43,10 @@ const AuthLayout = ({
 
       {/* Main Split Content */}
       <main className="flex-1 flex items-center justify-center p-3 sm:p-6 lg:p-8">
-        <div className="w-full max-w-6xl bg-white rounded-3xl border border-[#E2E8F0] shadow-[0_20px_50px_rgba(17,24,63,0.06)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+        <div className="w-full max-w-6xl bg-white rounded-3xl border border-[#E7E0D3] shadow-[0_20px_50px_rgba(23,75,57,0.08)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
           
           {/* ================= LEFT VISUAL PANEL ================= */}
-          <div className="lg:col-span-6 relative bg-[#F8FAFC] flex flex-col justify-between overflow-hidden min-h-[380px] lg:min-h-full border-b lg:border-b-0 lg:border-r border-[#E2E8F0]">
+          <div className="lg:col-span-6 relative bg-[#FDFBF7] flex flex-col justify-between overflow-hidden min-h-[380px] lg:min-h-full border-b lg:border-b-0 lg:border-r border-[#E7E0D3]">
             {/* Visual Image */}
             <div className="absolute inset-0">
               <img
@@ -54,23 +54,23 @@ const AuthLayout = ({
                 alt="DY&C Enterprise Technology and Consulting"
                 className="w-full h-full object-cover object-top"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#103728]/40 via-transparent to-transparent pointer-events-none" />
             </div>
           </div>
 
-
           {/* ================= RIGHT FORM PANEL ================= */}
-          <div className="lg:col-span-6 flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-white">
+          <div className="lg:col-span-6 flex flex-col justify-between p-6 sm:p-10 lg:p-12 bg-[#FDFBF7]">
             {/* Top Nav inside Form Panel */}
             <div className="hidden lg:flex items-center justify-between mb-4">
               <Link
                 to="/"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748B] hover:text-[#11183F] transition group"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#66665D] hover:text-[#174B39] transition group"
               >
                 <FiArrowLeft className="text-xs transition-transform group-hover:-translate-x-0.5" />
                 <span>Back to Public Website</span>
               </Link>
-              <div className="text-[11px] text-[#94A3B8] font-medium">
-                DY&C Secure Portal
+              <div className="text-[11px] text-[#B88A3B] font-bold uppercase tracking-wider">
+                DY&C Enterprise Portal
               </div>
             </div>
 
@@ -80,9 +80,9 @@ const AuthLayout = ({
             </div>
 
             {/* Bottom Notice */}
-            <div className="pt-6 mt-4 border-t border-[#F1F5F9] text-center">
-              <p className="text-[11px] text-[#94A3B8]">
-                Protected by enterprise encryption & real email verification.
+            <div className="pt-6 mt-4 border-t border-[#E7E0D3] text-center">
+              <p className="text-[11px] text-[#66665D]">
+                Protected by enterprise encryption & secure verification.
               </p>
             </div>
           </div>
@@ -91,7 +91,7 @@ const AuthLayout = ({
       </main>
 
       {/* Footer */}
-      <footer className="w-full text-center py-4 px-4 text-xs text-[#94A3B8]">
+      <footer className="w-full text-center py-4 px-4 text-xs text-[#66665D]">
         © {new Date().getFullYear()} Dinesh Yadav & Company (DY&C). All rights reserved.
       </footer>
     </div>

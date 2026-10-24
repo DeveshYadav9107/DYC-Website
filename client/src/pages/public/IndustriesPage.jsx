@@ -1,59 +1,73 @@
 import { Link } from 'react-router-dom';
 import IndustriesGrid from '../../components/home/IndustriesGrid';
 import Reveal from '../../components/animations/Reveal';
+import { FiCheck } from 'react-icons/fi';
 
 const IndustriesPage = () => {
   return (
-    <div className="bg-bg-primary min-h-screen text-text-primary">
+    <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
       {/* Header */}
-      <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
-        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_bottom_left,var(--color-primary-light),transparent_70%)]"></div>
-        <div className="max-w-7xl mx-auto text-center relative z-10 pt-10">
+      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
+        <div className="max-w-7xl mx-auto text-center relative z-10 pt-4 sm:pt-6">
           <Reveal>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Industries We <span className="text-primary">Serve</span></h1>
-            <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-bold tracking-[0.2em] uppercase mb-6 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
+              <span>Vertical Solutions</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 tracking-tight text-[#252720]">
+              Industries We <span className="text-[#174B39] italic">Serve</span>
+            </h1>
+            <p className="text-lg sm:text-xl text-[#66665D] max-w-2xl mx-auto leading-relaxed font-sans">
               Our ERP solutions, SAP expertise, and specialized staffing services are tailored to meet the strict demands of diverse sectors.
             </p>
           </Reveal>
         </div>
       </div>
 
-      {/* Reusing the IndustriesGrid component from the homepage */}
+      {/* Industries Grid */}
       <div>
         <IndustriesGrid />
       </div>
 
       {/* Deep Dive Section */}
-      <div className="bg-bg-secondary py-32 px-6 border-y border-border-light">
+      <div className="bg-[#FDFBF7] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 border-y border-[#E7E0D3]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-14 sm:gap-16 items-center">
             <Reveal>
               <div>
-                <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
-                  <span className="w-8 h-px bg-primary"></span>
+                <div className="text-[#B88A3B] font-bold uppercase tracking-widest text-xs mb-3 flex items-center gap-2.5">
+                  <span className="w-8 h-px bg-[#B88A3B]"></span>
                   Domain Expertise
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-10 tracking-tight">Why Industry Experience Matters</h2>
-                <ul className="space-y-8">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#252720] mb-8 tracking-tight">
+                  Why Industry Experience Matters
+                </h2>
+                <ul className="space-y-6">
                   <li className="flex items-start gap-4 group">
-                    <span className="text-primary mt-1 group-hover:scale-125 transition-transform">✓</span>
+                    <div className="w-6 h-6 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <FiCheck className="text-xs text-[#174B39]" />
+                    </div>
                     <div>
-                      <h3 className="font-bold text-lg text-text-primary group-hover:text-primary transition-colors">Regulatory Compliance</h3>
-                      <p className="text-text-secondary mt-2 leading-relaxed">We understand the specific compliance, security, and audit requirements of sectors like Healthcare and Finance.</p>
+                      <h3 className="font-serif font-bold text-lg text-[#252720] group-hover:text-[#174B39] transition-colors">Regulatory Compliance</h3>
+                      <p className="text-[#66665D] mt-1 text-sm sm:text-base leading-relaxed">We understand the specific compliance, security, and audit requirements of sectors like Healthcare and Finance.</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-4 group">
-                    <span className="text-primary mt-1 group-hover:scale-125 transition-transform">✓</span>
+                    <div className="w-6 h-6 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <FiCheck className="text-xs text-[#174B39]" />
+                    </div>
                     <div>
-                      <h3 className="font-bold text-lg text-text-primary group-hover:text-primary transition-colors">Custom Workflows</h3>
-                      <p className="text-text-secondary mt-2 leading-relaxed">Manufacturing supply chains operate differently than retail logistics. Our SAP consultants configure systems to match your reality.</p>
+                      <h3 className="font-serif font-bold text-lg text-[#252720] group-hover:text-[#174B39] transition-colors">Custom Workflows</h3>
+                      <p className="text-[#66665D] mt-1 text-sm sm:text-base leading-relaxed">Manufacturing supply chains operate differently than retail logistics. Our SAP consultants configure systems to match your reality.</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-4 group">
-                    <span className="text-primary mt-1 group-hover:scale-125 transition-transform">✓</span>
+                    <div className="w-6 h-6 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 flex items-center justify-center shrink-0 mt-0.5">
+                      <FiCheck className="text-xs text-[#174B39]" />
+                    </div>
                     <div>
-                      <h3 className="font-bold text-lg text-text-primary group-hover:text-primary transition-colors">Niche Talent Sourcing</h3>
-                      <p className="text-text-secondary mt-2 leading-relaxed">Our staffing division knows exactly where to find professionals with specific industry-certified experience.</p>
+                      <h3 className="font-serif font-bold text-lg text-[#252720] group-hover:text-[#174B39] transition-colors">Niche Talent Sourcing</h3>
+                      <p className="text-[#66665D] mt-1 text-sm sm:text-base leading-relaxed">Our staffing division knows exactly where to find professionals with specific industry-certified experience.</p>
                     </div>
                   </li>
                 </ul>
@@ -61,14 +75,14 @@ const IndustriesPage = () => {
             </Reveal>
             
             <Reveal delay={0.2}>
-              <div className="bg-surface border border-border shadow-surface rounded-2xl p-10 text-center relative overflow-hidden group hover:shadow-surface-hover transition-all">
-                 <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors pointer-events-none"></div>
-                 <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-500 relative z-10 grayscale group-hover:grayscale-0">🌍</div>
-                 <h3 className="text-2xl font-bold text-text-primary mb-4 relative z-10">Don't see your industry?</h3>
-                 <p className="text-text-secondary mb-8 relative z-10 leading-relaxed">
-                   Our core technology solutions are highly adaptable. We likely have experience solving operational challenges similar to yours.
+              <div className="bg-white border border-[#E7E0D3] shadow-[0_8px_30px_rgba(37,39,32,0.04)] rounded-3xl p-8 sm:p-10 text-center relative overflow-hidden group hover:shadow-[0_16px_40px_rgba(23,75,57,0.1)] transition-all">
+                 <div className="text-5xl mb-6 relative z-10">🏛️</div>
+                 <span className="text-xs font-bold uppercase tracking-widest text-[#B88A3B] block mb-2">Custom Engagement</span>
+                 <h3 className="text-2xl font-serif font-bold text-[#252720] mb-4 relative z-10">Don't See Your Industry?</h3>
+                 <p className="text-[#66665D] mb-8 relative z-10 leading-relaxed text-sm sm:text-base">
+                   Our core technology solutions are highly adaptable. We have proven experience solving operational challenges across specialized domains.
                  </p>
-                 <Link to="/contact" className="btn-primary inline-block px-8 py-3 relative z-10">
+                 <Link to="/contact" className="btn-primary inline-block px-8 py-3.5 relative z-10 text-sm sm:text-base font-semibold">
                    Discuss Your Requirements
                  </Link>
               </div>

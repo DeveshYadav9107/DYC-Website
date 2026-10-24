@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import siteConfig from '../../config/siteConfig';
 import { submitInquiry } from '../../services/api';
@@ -295,11 +295,11 @@ const ContactPage = () => {
   const currentCategoryObj = ENQUIRY_CATEGORIES.find((c) => c.id === selectedCategory) || ENQUIRY_CATEGORIES[0];
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen text-[#1E293B]">
-      {/* Header Banner - Light Theme with contact-banner.png */}
-      <div className="bg-white text-slate-900 py-20 md:py-28 px-6 relative overflow-hidden border-b border-slate-200">
-        {/* Background Image - Full Intensity */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
+    <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
+      {/* Header Banner */}
+      <div className="bg-[#F8F5EE] text-[#252720] py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
           <img
             src="/images/contact-banner.png"
             alt="Contact Us Banner"
@@ -310,13 +310,14 @@ const ContactPage = () => {
         <div className="max-w-7xl mx-auto relative z-10 pt-4">
           <Reveal>
             <div className="max-w-3xl">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 mb-4 shadow-xs">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-[#EAF0E8] text-[#174B39] border border-[#174B39]/20 mb-4 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
                 Enterprise Intake & Proposal Desk
               </span>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-[#102A43] tracking-tight mb-4">
-                Discuss Your Requirements
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#252720] tracking-tight mb-4">
+                Discuss Your <span className="text-[#174B39] italic">Requirements</span>
               </h1>
-              <p className="text-lg text-slate-600 leading-relaxed font-normal">
+              <p className="text-base sm:text-lg text-[#66665D] leading-relaxed font-sans">
                 Submit your business requirements to DY&C. Our functional leads and technical specialists will review your intake and formulate a tailored service proposal.
               </p>
             </div>
@@ -324,15 +325,15 @@ const ContactPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {/* Category Selector Grid */}
         <div className="mb-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-2">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">Step 1</span>
-              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Select Requirement Category</h2>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#B88A3B]">Step 1</span>
+              <h2 className="text-2xl font-serif font-bold text-[#252720] tracking-tight">Select Requirement Category</h2>
             </div>
-            <p className="text-sm text-slate-500">Choose the service area to tailor your submission form</p>
+            <p className="text-sm text-[#66665D]">Choose the service area to tailor your submission form</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -343,25 +344,27 @@ const ContactPage = () => {
                   key={cat.id}
                   type="button"
                   onClick={() => handleCategorySelect(cat.id)}
-                  className={`text-left p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between relative group ${
+                  className={`text-left p-4 rounded-2xl border transition-all duration-200 flex flex-col justify-between relative group cursor-pointer ${
                     isSelected
-                      ? 'bg-white border-emerald-600 shadow-md ring-2 ring-emerald-500/20'
-                      : 'bg-white/80 border-slate-200 hover:border-slate-300 hover:bg-white shadow-sm'
+                      ? 'bg-white border-[#174B39] shadow-md ring-2 ring-[#174B39]/20'
+                      : 'bg-[#FDFBF7] border-[#E7E0D3] hover:border-[#174B39]/40 hover:bg-white shadow-2xs'
                   }`}
                 >
                   {isSelected && (
-                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></span>
+                    <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-[#174B39] ring-4 ring-[#EAF0E8]"></span>
                   )}
                   <div>
                     <div className="text-2xl mb-2">{cat.icon}</div>
-                    <span className="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600 inline-block mb-1">
+                    <span className={`text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded inline-block mb-1 ${
+                      isSelected ? 'bg-[#EAF0E8] text-[#174B39]' : 'bg-white border border-[#E7E0D3] text-[#66665D]'
+                    }`}>
                       {cat.badge}
                     </span>
-                    <h3 className={`font-bold text-sm ${isSelected ? 'text-emerald-700' : 'text-slate-900'}`}>
+                    <h3 className={`font-serif font-bold text-sm ${isSelected ? 'text-[#174B39]' : 'text-[#252720]'}`}>
                       {cat.title}
                     </h3>
                   </div>
-                  <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#66665D] mt-2 line-clamp-2 leading-relaxed">
                     {cat.subtitle}
                   </p>
                 </button>
@@ -374,7 +377,7 @@ const ContactPage = () => {
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Main Form Area */}
           <div className="lg:col-span-8">
-            <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-10">
+            <div className="bg-white border border-[#E7E0D3] shadow-sm rounded-2xl p-6 md:p-10">
               {submissionResult.success ? (
                 <div className="text-center py-10 px-4 animate-fadeIn">
                   <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
@@ -383,14 +386,14 @@ const ContactPage = () => {
                   <span className="inline-block px-3 py-1 rounded-md bg-emerald-100/60 text-emerald-800 text-xs font-mono font-bold tracking-wider mb-3">
                     REF: {submissionResult.enquiryNumber}
                   </span>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Requirement Submitted Successfully!</h3>
-                  <p className="text-slate-600 max-w-lg mx-auto text-sm leading-relaxed mb-8">
+                  <h3 className="text-2xl font-bold text-[#252720] mb-2">Requirement Submitted Successfully!</h3>
+                  <p className="text-[#66665D] max-w-lg mx-auto text-sm leading-relaxed mb-8">
                     Thank you for reaching out to DY&C. Your intake has been registered under reference{' '}
-                    <strong className="text-slate-900">{submissionResult.enquiryNumber}</strong>. Our enterprise team will evaluate your scope and formulate a commercial proposal.
+                    <strong className="text-[#252720]">{submissionResult.enquiryNumber}</strong>. Our enterprise team will evaluate your scope and formulate a commercial proposal.
                   </p>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 max-w-md mx-auto text-left text-xs text-slate-600 space-y-2 mb-8">
-                    <p className="font-semibold text-slate-800">What happens next?</p>
+                  <div className="bg-slate-50 border border-[#E7E0D3] rounded-xl p-5 max-w-md mx-auto text-left text-xs text-[#66665D] space-y-2 mb-8">
+                    <p className="font-semibold text-[#252720]">What happens next?</p>
                     <p>• Our senior solution consultant reviews your technical specifications.</p>
                     <p>• If additional details are required, our desk will contact you via email or phone.</p>
                     <p>• A customized proposal with milestones and pricing will be prepared.</p>
@@ -407,13 +410,13 @@ const ContactPage = () => {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-8">
                   {/* Category Banner Title */}
-                  <div className="border-b border-slate-100 pb-5 flex items-center justify-between">
+                  <div className="border-b border-[#E7E0D3]/60 pb-5 flex items-center justify-between">
                     <div>
                       <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">Step 2</span>
-                      <h2 className="text-xl font-bold text-slate-900">
+                      <h2 className="text-xl font-bold text-[#252720]">
                         {currentCategoryObj.title} Request
                       </h2>
-                      <p className="text-xs text-slate-500 mt-0.5">{currentCategoryObj.description}</p>
+                      <p className="text-xs text-[#66665D] mt-0.5">{currentCategoryObj.description}</p>
                     </div>
                     <span className="text-3xl hidden sm:block">{currentCategoryObj.icon}</span>
                   </div>
@@ -425,7 +428,7 @@ const ContactPage = () => {
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                           Full Name <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -435,12 +438,12 @@ const ContactPage = () => {
                           value={formData.name}
                           onChange={handleChange}
                           placeholder="e.g. Rajesh Sharma"
-                          className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition text-slate-900"
+                          className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none transition text-[#252720]"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                           Business Email <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -450,12 +453,12 @@ const ContactPage = () => {
                           value={formData.email}
                           onChange={handleChange}
                           placeholder="rajesh@enterprise.com"
-                          className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition text-slate-900"
+                          className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none transition text-[#252720]"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                           Phone Number <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -465,12 +468,12 @@ const ContactPage = () => {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="+91 98765 43210"
-                          className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition text-slate-900"
+                          className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none transition text-[#252720]"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                           Company / Organization
                         </label>
                         <input
@@ -479,12 +482,12 @@ const ContactPage = () => {
                           value={formData.company}
                           onChange={handleChange}
                           placeholder="e.g. Precision Manufacturing Pvt Ltd"
-                          className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition text-slate-900"
+                          className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none transition text-[#252720]"
                         />
                       </div>
 
                       <div className="sm:col-span-2">
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                           Designation / Job Title (Optional)
                         </label>
                         <input
@@ -493,7 +496,7 @@ const ContactPage = () => {
                           value={formData.designation}
                           onChange={handleChange}
                           placeholder="e.g. VP Operations / IT Director / HR Head"
-                          className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition text-slate-900"
+                          className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none transition text-[#252720]"
                         />
                       </div>
                     </div>
@@ -503,18 +506,18 @@ const ContactPage = () => {
 
                   {/* 1. Manpower & Staffing */}
                   {selectedCategory === 'staffing-request' && (
-                    <div className="pt-4 border-t border-slate-100 space-y-6">
+                    <div className="pt-4 border-t border-[#E7E0D3]/60 space-y-6">
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                             Staffing Positions & Skill Requirements
                           </h3>
-                          <p className="text-xs text-slate-500">Specify one or multiple job roles required</p>
+                          <p className="text-xs text-[#66665D]">Specify one or multiple job roles required</p>
                         </div>
                         <button
                           type="button"
                           onClick={addPositionRow}
-                          className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-md transition"
+                          className="text-xs font-semibold text-[#174B39] hover:text-[#103728] flex items-center gap-1 bg-[#EAF0E8] hover:bg-[#EAF0E8]/80 px-3 py-1.5 rounded-lg transition font-semibold"
                         >
                           + Add Another Role
                         </button>
@@ -524,10 +527,10 @@ const ContactPage = () => {
                         {formData.staffingPositions.map((pos, idx) => (
                           <div
                             key={idx}
-                            className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl grid grid-cols-1 sm:grid-cols-12 gap-3 items-end"
+                            className="p-3.5 bg-slate-50 border border-[#E7E0D3] rounded-xl grid grid-cols-1 sm:grid-cols-12 gap-3 items-end"
                           >
                             <div className="sm:col-span-5">
-                              <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              <label className="block text-[11px] font-semibold text-[#66665D] mb-1">
                                 Role / Title *
                               </label>
                               <input
@@ -536,11 +539,11 @@ const ContactPage = () => {
                                 value={pos.roleTitle}
                                 onChange={(e) => handlePositionChange(idx, 'roleTitle', e.target.value)}
                                 placeholder="e.g. CNC Operator / Site Supervisor"
-                                className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:border-emerald-500 outline-none text-slate-900"
+                                className="w-full px-3 py-1.5 text-xs bg-white border border-[#E7E0D3] rounded-lg focus:border-[#174B39] outline-none text-[#252720]"
                               />
                             </div>
                             <div className="sm:col-span-2">
-                              <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              <label className="block text-[11px] font-semibold text-[#66665D] mb-1">
                                 Headcount
                               </label>
                               <input
@@ -548,17 +551,17 @@ const ContactPage = () => {
                                 min="1"
                                 value={pos.count}
                                 onChange={(e) => handlePositionChange(idx, 'count', Number(e.target.value) || 1)}
-                                className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:border-emerald-500 outline-none text-slate-900"
+                                className="w-full px-3 py-1.5 text-xs bg-white border border-[#E7E0D3] rounded-lg focus:border-[#174B39] outline-none text-[#252720]"
                               />
                             </div>
                             <div className="sm:col-span-2">
-                              <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              <label className="block text-[11px] font-semibold text-[#66665D] mb-1">
                                 Skill Level
                               </label>
                               <select
                                 value={pos.skillLevel}
                                 onChange={(e) => handlePositionChange(idx, 'skillLevel', e.target.value)}
-                                className="w-full px-2 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:border-emerald-500 outline-none text-slate-900"
+                                className="w-full px-2 py-1.5 text-xs bg-white border border-[#E7E0D3] rounded-lg focus:border-[#174B39] outline-none text-[#252720]"
                               >
                                 <option value="Skilled">Skilled</option>
                                 <option value="Semi-Skilled">Semi-Skilled</option>
@@ -567,13 +570,13 @@ const ContactPage = () => {
                               </select>
                             </div>
                             <div className="sm:col-span-2">
-                              <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              <label className="block text-[11px] font-semibold text-[#66665D] mb-1">
                                 Type
                               </label>
                               <select
                                 value={pos.employmentType}
                                 onChange={(e) => handlePositionChange(idx, 'employmentType', e.target.value)}
-                                className="w-full px-2 py-1.5 text-xs bg-white border border-slate-300 rounded-md focus:border-emerald-500 outline-none text-slate-900"
+                                className="w-full px-2 py-1.5 text-xs bg-white border border-[#E7E0D3] rounded-lg focus:border-[#174B39] outline-none text-[#252720]"
                               >
                                 <option value="Contract">Contract</option>
                                 <option value="Permanent">Permanent</option>
@@ -598,7 +601,7 @@ const ContactPage = () => {
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Work Location
                           </label>
                           <input
@@ -607,18 +610,18 @@ const ContactPage = () => {
                             value={formData.workLocation}
                             onChange={handleChange}
                             placeholder="e.g. Manesar / Bhiwadi / Pune"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Deployment Preference
                           </label>
                           <select
                             name="deploymentPreference"
                             value={formData.deploymentPreference}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="Onsite">Onsite (Plant / Facility)</option>
                             <option value="Hybrid">Hybrid</option>
@@ -626,7 +629,7 @@ const ContactPage = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Expected Start Date
                           </label>
                           <input
@@ -635,14 +638,14 @@ const ContactPage = () => {
                             value={formData.startDate}
                             onChange={handleChange}
                             placeholder="e.g. Immediate / Within 15 Days"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Contract / Project Duration
                           </label>
                           <input
@@ -651,11 +654,11 @@ const ContactPage = () => {
                             value={formData.duration}
                             onChange={handleChange}
                             placeholder="e.g. 6 Months / 1 Year / Ongoing"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Target Budget / Rate Range (Optional)
                           </label>
                           <input
@@ -664,7 +667,7 @@ const ContactPage = () => {
                             value={formData.budgetRange}
                             onChange={handleChange}
                             placeholder="e.g. ₹25,000 - ₹35,000 / month per resource"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                       </div>
@@ -673,21 +676,21 @@ const ContactPage = () => {
 
                   {/* 2. SAP Resources Request */}
                   {selectedCategory === 'sap-resource-request' && (
-                    <div className="pt-4 border-t border-slate-100 space-y-4">
+                    <div className="pt-4 border-t border-[#E7E0D3]/60 space-y-4">
                       <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                         SAP Consultant Profile & Module Details
                       </h3>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Primary SAP Module *
                           </label>
                           <select
                             name="sapModule"
                             value={formData.sapModule}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="FICO">SAP FICO (Financial & Controlling)</option>
                             <option value="MM">SAP MM (Materials Management)</option>
@@ -704,7 +707,7 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Resource Role & Specialty
                           </label>
                           <input
@@ -713,19 +716,19 @@ const ContactPage = () => {
                             value={formData.sapRole}
                             onChange={handleChange}
                             placeholder="e.g. Lead FICO Consultant, Senior ABAPer"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Consultant Category
                           </label>
                           <select
                             name="sapResourceCategory"
                             value={formData.sapResourceCategory}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="Functional Consultant">Functional Consultant</option>
                             <option value="Technical Consultant">Technical Consultant (ABAP / Basis)</option>
@@ -735,14 +738,14 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Required Experience
                           </label>
                           <select
                             name="experienceLevel"
                             value={formData.experienceLevel}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="3-5 Years">3 - 5 Years (Mid-level)</option>
                             <option value="5-8 Years">5 - 8 Years (Senior)</option>
@@ -752,14 +755,14 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             SAP System Environment
                           </label>
                           <select
                             name="sapEnvironment"
                             value={formData.sapEnvironment}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="S/4HANA On-Premise">S/4HANA On-Premise</option>
                             <option value="S/4HANA Cloud (Public/Private)">S/4HANA Cloud (Public/Private)</option>
@@ -769,7 +772,7 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Number of Consultants Required
                           </label>
                           <input
@@ -778,21 +781,21 @@ const ContactPage = () => {
                             name="numberOfConsultants"
                             value={formData.numberOfConsultants}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Deployment Mode
                           </label>
                           <select
                             name="deploymentPreference"
                             value={formData.deploymentPreference}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="Onsite">Client Onsite</option>
                             <option value="Hybrid">Hybrid Delivery</option>
@@ -800,7 +803,7 @@ const ContactPage = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Expected Start Date
                           </label>
                           <input
@@ -809,11 +812,11 @@ const ContactPage = () => {
                             value={formData.startDate}
                             onChange={handleChange}
                             placeholder="e.g. Immediate / Next Month"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Engagement Duration
                           </label>
                           <input
@@ -822,7 +825,7 @@ const ContactPage = () => {
                             value={formData.duration}
                             onChange={handleChange}
                             placeholder="e.g. 3 Months / 6 Months"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                       </div>
@@ -831,21 +834,21 @@ const ContactPage = () => {
 
                   {/* 3. SAP Support & Maintenance */}
                   {selectedCategory === 'sap-support' && (
-                    <div className="pt-4 border-t border-slate-100 space-y-4">
+                    <div className="pt-4 border-t border-[#E7E0D3]/60 space-y-4">
                       <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                         SAP Support Scope & SLA Expectations
                       </h3>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Type of Requirement *
                           </label>
                           <select
                             name="supportType"
                             value={formData.supportType}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="Application Management Support (AMS)">Application Management Support (AMS)</option>
                             <option value="Incident & Ticket Support">Incident & Ticket Support</option>
@@ -856,7 +859,7 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             SAP Environment & Release
                           </label>
                           <input
@@ -865,19 +868,19 @@ const ContactPage = () => {
                             value={formData.sapEnvironment}
                             onChange={handleChange}
                             placeholder="e.g. S/4HANA 2022 / ECC 6.0 EHP8"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Business Impact / Priority
                           </label>
                           <select
                             name="businessImpact"
                             value={formData.businessImpact}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="Low - Informational">Low — Non-urgent inquiry / optimization</option>
                             <option value="Medium - Operational impact">Medium — Normal operational impact</option>
@@ -887,14 +890,14 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Support Window / SLA Coverage
                           </label>
                           <select
                             name="supportCoverage"
                             value={formData.supportCoverage}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="Standard Business Hours (8x5)">Standard Business Hours (8x5)</option>
                             <option value="Extended Coverage (16x5)">Extended Coverage (16x5)</option>
@@ -905,7 +908,7 @@ const ContactPage = () => {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                           Active SAP Modules Needing Support
                         </label>
                         <input
@@ -914,7 +917,7 @@ const ContactPage = () => {
                           value={formData.sapModule}
                           onChange={handleChange}
                           placeholder="e.g. FICO, SD, MM, PP, Basis"
-                          className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                          className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                         />
                       </div>
                     </div>
@@ -922,21 +925,21 @@ const ContactPage = () => {
 
                   {/* 4. ERP Solutions */}
                   {selectedCategory === 'erp-inquiry' && (
-                    <div className="pt-4 border-t border-slate-100 space-y-4">
+                    <div className="pt-4 border-t border-[#E7E0D3]/60 space-y-4">
                       <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                         Enterprise Landscape & Business Scope
                       </h3>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Industry Vertical
                           </label>
                           <select
                             name="industry"
                             value={formData.industry}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="Manufacturing">Manufacturing & Engineering</option>
                             <option value="Automotive">Automotive & Components</option>
@@ -951,7 +954,7 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Current Software / Accounting System
                           </label>
                           <input
@@ -960,12 +963,12 @@ const ContactPage = () => {
                             value={formData.currentSoftware}
                             onChange={handleChange}
                             placeholder="e.g. Tally Prime / Busy / Excel / Legacy ERP"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
 
                         <div className="sm:col-span-2">
-                          <label className="block text-xs font-semibold text-slate-700 mb-2">
+                          <label className="block text-xs font-semibold text-[#252720] mb-2">
                             Departments / Business Functions in Scope
                           </label>
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -985,8 +988,8 @@ const ContactPage = () => {
                                   onClick={() => handleDepartmentToggle(dept)}
                                   className={`px-3 py-2 text-xs rounded-lg border text-left flex items-center gap-2 transition ${
                                     checked
-                                      ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-medium'
-                                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                      ? 'bg-[#EAF0E8] border-[#174B39]/40 text-[#174B39] font-medium'
+                                      : 'bg-white border-[#E7E0D3] text-[#66665D] hover:bg-slate-50'
                                   }`}
                                 >
                                   <span>{checked ? '☑' : '☐'}</span>
@@ -998,14 +1001,14 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Estimated System Users
                           </label>
                           <select
                             name="userSize"
                             value={formData.userSize}
                             onChange={handleChange}
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           >
                             <option value="< 15 Users">Under 15 Named Users</option>
                             <option value="15-50 Users">15 - 50 Users</option>
@@ -1015,7 +1018,7 @@ const ContactPage = () => {
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                          <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                             Target Implementation Horizon
                           </label>
                           <input
@@ -1024,7 +1027,7 @@ const ContactPage = () => {
                             value={formData.startDate}
                             onChange={handleChange}
                             placeholder="e.g. Q3 2026 / Next 6 Months"
-                            className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                            className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                           />
                         </div>
                       </div>
@@ -1032,9 +1035,9 @@ const ContactPage = () => {
                   )}
 
                   {/* Section C: Detailed Requirements & Message */}
-                  <div className="pt-4 border-t border-slate-100">
+                  <div className="pt-4 border-t border-[#E7E0D3]/60">
                     <div className="mb-4">
-                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                      <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                         Subject / Brief Title (Optional)
                       </label>
                       <input
@@ -1043,12 +1046,12 @@ const ContactPage = () => {
                         value={formData.subject}
                         onChange={handleChange}
                         placeholder={`e.g. ${currentCategoryObj.title} for ${formData.company || 'Our Company'}`}
-                        className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none text-slate-900"
+                        className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none text-[#252720]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                      <label className="block text-xs font-semibold text-[#252720] mb-1.5">
                         Detailed Business Requirements / Scope Description <span className="text-red-500">*</span>
                       </label>
                       <textarea
@@ -1058,7 +1061,7 @@ const ContactPage = () => {
                         value={formData.message}
                         onChange={handleChange}
                         placeholder="Please describe your project scope, technical expectations, or current bottlenecks so our team can prepare an accurate response."
-                        className="w-full px-3.5 py-2.5 bg-slate-50/50 border border-slate-300 rounded-lg text-sm focus:border-emerald-500 outline-none resize-y text-slate-900 placeholder-slate-400"
+                        className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none resize-y text-[#252720] placeholder-[#8A897C]"
                       ></textarea>
                     </div>
                   </div>
@@ -1075,7 +1078,7 @@ const ContactPage = () => {
                     <button
                       type="submit"
                       disabled={submissionResult.loading}
-                      className="w-full py-3.5 px-6 rounded-xl font-bold text-sm text-white bg-[#102A43] hover:bg-emerald-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full py-4 px-6 rounded-full font-bold text-sm sm:text-base text-white bg-[#174B39] hover:bg-[#103728] transition-all duration-200 shadow-[0_4px_16px_rgba(23,75,57,0.25)] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                     >
                       {submissionResult.loading ? (
                         <>
@@ -1097,61 +1100,61 @@ const ContactPage = () => {
 
           {/* Right Side: Enterprise Contact Cards */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-              <h3 className="font-bold text-base text-slate-900 mb-4 flex items-center gap-2">
+            <div className="bg-white border border-[#E7E0D3] rounded-2xl p-6 shadow-[0_4px_16px_rgba(37,39,32,0.03)]">
+              <h3 className="font-bold text-base text-[#252720] mb-4 flex items-center gap-2">
                 <span>🏢</span> Corporate Office
               </h3>
-              <div className="space-y-4 text-xs text-slate-600">
+              <div className="space-y-4 text-xs text-[#66665D]">
                 <div className="flex items-start gap-3">
                   <span className="text-slate-400 mt-0.5">📍</span>
                   <div>
-                    <strong className="text-slate-800 block mb-0.5">DY&C</strong>
+                    <strong className="text-[#252720] block mb-0.5">DY&C</strong>
                     <p className="leading-relaxed">{siteConfig.contact.address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-slate-400 mt-0.5">📞</span>
                   <div>
-                    <strong className="text-slate-800 block mb-0.5">Direct Line</strong>
+                    <strong className="text-[#252720] block mb-0.5">Direct Line</strong>
                     <p>{siteConfig.contact.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-slate-400 mt-0.5">✉️</span>
                   <div>
-                    <strong className="text-slate-800 block mb-0.5">Official Communications</strong>
+                    <strong className="text-[#252720] block mb-0.5">Official Communications</strong>
                     <p>{siteConfig.contact.email}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-emerald-50/50 text-slate-800 rounded-2xl p-6 shadow-sm border border-emerald-200">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block mb-1">
+            <div className="bg-[#EAF0E8] text-[#252720] rounded-2xl p-6 shadow-2xs border border-[#174B39]/20">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#174B39] block mb-1">
                 Enterprise Standards
               </span>
               <h3 className="text-base font-bold text-[#102A43] mb-2">Service Commitments</h3>
-              <div className="space-y-3 text-xs text-slate-600">
+              <div className="space-y-3 text-xs text-[#66665D]">
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span className="text-[#174B39] font-bold">✓</span>
                   <span>Structured Proposals with transparent line items</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span className="text-[#174B39] font-bold">✓</span>
                   <span>Verified technical vetting for all SAP consultants</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span className="text-[#174B39] font-bold">✓</span>
                   <span>Statutory compliance for industrial staffing</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span className="text-[#174B39] font-bold">✓</span>
                   <span>SLA-backed Application Management Support</span>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/60 text-xs text-emerald-800">
+            <div className="p-4 rounded-xl bg-[#FDFBF7] border border-[#B88A3B]/40 text-xs text-[#252720]">
               <span className="font-semibold block mb-1">Need an urgent meeting?</span>
               Reach our corporate advisory team directly at{' '}
               <a href={`mailto:${siteConfig.contact.email}`} className="font-bold underline">

@@ -5,30 +5,37 @@ import { StaggerContainer, StaggerItem } from '../../components/animations/Stagg
 
 const AboutPage = () => {
   return (
-    <div className="bg-bg-primary min-h-screen text-text-primary">
+    <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
       {/* Header */}
-      <div className="bg-bg-tertiary text-text-primary py-24 px-6 relative overflow-hidden border-b border-border-light">
+      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
         
         {/* Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 opacity-100">
+        <div className="absolute inset-0 z-0 opacity-15">
           <img src="/images/about-banner.png" alt="About DY&C" className="w-full h-full object-cover object-center" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-bg-tertiary/80 via-bg-tertiary/30 to-transparent z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/90 to-transparent z-0"></div>
 
-        <div className="max-w-7xl mx-auto relative z-10 pt-10">
+        <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">
           <Reveal>
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
               <div>
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight !text-[#102A43]">About <span className="!text-[#102A43]">{siteConfig.company.name}</span></h1>
-                <p className="text-xl text-text-secondary leading-relaxed max-w-xl">
+                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-bold tracking-[0.2em] uppercase mb-6 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
+                  <span>About DY&C</span>
+                </div>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 tracking-tight text-[#252720]">
+                  Enterprise Consulting With a <span className="text-[#174B39] italic">Disciplined</span> Edge
+                </h1>
+                <p className="text-lg sm:text-xl text-[#66665D] leading-relaxed max-w-xl font-sans">
                   {siteConfig.company.description}
                 </p>
               </div>
               
-              <div className="bg-white/60 backdrop-blur-md p-8 rounded-2xl border border-white/50 shadow-sm hidden md:block">
-                <h3 className="text-xl font-bold text-[#102A43] mb-4">Our Commitment</h3>
-                <p className="text-[#102A43]/90 leading-relaxed font-medium">
-                  We bridge the gap between exceptional talent and transformative technology. Our goal is to empower enterprises to scale efficiently through world-class SAP integration, innovative ERP solutions, and unparalleled strategic staffing tailored to your exact needs.
+              <div className="bg-[#FDFBF7] p-8 rounded-2xl border border-[#E7E0D3] shadow-[0_8px_30px_rgba(37,39,32,0.04)] hidden md:block">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#B88A3B] block mb-2">Our Executive Commitment</span>
+                <h3 className="text-xl font-serif font-bold text-[#252720] mb-4">Bridging Strategy and System Execution</h3>
+                <p className="text-[#66665D] leading-relaxed text-sm sm:text-base">
+                  We bridge the gap between exceptional talent and transformative technology. Our goal is to empower enterprises to scale efficiently through world-class SAP integration, innovative ERP solutions, and strategic staffing tailored to your operational realities.
                 </p>
               </div>
             </div>
@@ -37,22 +44,24 @@ const AboutPage = () => {
       </div>
 
       {/* Story & Vision */}
-      <div className="max-w-7xl mx-auto px-6 py-32">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+        <div className="grid md:grid-cols-2 gap-14 sm:gap-16 items-center">
           <Reveal>
             <div>
-              <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 flex items-center gap-2">
-                <span className="w-8 h-px bg-primary"></span>
+              <div className="text-[#B88A3B] font-bold uppercase tracking-widest text-xs mb-3 flex items-center gap-2.5">
+                <span className="w-8 h-px bg-[#B88A3B]"></span>
                 Our Origin
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-6 tracking-tight">Our Story</h2>
-              <p className="text-text-secondary mb-6 leading-relaxed">
+              <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#252720] mb-6 tracking-tight">
+                Our Story
+              </h2>
+              <p className="text-[#66665D] mb-6 leading-relaxed text-base sm:text-lg">
                 Founded on the principle that technology should drive measurable business value, DY&C has grown into a trusted partner for enterprises navigating complex digital transformations.
               </p>
-              <p className="text-text-secondary mb-8 leading-relaxed">
-                With over {siteConfig.metrics.yearsExperience.value} years of excellence, we bridge the gap between business strategy and IT execution. Whether it's sourcing the perfect SAP consultant, managing an S/4HANA migration, or building custom ERP software from the ground up, we bring deep industry expertise to every engagement.
+              <p className="text-[#66665D] mb-8 leading-relaxed text-base sm:text-lg">
+                With over {siteConfig.metrics.yearsExperience.value} years of excellence, we bridge the gap between business strategy and IT execution. Whether it's sourcing the right SAP consultant, managing an S/4HANA migration, or building custom ERP software from the ground up, we bring deep industry expertise to every engagement.
               </p>
-              <Link to="/contact" className="btn-secondary inline-block px-6 py-2.5">
+              <Link to="/contact" className="btn-secondary px-6 py-3 text-sm sm:text-base font-semibold">
                 Work With Us
               </Link>
             </div>
@@ -60,24 +69,33 @@ const AboutPage = () => {
           
           <Reveal delay={0.2}>
             <div className="relative group">
-              <div className="absolute inset-0 bg-primary/20 rounded-2xl transform translate-x-4 translate-y-4 blur-sm group-hover:translate-x-6 group-hover:translate-y-6 transition-all duration-500"></div>
-              <img 
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                alt="DYC Team Collaboration" 
-                className="rounded-2xl shadow-surface relative z-10 transition-transform duration-500 group-hover:scale-[1.02]"
-              />
+              <div className="absolute inset-0 bg-[#174B39]/10 rounded-2xl transform translate-x-3 translate-y-3 blur-xs transition-all duration-500"></div>
+              <div className="relative rounded-2xl overflow-hidden border border-[#E7E0D3] shadow-[0_12px_36px_rgba(23,75,57,0.08)] bg-white p-2">
+                <img 
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                  alt="DYC Team Collaboration" 
+                  className="rounded-xl w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                />
+              </div>
             </div>
           </Reveal>
         </div>
       </div>
 
       {/* Values */}
-      <div className="bg-bg-secondary py-32 px-6 border-y border-border-light">
+      <div className="bg-[#FDFBF7] py-24 sm:py-32 px-4 sm:px-6 lg:px-8 border-y border-[#E7E0D3]">
         <div className="max-w-7xl mx-auto">
           <Reveal>
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-4 tracking-tight">Our Core Values</h2>
-              <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
+            <div className="text-center mb-16 sm:mb-20">
+              <div className="text-[#B88A3B] font-bold uppercase tracking-widest text-xs mb-3 flex items-center justify-center gap-2.5">
+                <span className="w-8 h-px bg-[#B88A3B]"></span>
+                Guiding Principles
+                <span className="w-8 h-px bg-[#B88A3B]"></span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#252720] mb-4 tracking-tight">
+                Our Core Values
+              </h2>
+              <p className="text-lg md:text-xl text-[#66665D] max-w-2xl mx-auto leading-relaxed">
                 The principles that guide our consultants, developers, and leadership team every day.
               </p>
             </div>
@@ -103,32 +121,32 @@ const AboutPage = () => {
             ].map((val, idx) => (
               <StaggerItem key={idx}>
                 <div className="block group h-full">
-                  <div className="relative rounded-2xl overflow-hidden h-[380px] flex flex-col justify-end p-8 border border-border shadow-surface transition-all duration-500 hover:shadow-surface-hover cursor-default group-hover:-translate-y-2 group-hover:border-primary/30">
+                  <div className="relative rounded-2xl overflow-hidden h-[390px] flex flex-col justify-end p-7 sm:p-8 border border-[#E7E0D3] shadow-[0_4px_20px_rgba(37,39,32,0.04)] transition-all duration-500 hover:shadow-[0_12px_32px_rgba(23,75,57,0.12)] cursor-default group-hover:-translate-y-2 group-hover:border-[#174B39]/40 bg-white">
                     
                     {/* Background Image */}
                     <img
                       src={val.image}
                       alt={val.title}
-                      className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                      className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-108 transition-transform duration-1000"
                     />
                     
                     {/* Gradient Overlay Base */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent group-hover:opacity-0 transition-opacity duration-300 z-0"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/85 to-transparent group-hover:opacity-0 transition-opacity duration-300 z-0"></div>
 
                     {/* Content Base State */}
-                    <div className="relative z-10 mt-auto group-hover:opacity-0 transition-opacity duration-300 text-center md:text-left">
-                      <h3 className="text-xl font-bold text-text-primary mb-3 tracking-tight transition-colors">
+                    <div className="relative z-10 mt-auto group-hover:opacity-0 transition-opacity duration-300">
+                      <h3 className="text-2xl font-serif font-bold text-[#252720] mb-2.5 tracking-tight">
                         {val.title}
                       </h3>
-                      <p className="text-text-secondary leading-relaxed line-clamp-3">
+                      <p className="text-[#66665D] text-sm sm:text-base leading-relaxed line-clamp-3">
                         {val.desc}
                       </p>
                     </div>
 
-                    {/* Hover Overlay State */}
-                    <div className="absolute inset-0 bg-bg-navy/95 text-white p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end z-20 backdrop-blur-sm text-center md:text-left">
-                      <h4 className="text-2xl font-bold mb-4 tracking-tight text-white">{val.title}</h4>
-                      <p className="text-white/90 leading-relaxed text-lg">{val.desc}</p>
+                    {/* Hover Overlay State: Deep Forest Green with Gold Header */}
+                    <div className="absolute inset-0 bg-[#103728]/95 text-white p-7 sm:p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end z-20 backdrop-blur-xs">
+                      <h4 className="text-2xl font-serif font-bold mb-3 tracking-tight text-[#D7B875]">{val.title}</h4>
+                      <p className="text-[#EAF0E8] leading-relaxed text-base">{val.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -139,13 +157,15 @@ const AboutPage = () => {
       </div>
 
       {/* CTA */}
-      <div className="py-32 px-6 text-center bg-bg-primary">
+      <div className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 text-center bg-[#F8F5EE]">
         <Reveal>
-          <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Ready to work with us?</h2>
-          <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-10 leading-relaxed">
+          <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#252720] mb-5 tracking-tight">
+            Ready to Work With Us?
+          </h2>
+          <p className="text-lg md:text-xl text-[#66665D] max-w-2xl mx-auto mb-10 leading-relaxed">
             Join the growing list of enterprises that trust DYC for their SAP, staffing, and software needs.
           </p>
-          <Link to="/contact" className="btn-primary inline-block px-8 py-4 text-lg">
+          <Link to="/contact" className="btn-primary inline-block px-8 py-4 text-base sm:text-lg font-semibold">
             Contact Our Team
           </Link>
         </Reveal>

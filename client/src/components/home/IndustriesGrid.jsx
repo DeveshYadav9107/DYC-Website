@@ -13,19 +13,19 @@ const IndustriesGrid = () => {
   ];
 
   return (
-    <section className="py-32 bg-bg-primary px-6 relative border-t border-border-light">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,var(--color-primary-light),transparent_50%)] opacity-30"></div>
-
+    <section className="py-24 sm:py-32 bg-[#F8F5EE] px-4 sm:px-6 lg:px-8 relative border-b border-[#E7E0D3]">
       <div className="max-w-7xl mx-auto relative z-10">
         <Reveal>
-          <div className="text-center mb-20">
-            <div className="text-primary font-bold uppercase tracking-wider text-xs mb-3 inline-flex items-center gap-2">
-              <span className="w-8 h-px bg-primary"></span>
+          <div className="text-center mb-16 sm:mb-20">
+            <div className="text-[#B88A3B] font-bold uppercase tracking-widest text-xs mb-3.5 inline-flex items-center gap-2.5">
+              <span className="w-8 h-px bg-[#B88A3B]"></span>
               Sectors
-              <span className="w-8 h-px bg-primary"></span>
+              <span className="w-8 h-px bg-[#B88A3B]"></span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">Industries We Serve</h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#252720] mb-4 tracking-tight">
+              Industries We Serve
+            </h2>
+            <p className="text-lg md:text-xl text-[#66665D] max-w-2xl mx-auto leading-relaxed">
               Tailored enterprise solutions designed for the unique regulatory and operational challenges of your sector.
             </p>
           </div>
@@ -35,30 +35,34 @@ const IndustriesGrid = () => {
           {industries.map((ind, idx) => (
             <StaggerItem key={idx}>
               <Link to="/industries" className="block group h-full">
-                <div className="relative rounded-2xl overflow-hidden h-[420px] flex flex-col justify-end p-8 border border-border hover:border-primary/30 transition-all duration-500 shadow-surface group-hover:-translate-y-2 group-hover:shadow-surface-hover">
+                <div className="relative rounded-2xl overflow-hidden h-[420px] flex flex-col justify-end p-7 sm:p-8 border border-[#E7E0D3] hover:border-[#174B39]/50 transition-all duration-500 shadow-[0_4px_20px_rgba(37,39,32,0.04)] group-hover:-translate-y-2 group-hover:shadow-[0_12px_32px_rgba(23,75,57,0.1)] bg-white">
 
                   {/* Background Image */}
                   <img
                     src={ind.image}
                     alt={ind.name}
-                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                    className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-108 transition-transform duration-1000"
                   />
 
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/85 to-transparent"></div>
+                  <div className="absolute inset-0 bg-[#174B39]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-multiply"></div>
 
                   {/* Content */}
                   <div className="relative z-10 mt-auto">
-                    <h3 className="text-2xl font-bold text-text-primary mb-3 tracking-tight group-hover:text-primary transition-colors">
+                    <span className="text-[11px] font-bold text-[#B88A3B] uppercase tracking-wider mb-2 block">
+                      Enterprise Vertical
+                    </span>
+                    <h3 className="text-2xl font-serif font-bold text-[#252720] mb-2.5 tracking-tight group-hover:text-[#174B39] transition-colors">
                       {ind.name}
                     </h3>
-                    <p className="text-text-secondary leading-relaxed mb-6">
+                    <p className="text-[#66665D] text-sm sm:text-base leading-relaxed mb-5">
                       {ind.desc}
                     </p>
 
-                    <div className="text-primary font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                      Explore <span aria-hidden="true">→</span>
+                    <div className="text-[#174B39] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                      <span>Explore</span> 
+                      <span aria-hidden="true" className="text-[#B88A3B]">→</span>
                     </div>
                   </div>
                 </div>

@@ -11,7 +11,6 @@ import {
   FiEyeOff,
   FiArrowRight,
   FiAlertCircle,
-  FiCheck,
 } from 'react-icons/fi';
 
 const SignupPage = () => {
@@ -51,8 +50,8 @@ const SignupPage = () => {
 
     if (score <= 1) return { score: 1, label: 'Weak', color: 'bg-red-500' };
     if (score <= 2) return { score: 2, label: 'Fair', color: 'bg-amber-500' };
-    if (score === 3) return { score: 3, label: 'Good', color: 'bg-blue-500' };
-    return { score: 4, label: 'Strong', color: 'bg-emerald-500' };
+    if (score === 3) return { score: 3, label: 'Good', color: 'bg-[#B88A3B]' };
+    return { score: 4, label: 'Strong', color: 'bg-[#174B39]' };
   };
 
   const strength = getPasswordStrength(formData.password);
@@ -137,10 +136,13 @@ const SignupPage = () => {
       <div className="w-full max-w-md mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#11183F] tracking-tight">
-            Create your account
+          <span className="text-xs font-bold uppercase tracking-widest text-[#B88A3B] block mb-1.5">
+            Registration
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#252720] tracking-tight">
+            Create Your Account
           </h1>
-          <p className="text-xs sm:text-sm text-[#64748B] mt-1.5 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#66665D] mt-1.5 leading-relaxed font-sans">
             Register with Dinesh Yadav & Company to manage inquiries, view service updates, and access enterprise support.
           </p>
         </div>
@@ -161,12 +163,12 @@ const SignupPage = () => {
             <div>
               <label
                 htmlFor={firstNameId}
-                className="block text-xs font-bold text-[#1E293B] mb-1 uppercase tracking-wider"
+                className="block text-xs font-bold text-[#252720] mb-1 uppercase tracking-wider"
               >
                 First Name <span className="text-[#DC2626]">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#94A3B8]">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#8A897C]">
                   <FiUser className="w-4 h-4" />
                 </div>
                 <input
@@ -176,10 +178,10 @@ const SignupPage = () => {
                   placeholder="Dinesh"
                   value={formData.firstName}
                   onChange={handleChange('firstName')}
-                  className={`w-full pl-9 pr-3 py-2 text-sm text-[#11183F] bg-white border rounded-xl focus:ring-4 outline-none transition placeholder:text-[#94A3B8] ${
+                  className={`w-full pl-9 pr-3 py-2 text-sm text-[#252720] bg-white border rounded-xl focus:ring-2 outline-none transition placeholder:text-[#8A897C] ${
                     errors.firstName
                       ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-[#DC2626]/10'
-                      : 'border-[#E2E8F0] focus:border-[#4F46E5] focus:ring-[#4F46E5]/10'
+                      : 'border-[#E7E0D3] focus:border-[#174B39] focus:ring-[#174B39]/20'
                   }`}
                 />
               </div>
@@ -192,12 +194,12 @@ const SignupPage = () => {
             <div>
               <label
                 htmlFor={lastNameId}
-                className="block text-xs font-bold text-[#1E293B] mb-1 uppercase tracking-wider"
+                className="block text-xs font-bold text-[#252720] mb-1 uppercase tracking-wider"
               >
                 Last Name <span className="text-[#DC2626]">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#94A3B8]">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#8A897C]">
                   <FiUser className="w-4 h-4" />
                 </div>
                 <input
@@ -207,10 +209,10 @@ const SignupPage = () => {
                   placeholder="Yadav"
                   value={formData.lastName}
                   onChange={handleChange('lastName')}
-                  className={`w-full pl-9 pr-3 py-2 text-sm text-[#11183F] bg-white border rounded-xl focus:ring-4 outline-none transition placeholder:text-[#94A3B8] ${
+                  className={`w-full pl-9 pr-3 py-2 text-sm text-[#252720] bg-white border rounded-xl focus:ring-2 outline-none transition placeholder:text-[#8A897C] ${
                     errors.lastName
                       ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-[#DC2626]/10'
-                      : 'border-[#E2E8F0] focus:border-[#4F46E5] focus:ring-[#4F46E5]/10'
+                      : 'border-[#E7E0D3] focus:border-[#174B39] focus:ring-[#174B39]/20'
                   }`}
                 />
               </div>
@@ -224,12 +226,12 @@ const SignupPage = () => {
           <div>
             <label
               htmlFor={phoneId}
-              className="block text-xs font-bold text-[#1E293B] mb-1 uppercase tracking-wider"
+              className="block text-xs font-bold text-[#252720] mb-1 uppercase tracking-wider"
             >
               Phone Number <span className="text-[#DC2626]">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8A897C]">
                 <FiPhone className="w-4 h-4" />
               </div>
               <input
@@ -239,10 +241,10 @@ const SignupPage = () => {
                 placeholder="+91 98765 43210"
                 value={formData.phone}
                 onChange={handleChange('phone')}
-                className={`w-full pl-10 pr-4 py-2 text-sm text-[#11183F] bg-white border rounded-xl focus:ring-4 outline-none transition placeholder:text-[#94A3B8] ${
+                className={`w-full pl-10 pr-4 py-2 text-sm text-[#252720] bg-white border rounded-xl focus:ring-2 outline-none transition placeholder:text-[#8A897C] ${
                   errors.phone
                     ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-[#DC2626]/10'
-                    : 'border-[#E2E8F0] focus:border-[#4F46E5] focus:ring-[#4F46E5]/10'
+                    : 'border-[#E7E0D3] focus:border-[#174B39] focus:ring-[#174B39]/20'
                 }`}
               />
             </div>
@@ -251,16 +253,16 @@ const SignupPage = () => {
             )}
           </div>
 
-          {/* 4. Email Address */}
+          {/* 4. Business Email */}
           <div>
             <label
               htmlFor={emailId}
-              className="block text-xs font-bold text-[#1E293B] mb-1 uppercase tracking-wider"
+              className="block text-xs font-bold text-[#252720] mb-1 uppercase tracking-wider"
             >
               Email Address <span className="text-[#DC2626]">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8A897C]">
                 <FiMail className="w-4 h-4" />
               </div>
               <input
@@ -271,10 +273,10 @@ const SignupPage = () => {
                 placeholder="you@company.com"
                 value={formData.email}
                 onChange={handleChange('email')}
-                className={`w-full pl-10 pr-4 py-2 text-sm text-[#11183F] bg-white border rounded-xl focus:ring-4 outline-none transition placeholder:text-[#94A3B8] ${
+                className={`w-full pl-10 pr-4 py-2 text-sm text-[#252720] bg-white border rounded-xl focus:ring-2 outline-none transition placeholder:text-[#8A897C] ${
                   errors.email
                     ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-[#DC2626]/10'
-                    : 'border-[#E2E8F0] focus:border-[#4F46E5] focus:ring-[#4F46E5]/10'
+                    : 'border-[#E7E0D3] focus:border-[#174B39] focus:ring-[#174B39]/20'
                 }`}
               />
             </div>
@@ -287,12 +289,12 @@ const SignupPage = () => {
           <div>
             <label
               htmlFor={passwordId}
-              className="block text-xs font-bold text-[#1E293B] mb-1 uppercase tracking-wider"
+              className="block text-xs font-bold text-[#252720] mb-1 uppercase tracking-wider"
             >
               Password <span className="text-[#DC2626]">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8A897C]">
                 <FiLock className="w-4 h-4" />
               </div>
               <input
@@ -303,16 +305,16 @@ const SignupPage = () => {
                 placeholder="Minimum 8 characters"
                 value={formData.password}
                 onChange={handleChange('password')}
-                className={`w-full pl-10 pr-10 py-2 text-sm text-[#11183F] bg-white border rounded-xl focus:ring-4 outline-none transition placeholder:text-[#94A3B8] ${
+                className={`w-full pl-10 pr-10 py-2 text-sm text-[#252720] bg-white border rounded-xl focus:ring-2 outline-none transition placeholder:text-[#8A897C] ${
                   errors.password
                     ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-[#DC2626]/10'
-                    : 'border-[#E2E8F0] focus:border-[#4F46E5] focus:ring-[#4F46E5]/10'
+                    : 'border-[#E7E0D3] focus:border-[#174B39] focus:ring-[#174B39]/20'
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#94A3B8] hover:text-[#11183F] cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#8A897C] hover:text-[#252720] cursor-pointer"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
@@ -327,7 +329,7 @@ const SignupPage = () => {
                     style={{ width: `${(strength.score / 4) * 100}%` }}
                   />
                 </div>
-                <span className="text-[10px] font-semibold text-[#64748B]">
+                <span className="text-[10px] font-semibold text-[#66665D]">
                   {strength.label}
                 </span>
               </div>
@@ -341,12 +343,12 @@ const SignupPage = () => {
           <div>
             <label
               htmlFor={confirmPasswordId}
-              className="block text-xs font-bold text-[#1E293B] mb-1 uppercase tracking-wider"
+              className="block text-xs font-bold text-[#252720] mb-1 uppercase tracking-wider"
             >
               Confirm Password <span className="text-[#DC2626]">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8A897C]">
                 <FiLock className="w-4 h-4" />
               </div>
               <input
@@ -357,16 +359,16 @@ const SignupPage = () => {
                 placeholder="Re-enter your password"
                 value={formData.confirmPassword}
                 onChange={handleChange('confirmPassword')}
-                className={`w-full pl-10 pr-10 py-2 text-sm text-[#11183F] bg-white border rounded-xl focus:ring-4 outline-none transition placeholder:text-[#94A3B8] ${
+                className={`w-full pl-10 pr-10 py-2 text-sm text-[#252720] bg-white border rounded-xl focus:ring-2 outline-none transition placeholder:text-[#8A897C] ${
                   errors.confirmPassword
                     ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-[#DC2626]/10'
-                    : 'border-[#E2E8F0] focus:border-[#4F46E5] focus:ring-[#4F46E5]/10'
+                    : 'border-[#E7E0D3] focus:border-[#174B39] focus:ring-[#174B39]/20'
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#94A3B8] hover:text-[#11183F] cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#8A897C] hover:text-[#252720] cursor-pointer"
                 aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
               >
                 {showConfirmPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
@@ -382,7 +384,7 @@ const SignupPage = () => {
             type="submit"
             id="signup-submit-btn"
             disabled={loading}
-            className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-[#172554] hover:bg-[#1E293B] active:scale-[0.99] text-white text-sm font-semibold py-2.5 px-4 rounded-xl shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5]"
+            className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-[#174B39] hover:bg-[#103728] active:scale-[0.99] text-white text-sm font-semibold py-3 px-4 rounded-full shadow-[0_4px_16px_rgba(23,75,57,0.25)] transition disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39]"
           >
             {loading ? (
               <>
@@ -392,19 +394,19 @@ const SignupPage = () => {
             ) : (
               <>
                 <span>Create Account</span>
-                <FiArrowRight className="w-4 h-4" />
+                <FiArrowRight className="w-4 h-4 text-[#D7B875]" />
               </>
             )}
           </button>
         </form>
 
         {/* Switch to Login */}
-        <div className="mt-6 text-center">
-          <p className="text-xs text-[#64748B]">
+        <div className="mt-6 text-center pt-4 border-t border-[#E7E0D3]">
+          <p className="text-xs text-[#66665D]">
             Already have a DY&C account?{' '}
             <Link
               to="/login"
-              className="font-bold text-[#4F46E5] hover:text-[#4338CA] transition"
+              className="font-bold text-[#174B39] hover:text-[#103728] transition"
             >
               Sign In
             </Link>

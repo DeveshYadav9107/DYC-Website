@@ -406,21 +406,21 @@ const ProposalEditorModal = ({ isOpen, onClose, inquiry, initialProposal, onSave
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#172033]/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[94vh] flex flex-col border border-slate-200 shadow-2xl overflow-hidden my-auto">
+    <div className="fixed inset-0 z-50 bg-[#252720]/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+      <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[94vh] flex flex-col border border-[#E7E0D3] shadow-2xl overflow-hidden my-auto">
         {/* Modal Header */}
-        <div className="p-5 sm:p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+        <div className="p-5 sm:p-6 border-b border-[#E7E0D3] bg-[#FDFBF7] flex items-center justify-between shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#EAF0E8] text-[#174B39] border border-[#174B39]/20">
                 <FiFileText className="w-3 h-3" />
                 {isEditing ? `Edit Proposal Draft (${initialProposal.proposalNumber})` : 'New Proposal Generator'}
               </span>
-              <span className="text-xs text-slate-500">
-                Source Enquiry: <strong className="text-slate-800">{inquiry.enquiryNumber || `#${inquiry._id.slice(-6)}`}</strong>
+              <span className="text-xs text-[#66665D]">
+                Source Enquiry: <strong className="text-[#252720]">{inquiry.enquiryNumber || `#${inquiry._id.slice(-6)}`}</strong>
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#252720]">
               {isEditing ? initialProposal.title : `Create Proposal for ${inquiry.company || inquiry.name}`}
             </h2>
           </div>

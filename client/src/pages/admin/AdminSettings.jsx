@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { getSettings, updateSettings } from '../../services/api';
 import {
   FiSave,
@@ -111,7 +111,7 @@ const AdminSettings = () => {
   if (status.loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
-        <div className="w-8 h-8 border-2 border-[#4F46E5] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-2 border-[#174B39] border-t-transparent rounded-full animate-spin"></div>
         <p className="text-xs text-[#64748B] font-medium">Loading system settings...</p>
       </div>
     );
@@ -122,7 +122,7 @@ const AdminSettings = () => {
       {/* Top Header & Save Button */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#172033]">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#252720]">
             Global Site Settings
           </h2>
           <p className="text-sm text-[#64748B] mt-1">
@@ -134,7 +134,7 @@ const AdminSettings = () => {
           <button
             onClick={handleSubmit}
             disabled={status.saving}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition cursor-pointer ${
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold shadow-xs transition cursor-pointer ${
               status.saving ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >
@@ -170,13 +170,13 @@ const AdminSettings = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 1. Company Identity Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E8ECF3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E8ECF3]">
-            <div className="w-9 h-9 rounded-xl bg-[#EEF4FF] text-[#4F46E5] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
+        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
+            <div className="w-9 h-9 rounded-xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
               <FiBriefcase className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-[#172033] text-sm sm:text-base">
+              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
                 Company Identity
               </h3>
               <p className="text-xs text-[#64748B] mt-0.5">
@@ -187,7 +187,7 @@ const AdminSettings = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 Company Legal Name
               </label>
               <input
@@ -196,12 +196,12 @@ const AdminSettings = () => {
                 value={formData.companyName || ''}
                 onChange={handleChange}
                 placeholder="e.g. Dinesh Yadav & Company"
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 Company Tagline / Subtitle
               </label>
               <input
@@ -210,12 +210,12 @@ const AdminSettings = () => {
                 value={formData.companyTagline || ''}
                 onChange={handleChange}
                 placeholder="e.g. We help businesses run smarter with the right people and the right systems."
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 GST / Tax Registration Number
               </label>
               <input
@@ -224,20 +224,20 @@ const AdminSettings = () => {
                 value={formData.gst || ''}
                 onChange={handleChange}
                 placeholder="e.g. 06AOZPY8747D1ZX"
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition uppercase"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition uppercase"
               />
             </div>
           </div>
         </div>
 
         {/* 2. Contact Information Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E8ECF3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E8ECF3]">
-            <div className="w-9 h-9 rounded-xl bg-[#F2EEFF] text-[#7C3AED] flex items-center justify-center shrink-0 border border-[#DDD6FE]">
+        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
+            <div className="w-9 h-9 rounded-xl bg-[#EAF0E8] text-[#7C3AED] flex items-center justify-center shrink-0 border border-[#DDD6FE]">
               <FiPhone className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-[#172033] text-sm sm:text-base">
+              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
                 Contact & Office Details
               </h3>
               <p className="text-xs text-[#64748B] mt-0.5">
@@ -248,7 +248,7 @@ const AdminSettings = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 Primary Phone Number
               </label>
               <input
@@ -257,12 +257,12 @@ const AdminSettings = () => {
                 value={formData.phone || ''}
                 onChange={handleChange}
                 placeholder="+91 95883 09979"
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 Primary Support Email
               </label>
               <input
@@ -271,12 +271,12 @@ const AdminSettings = () => {
                 value={formData.email || ''}
                 onChange={handleChange}
                 placeholder="info@dycinfo.com"
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 Corporate Office Address
               </label>
               <input
@@ -285,20 +285,20 @@ const AdminSettings = () => {
                 value={formData.address || ''}
                 onChange={handleChange}
                 placeholder="E-52A, Suncity, Rewari, Haryana, India"
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
               />
             </div>
           </div>
         </div>
 
         {/* 3. SEO Defaults Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E8ECF3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E8ECF3]">
+        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
             <div className="w-9 h-9 rounded-xl bg-[#E8F8FC] text-[#0284C7] flex items-center justify-center shrink-0 border border-[#BAE6FD]">
               <FiGlobe className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-[#172033] text-sm sm:text-base">
+              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
                 Search Engine Optimization (SEO)
               </h3>
               <p className="text-xs text-[#64748B] mt-0.5">
@@ -309,7 +309,7 @@ const AdminSettings = () => {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 Default Meta Title
               </label>
               <input
@@ -318,12 +318,12 @@ const AdminSettings = () => {
                 value={formData.seo?.defaultTitle || ''}
                 onChange={handleChange}
                 placeholder="e.g. Dinesh Yadav & Company | Enterprise SAP & ERP Consulting"
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
                 Default Meta Description
               </label>
               <textarea
@@ -332,20 +332,20 @@ const AdminSettings = () => {
                 onChange={handleChange}
                 rows="3"
                 placeholder="Enterprise SAP consulting, staffing solutions and custom ERP software."
-                className="w-full px-3.5 py-2.5 text-xs text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/10 outline-none transition resize-none leading-relaxed"
+                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition resize-none leading-relaxed"
               ></textarea>
             </div>
           </div>
         </div>
 
         {/* 4. Feature Flags Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E8ECF3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E8ECF3]">
+        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
             <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] text-[#15803D] flex items-center justify-center shrink-0 border border-[#D1FAE5]">
               <FiToggleRight className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-[#172033] text-sm sm:text-base">
+              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
                 Feature Flags & Visibility
               </h3>
               <p className="text-xs text-[#64748B] mt-0.5">
@@ -384,19 +384,19 @@ const AdminSettings = () => {
                   onClick={() => handleToggle(feature.id)}
                   className={`p-4 rounded-xl border transition cursor-pointer flex items-center justify-between gap-4 select-none ${
                     enabled
-                      ? 'bg-[#EEF4FF]/30 border-[#4F46E5]/30'
-                      : 'bg-[#FFFFFF] border-[#E8ECF3] hover:bg-[#F8FAFC]'
+                      ? 'bg-[#EAF0E8]/30 border-[#174B39]/30'
+                      : 'bg-[#FFFFFF] border-[#E7E0D3] hover:bg-[#F8FAFC]'
                   }`}
                 >
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-[#172033]">{feature.title}</p>
+                    <p className="text-xs font-bold text-[#252720]">{feature.title}</p>
                     <p className="text-[11px] text-[#64748B] mt-0.5">{feature.desc}</p>
                   </div>
 
                   {/* Switch Pill */}
                   <div
                     className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors shrink-0 ${
-                      enabled ? 'bg-[#4F46E5]' : 'bg-[#E2E8F0]'
+                      enabled ? 'bg-[#174B39]' : 'bg-[#E2E8F0]'
                     }`}
                   >
                     <div
@@ -416,7 +416,7 @@ const AdminSettings = () => {
           <button
             type="submit"
             disabled={status.saving}
-            className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition cursor-pointer ${
+            className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold shadow-xs transition cursor-pointer ${
               status.saving ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >

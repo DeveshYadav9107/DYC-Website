@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FiArrowUpRight,
   FiChevronDown,
   FiChevronRight,
   FiMenu,
@@ -18,7 +17,6 @@ import {
 } from 'react-icons/fi';
 import siteConfig from '../../config/siteConfig';
 import { useAuth } from '../../context/AuthContext';
-
 
 const servicesList = [
   {
@@ -114,7 +112,6 @@ const Navbar = () => {
     };
   }, []);
 
-
   // Prevent background scrolling when mobile menu drawer is open
   useEffect(() => {
     if (mobileOpen) {
@@ -157,8 +154,8 @@ const Navbar = () => {
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? 'bg-white/95 backdrop-blur-md border-b border-[#E8ECF3] shadow-[0_4px_20px_-2px_rgba(23,37,84,0.06)] py-2 md:py-2.5'
-          : 'bg-white/90 backdrop-blur-md border-b border-[#E8ECF3]/70 py-3.5 md:py-4 shadow-none'
+          ? 'bg-[#F8F5EE]/95 backdrop-blur-md border-b border-[#E7E0D3] shadow-[0_4px_24px_rgba(23,75,57,0.06)] py-2.5 md:py-3'
+          : 'bg-[#F8F5EE]/90 backdrop-blur-md border-b border-[#E7E0D3]/80 py-3.5 md:py-4 shadow-none'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -167,10 +164,10 @@ const Navbar = () => {
         <div className="flex items-center shrink-0">
           <Link
             to="/"
-            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] rounded-xl"
+            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39] rounded-xl"
             aria-label={`${siteConfig.company.name} Home`}
           >
-            <div className="h-9 w-9 lg:h-10 lg:w-10 rounded-lg p-0.5 bg-white border border-[#E8ECF3] shadow-xs flex items-center justify-center transition-all duration-200 group-hover:border-[#4F46E5]/40 group-hover:shadow-sm">
+            <div className="h-9 w-9 lg:h-10 lg:w-10 rounded-lg p-0.5 bg-white border border-[#E7E0D3] shadow-xs flex items-center justify-center transition-all duration-200 group-hover:border-[#174B39]/50 group-hover:shadow-sm">
               <img
                 src="/favicon.jpg"
                 alt="DY&C Logo"
@@ -178,10 +175,10 @@ const Navbar = () => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg lg:text-xl font-bold text-[#172554] tracking-tight leading-none group-hover:text-[#4F46E5] transition-colors">
+              <span className="text-lg lg:text-xl font-bold font-serif text-[#252720] tracking-tight leading-none group-hover:text-[#174B39] transition-colors">
                 {siteConfig.company.name}
               </span>
-              <span className="text-[10px] font-semibold text-[#475569] tracking-wider uppercase mt-1 hidden sm:inline-block">
+              <span className="text-[10px] font-semibold text-[#66665D] tracking-widest uppercase mt-1 hidden sm:inline-block">
                 Business Solution
               </span>
             </div>
@@ -190,16 +187,16 @@ const Navbar = () => {
 
         {/* ================= 2. CENTER SECTION: FLOATING PILL NAVIGATION ================= */}
         <nav
-          className="hidden md:flex items-center bg-white border border-[#E8ECF3] rounded-full p-1.5 shadow-[0_2px_12px_rgba(23,37,84,0.05)] transition-all duration-300"
+          className="hidden md:flex items-center bg-[#FDFBF7] border border-[#E7E0D3] rounded-full p-1.5 shadow-[0_2px_12px_rgba(23,75,57,0.04)] transition-all duration-300"
           aria-label="Main Navigation"
         >
           {/* Home */}
           <Link
             to="/"
-            className={`px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
+            className={`relative px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
               location.pathname === '/'
-                ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold shadow-xs'
-                : 'text-[#172554] hover:text-[#4F46E5] hover:bg-[#F8FAFC]'
+                ? 'bg-[#EAF0E8] text-[#174B39] font-bold shadow-xs after:content-[""] after:absolute after:bottom-1 after:left-3 after:right-3 after:h-[2px] after:bg-[#B88A3B] after:rounded-full'
+                : 'text-[#252720] hover:text-[#174B39] hover:bg-[#EAF0E8]/50'
             }`}
           >
             Home
@@ -208,10 +205,10 @@ const Navbar = () => {
           {/* About */}
           <Link
             to="/about"
-            className={`px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
+            className={`relative px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
               location.pathname === '/about'
-                ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold shadow-xs'
-                : 'text-[#172554] hover:text-[#4F46E5] hover:bg-[#F8FAFC]'
+                ? 'bg-[#EAF0E8] text-[#174B39] font-bold shadow-xs after:content-[""] after:absolute after:bottom-1 after:left-3 after:right-3 after:h-[2px] after:bg-[#B88A3B] after:rounded-full'
+                : 'text-[#252720] hover:text-[#174B39] hover:bg-[#EAF0E8]/50'
             }`}
           >
             About
@@ -229,16 +226,16 @@ const Navbar = () => {
               onClick={() => setServicesOpen((prev) => !prev)}
               aria-haspopup="true"
               aria-expanded={servicesOpen}
-              className={`flex items-center gap-1 px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 cursor-pointer ${
+              className={`relative flex items-center gap-1 px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 cursor-pointer ${
                 isServicesActive || servicesOpen
-                  ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold shadow-xs'
-                  : 'text-[#172554] hover:text-[#4F46E5] hover:bg-[#F8FAFC]'
+                  ? 'bg-[#EAF0E8] text-[#174B39] font-bold shadow-xs after:content-[""] after:absolute after:bottom-1 after:left-3 after:right-3 after:h-[2px] after:bg-[#B88A3B] after:rounded-full'
+                  : 'text-[#252720] hover:text-[#174B39] hover:bg-[#EAF0E8]/50'
               }`}
             >
               <span>Services</span>
               <FiChevronDown
                 className={`text-xs transition-transform duration-200 ${
-                  servicesOpen ? 'rotate-180 text-[#4F46E5]' : 'text-[#475569]'
+                  servicesOpen ? 'rotate-180 text-[#174B39]' : 'text-[#66665D]'
                 }`}
               />
             </button>
@@ -251,12 +248,12 @@ const Navbar = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.98 }}
                   transition={{ duration: 0.16, ease: 'easeOut' }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 min-w-[280px] lg:min-w-[310px]"
+                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 min-w-[290px] lg:min-w-[320px]"
                 >
                   <div
                     role="menu"
                     aria-label="Services Submenu"
-                    className="bg-white rounded-2xl border border-[#E8ECF3] shadow-[0_12px_36px_rgba(23,37,84,0.12),0_4px_12px_rgba(0,0,0,0.04)] p-2"
+                    className="bg-[#FDFBF7] rounded-2xl border border-[#E7E0D3] shadow-[0_16px_40px_rgba(23,75,57,0.12),0_4px_12px_rgba(0,0,0,0.04)] p-2"
                   >
                     {servicesList.map((service) => {
                       const isActive = location.pathname === service.path;
@@ -268,15 +265,15 @@ const Navbar = () => {
                           onClick={() => setServicesOpen(false)}
                           className={`flex items-start gap-3 p-2.5 rounded-xl transition-all duration-150 group/item ${
                             isActive
-                              ? 'bg-[#EEF2FF] text-[#4F46E5]'
-                              : 'hover:bg-[#F8FAFC] text-[#172554]'
+                              ? 'bg-[#EAF0E8] text-[#174B39]'
+                              : 'hover:bg-[#EAF0E8]/60 text-[#252720]'
                           }`}
                         >
                           <div
                             className={`p-2 rounded-lg mt-0.5 transition-colors ${
                               isActive
-                                ? 'bg-white text-[#4F46E5] shadow-xs'
-                                : 'bg-[#EEF2FF]/70 text-[#4F46E5] group-hover/item:bg-[#4F46E5] group-hover/item:text-white'
+                                ? 'bg-white text-[#174B39] shadow-xs'
+                                : 'bg-[#EAF0E8] text-[#174B39] group-hover/item:bg-[#174B39] group-hover/item:text-white'
                             }`}
                           >
                             <IconComponent className="text-base" />
@@ -286,8 +283,8 @@ const Navbar = () => {
                               <span
                                 className={`text-sm font-semibold transition-colors ${
                                   isActive
-                                    ? 'text-[#4F46E5]'
-                                    : 'text-[#172554] group-hover/item:text-[#4F46E5]'
+                                    ? 'text-[#174B39]'
+                                    : 'text-[#252720] group-hover/item:text-[#174B39]'
                                 }`}
                               >
                                 {service.name}
@@ -295,12 +292,12 @@ const Navbar = () => {
                               <FiChevronRight
                                 className={`text-xs opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200 ${
                                   isActive
-                                    ? 'opacity-100 translate-x-0 text-[#4F46E5]'
-                                    : 'text-slate-400'
+                                    ? 'opacity-100 translate-x-0 text-[#B88A3B]'
+                                    : 'text-[#B88A3B]'
                                 }`}
                               />
                             </div>
-                            <p className="text-xs text-[#475569] mt-0.5 line-clamp-1">
+                            <p className="text-xs text-[#66665D] mt-0.5 line-clamp-1">
                               {service.desc}
                             </p>
                           </div>
@@ -316,10 +313,10 @@ const Navbar = () => {
           {/* SAP */}
           <Link
             to="/sap-capabilities"
-            className={`px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
+            className={`relative px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
               location.pathname === '/sap-capabilities'
-                ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold shadow-xs'
-                : 'text-[#172554] hover:text-[#4F46E5] hover:bg-[#F8FAFC]'
+                ? 'bg-[#EAF0E8] text-[#174B39] font-bold shadow-xs after:content-[""] after:absolute after:bottom-1 after:left-3 after:right-3 after:h-[2px] after:bg-[#B88A3B] after:rounded-full'
+                : 'text-[#252720] hover:text-[#174B39] hover:bg-[#EAF0E8]/50'
             }`}
           >
             SAP
@@ -328,10 +325,10 @@ const Navbar = () => {
           {/* Industries */}
           <Link
             to="/industries"
-            className={`px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
+            className={`relative px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
               location.pathname === '/industries'
-                ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold shadow-xs'
-                : 'text-[#172554] hover:text-[#4F46E5] hover:bg-[#F8FAFC]'
+                ? 'bg-[#EAF0E8] text-[#174B39] font-bold shadow-xs after:content-[""] after:absolute after:bottom-1 after:left-3 after:right-3 after:h-[2px] after:bg-[#B88A3B] after:rounded-full'
+                : 'text-[#252720] hover:text-[#174B39] hover:bg-[#EAF0E8]/50'
             }`}
           >
             Industries
@@ -340,10 +337,10 @@ const Navbar = () => {
           {/* Contact */}
           <Link
             to="/contact"
-            className={`px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
+            className={`relative px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
               location.pathname === '/contact'
-                ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold shadow-xs'
-                : 'text-[#172554] hover:text-[#4F46E5] hover:bg-[#F8FAFC]'
+                ? 'bg-[#EAF0E8] text-[#174B39] font-bold shadow-xs after:content-[""] after:absolute after:bottom-1 after:left-3 after:right-3 after:h-[2px] after:bg-[#B88A3B] after:rounded-full'
+                : 'text-[#252720] hover:text-[#174B39] hover:bg-[#EAF0E8]/50'
             }`}
           >
             Contact
@@ -357,14 +354,14 @@ const Navbar = () => {
               <Link
                 to="/login"
                 id="navbar-login-btn"
-                className="px-3.5 lg:px-4 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-semibold text-[#172554] hover:text-[#4F46E5] hover:bg-[#EEF2FF]/60 border border-[#E2E8F0] hover:border-[#CBD5E1] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5]"
+                className="px-3.5 lg:px-4 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-semibold text-[#252720] hover:text-[#174B39] hover:bg-white bg-[#FDFBF7] border border-[#E7E0D3] hover:border-[#174B39] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39]"
               >
                 Login
               </Link>
               <Link
                 to="/signup"
                 id="navbar-signup-btn"
-                className="group relative inline-flex items-center gap-1.5 bg-[#172554] hover:bg-[#1E293B] text-white px-4 lg:px-5 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-semibold shadow-[0_2px_8px_rgba(23,37,84,0.15)] hover:shadow-[0_6px_20px_rgba(23,37,84,0.22)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5]"
+                className="group relative inline-flex items-center gap-1.5 bg-[#174B39] hover:bg-[#103728] text-white px-4 lg:px-5 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-semibold shadow-[0_2px_10px_rgba(23,75,57,0.2)] hover:shadow-[0_4px_16px_rgba(23,75,57,0.3)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 border border-[#103728] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39]"
               >
                 <span>Sign Up</span>
               </Link>
@@ -375,17 +372,17 @@ const Navbar = () => {
                 type="button"
                 id="navbar-user-menu-btn"
                 onClick={() => setUserMenuOpen((prev) => !prev)}
-                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[#E2E8F0] hover:border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] shadow-xs transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5]"
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[#E7E0D3] hover:border-[#174B39] bg-[#FDFBF7] hover:bg-white shadow-xs transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39]"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#172554] to-[#4F46E5] text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#174B39] to-[#B88A3B] text-white flex items-center justify-center text-xs font-bold shadow-xs">
                   {userInitials}
                 </div>
-                <span className="text-xs lg:text-sm font-semibold text-[#172554] max-w-[130px] truncate">
+                <span className="text-xs lg:text-sm font-semibold text-[#252720] max-w-[130px] truncate">
                   {user?.firstName || user?.name?.split(' ')[0] || 'My Account'}
                 </span>
                 <FiChevronDown
-                  className={`text-xs text-[#64748B] transition-transform duration-200 ${
-                    userMenuOpen ? 'rotate-180 text-[#4F46E5]' : ''
+                  className={`text-xs text-[#66665D] transition-transform duration-200 ${
+                    userMenuOpen ? 'rotate-180 text-[#174B39]' : ''
                   }`}
                 />
               </button>
@@ -399,27 +396,27 @@ const Navbar = () => {
                     transition={{ duration: 0.16, ease: 'easeOut' }}
                     className="absolute right-0 top-full pt-2 z-50 min-w-[230px]"
                   >
-                    <div className="bg-white rounded-2xl border border-[#E8ECF3] shadow-[0_12px_36px_rgba(23,37,84,0.12),0_4px_12px_rgba(0,0,0,0.04)] p-2">
-                      <div className="px-3 py-2 border-b border-[#F1F5F9] mb-1">
-                        <p className="text-xs font-bold text-[#172554] truncate">{user?.name}</p>
-                        <p className="text-[11px] text-[#64748B] truncate">{user?.email}</p>
+                    <div className="bg-[#FDFBF7] rounded-2xl border border-[#E7E0D3] shadow-[0_16px_40px_rgba(23,75,57,0.12),0_4px_12px_rgba(0,0,0,0.04)] p-2">
+                      <div className="px-3 py-2 border-b border-[#E7E0D3]/60 mb-1">
+                        <p className="text-xs font-bold text-[#252720] truncate">{user?.name}</p>
+                        <p className="text-[11px] text-[#66665D] truncate">{user?.email}</p>
                       </div>
 
                       <Link
                         to="/profile"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#334155] hover:bg-[#F8FAFC] hover:text-[#4F46E5] transition"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#252720] hover:bg-[#EAF0E8] hover:text-[#174B39] transition"
                       >
-                        <FiUser className="text-sm text-[#64748B]" />
+                        <FiUser className="text-sm text-[#66665D]" />
                         <span>Profile</span>
                       </Link>
 
                       <Link
                         to="/my-enquiries"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#334155] hover:bg-[#F8FAFC] hover:text-[#4F46E5] transition"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#252720] hover:bg-[#EAF0E8] hover:text-[#174B39] transition"
                       >
-                        <FiFileText className="text-sm text-[#64748B]" />
+                        <FiFileText className="text-sm text-[#66665D]" />
                         <span>My Enquiries</span>
                       </Link>
 
@@ -427,14 +424,14 @@ const Navbar = () => {
                         <Link
                           to="/admin"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#4F46E5] bg-[#EEF2FF]/60 hover:bg-[#EEF2FF] transition"
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#174B39] bg-[#EAF0E8] hover:bg-[#EAF0E8]/80 transition"
                         >
-                          <FiShield className="text-sm text-[#4F46E5]" />
+                          <FiShield className="text-sm text-[#174B39]" />
                           <span>Admin Console</span>
                         </Link>
                       )}
 
-                      <div className="my-1 border-t border-[#F1F5F9]"></div>
+                      <div className="my-1 border-t border-[#E7E0D3]/60"></div>
 
                       <button
                         type="button"
@@ -460,14 +457,14 @@ const Navbar = () => {
           {!isAuthenticated ? (
             <Link
               to="/login"
-              className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-[#172554] bg-[#F1F5F9] hover:bg-[#E2E8F0] transition"
+              className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-[#252720] bg-white border border-[#E7E0D3] hover:border-[#174B39] transition"
             >
               Login
             </Link>
           ) : (
             <Link
               to="/profile"
-              className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#172554] to-[#4F46E5] text-white flex items-center justify-center text-xs font-bold shadow-xs"
+              className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#174B39] to-[#B88A3B] text-white flex items-center justify-center text-xs font-bold shadow-xs"
               title="My Profile"
             >
               {userInitials}
@@ -479,14 +476,13 @@ const Navbar = () => {
             onClick={() => setMobileOpen((prev) => !prev)}
             aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileOpen}
-            className="p-2 rounded-xl text-[#172554] hover:bg-[#EEF2FF] hover:text-[#4F46E5] border border-[#E8ECF3] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F46E5] cursor-pointer"
+            className="p-2 rounded-xl text-[#252720] hover:bg-[#EAF0E8] hover:text-[#174B39] border border-[#E7E0D3] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39] cursor-pointer"
           >
             {mobileOpen ? <FiX className="text-xl" /> : <FiMenu className="text-xl" />}
           </button>
         </div>
 
       </div>
-
 
       {/* ================= 5. MOBILE ACCORDION DRAWER & BACKDROP ================= */}
       <AnimatePresence>
@@ -499,7 +495,7 @@ const Navbar = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 top-[56px] sm:top-[64px] bg-slate-900/40 backdrop-blur-xs z-40 md:hidden"
+              className="fixed inset-0 top-[56px] sm:top-[64px] bg-[#252720]/40 backdrop-blur-xs z-40 md:hidden"
               aria-hidden="true"
             />
 
@@ -509,7 +505,7 @@ const Navbar = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: 'easeInOut' }}
-              className="relative z-50 md:hidden overflow-hidden bg-white border-t border-[#E8ECF3] shadow-2xl max-h-[calc(100vh-70px)] overflow-y-auto"
+              className="relative z-50 md:hidden overflow-hidden bg-[#FDFBF7] border-t border-[#E7E0D3] shadow-2xl max-h-[calc(100vh-70px)] overflow-y-auto"
             >
               <div className="px-5 pt-3 pb-6 flex flex-col gap-1">
                 {/* Home */}
@@ -518,8 +514,8 @@ const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                   className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     location.pathname === '/'
-                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                      ? 'bg-[#EAF0E8] text-[#174B39] font-bold border-l-2 border-[#B88A3B]'
+                      : 'text-[#252720] hover:bg-[#EAF0E8]/50'
                   }`}
                 >
                   Home
@@ -531,8 +527,8 @@ const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                   className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     location.pathname === '/about'
-                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                      ? 'bg-[#EAF0E8] text-[#174B39] font-bold border-l-2 border-[#B88A3B]'
+                      : 'text-[#252720] hover:bg-[#EAF0E8]/50'
                   }`}
                 >
                   About
@@ -545,14 +541,14 @@ const Navbar = () => {
                     onClick={() => setMobileServicesOpen((prev) => !prev)}
                     className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
                       isServicesActive || mobileServicesOpen
-                        ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                        : 'text-[#172554] hover:bg-[#F8FAFC]'
+                        ? 'bg-[#EAF0E8] text-[#174B39] font-bold border-l-2 border-[#B88A3B]'
+                        : 'text-[#252720] hover:bg-[#EAF0E8]/50'
                     }`}
                   >
                     <span>Services</span>
                     <FiChevronDown
                       className={`text-sm transition-transform duration-200 ${
-                        mobileServicesOpen ? 'rotate-180 text-[#4F46E5]' : 'text-[#475569]'
+                        mobileServicesOpen ? 'rotate-180 text-[#174B39]' : 'text-[#66665D]'
                       }`}
                     />
                   </button>
@@ -576,11 +572,11 @@ const Navbar = () => {
                               onClick={() => setMobileOpen(false)}
                               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                                 isActive
-                                  ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                                  : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#172554]'
+                                  ? 'bg-[#EAF0E8] text-[#174B39] font-bold'
+                                  : 'text-[#66665D] hover:bg-[#EAF0E8]/50 hover:text-[#252720]'
                               }`}
                             >
-                              <IconComp className="text-sm text-[#4F46E5]" />
+                              <IconComp className="text-sm text-[#174B39]" />
                               <span>{service.name}</span>
                             </Link>
                           );
@@ -596,8 +592,8 @@ const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                   className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     location.pathname === '/sap-capabilities'
-                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                      ? 'bg-[#EAF0E8] text-[#174B39] font-bold border-l-2 border-[#B88A3B]'
+                      : 'text-[#252720] hover:bg-[#EAF0E8]/50'
                   }`}
                 >
                   SAP
@@ -609,8 +605,8 @@ const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                   className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     location.pathname === '/industries'
-                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                      ? 'bg-[#EAF0E8] text-[#174B39] font-bold border-l-2 border-[#B88A3B]'
+                      : 'text-[#252720] hover:bg-[#EAF0E8]/50'
                   }`}
                 >
                   Industries
@@ -622,58 +618,58 @@ const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                   className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                     location.pathname === '/contact'
-                      ? 'bg-[#EEF2FF] text-[#4F46E5] font-semibold'
-                      : 'text-[#172554] hover:bg-[#F8FAFC]'
+                      ? 'bg-[#EAF0E8] text-[#174B39] font-bold border-l-2 border-[#B88A3B]'
+                      : 'text-[#252720] hover:bg-[#EAF0E8]/50'
                   }`}
                 >
                   Contact
                 </Link>
 
                 {/* Mobile Auth Actions */}
-                <div className="pt-3 mt-2 border-t border-slate-100">
+                <div className="pt-3 mt-2 border-t border-[#E7E0D3]">
                   {!isAuthenticated ? (
                     <div className="grid grid-cols-2 gap-2">
                       <Link
                         to="/login"
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center justify-center py-2.5 rounded-full text-xs font-semibold text-[#172554] bg-[#F1F5F9] hover:bg-[#E2E8F0] transition"
+                        className="flex items-center justify-center py-2.5 rounded-full text-xs font-semibold text-[#252720] bg-white border border-[#E7E0D3] hover:border-[#174B39] transition"
                       >
                         Login
                       </Link>
                       <Link
                         to="/signup"
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center justify-center py-2.5 rounded-full text-xs font-semibold text-white bg-[#172554] hover:bg-[#1E293B] shadow-sm transition"
+                        className="flex items-center justify-center py-2.5 rounded-full text-xs font-semibold text-white bg-[#174B39] hover:bg-[#103728] shadow-sm transition border border-[#103728]"
                       >
                         Sign Up
                       </Link>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2.5 px-3 py-2 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#172554] to-[#4F46E5] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                      <div className="flex items-center gap-2.5 px-3 py-2 bg-white rounded-xl border border-[#E7E0D3]">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#174B39] to-[#B88A3B] text-white flex items-center justify-center text-xs font-bold shrink-0">
                           {userInitials}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs font-bold text-[#172554] truncate">{user?.name}</p>
-                          <p className="text-[11px] text-[#64748B] truncate">{user?.email}</p>
+                          <p className="text-xs font-bold text-[#252720] truncate">{user?.name}</p>
+                          <p className="text-[11px] text-[#66665D] truncate">{user?.email}</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <Link
                           to="/profile"
                           onClick={() => setMobileOpen(false)}
-                          className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-medium text-[#334155] bg-white border border-[#E2E8F0] hover:bg-[#F8FAFC] transition"
+                          className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-medium text-[#252720] bg-white border border-[#E7E0D3] hover:bg-[#EAF0E8] transition"
                         >
-                          <FiUser className="text-xs text-[#64748B]" />
+                          <FiUser className="text-xs text-[#66665D]" />
                           Profile
                         </Link>
                         <Link
                           to="/my-enquiries"
                           onClick={() => setMobileOpen(false)}
-                          className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-medium text-[#334155] bg-white border border-[#E2E8F0] hover:bg-[#F8FAFC] transition"
+                          className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-medium text-[#252720] bg-white border border-[#E7E0D3] hover:bg-[#EAF0E8] transition"
                         >
-                          <FiFileText className="text-xs text-[#64748B]" />
+                          <FiFileText className="text-xs text-[#66665D]" />
                           My Enquiries
                         </Link>
                       </div>
@@ -681,7 +677,7 @@ const Navbar = () => {
                         <Link
                           to="/admin"
                           onClick={() => setMobileOpen(false)}
-                          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold text-[#4F46E5] bg-[#EEF2FF] border border-[#C7D2FE] transition"
+                          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold text-[#174B39] bg-[#EAF0E8] border border-[#174B39]/20 transition"
                         >
                           <FiShield className="text-xs" />
                           Admin Console

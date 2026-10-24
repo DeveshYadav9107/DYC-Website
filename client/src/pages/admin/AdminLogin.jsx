@@ -39,34 +39,37 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F8FC] flex flex-col justify-between items-center p-6 sm:p-8 font-sans selection:bg-[#F2EEFF] selection:text-[#4F46E5]">
+    <div className="min-h-screen bg-[#F8F5EE] flex flex-col justify-between items-center p-6 sm:p-8 font-sans selection:bg-[#EAF0E8] selection:text-[#174B39]">
       {/* Top Brand Link */}
       <div className="w-full max-w-md flex justify-between items-center pt-2">
         <Link 
           to="/" 
-          className="inline-flex items-center gap-2 text-xs font-semibold text-[#64748B] hover:text-[#172033] transition"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-[#66665D] hover:text-[#174B39] transition"
         >
           <span>←</span> Back to Public Website
         </Link>
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#15803D] border border-[#D1FAE5]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse"></span>
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-[#EAF0E8] text-[#174B39] border border-[#174B39]/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#174B39] animate-pulse"></span>
           System Online
         </span>
       </div>
 
       {/* Main Login Card */}
       <div className="w-full max-w-md my-auto">
-        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8ECF3] shadow-[0_4px_24px_rgba(23,32,51,0.04)] overflow-hidden p-8 sm:p-10">
+        <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E0D3] shadow-[0_8px_30px_rgba(37,39,32,0.06)] overflow-hidden p-8 sm:p-10">
           {/* Logo & Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#EEF4FF] text-[#4F46E5] mb-4 shadow-sm">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#EAF0E8] text-[#174B39] mb-4 shadow-sm border border-[#174B39]/20">
               <FiShield className="w-6 h-6" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#172033]">
-              {siteConfig.company.shortName} Admin
+            <span className="text-xs font-bold uppercase tracking-widest text-[#B88A3B] block mb-1">
+              Authorized Personnel
+            </span>
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-[#252720]">
+              {siteConfig.company.shortName} Admin Console
             </h1>
-            <p className="text-sm text-[#64748B] mt-1.5">
-              Secure console for enterprise operations
+            <p className="text-sm text-[#66665D] mt-1.5 font-sans">
+              Secure operations, proposal desk & inquiry management
             </p>
           </div>
 
@@ -81,18 +84,18 @@ const AdminLogin = () => {
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033] mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#252720] mb-1.5">
                 Admin Email
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8A897C]">
                   <FiMail className="w-4 h-4" />
                 </div>
                 <input
                   type="email"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-[#4F46E5]/10 outline-none transition placeholder:text-[#94A3B8]"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm text-[#252720] bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none transition placeholder:text-[#8A897C]"
                   placeholder="admin@dycinfo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -101,20 +104,18 @@ const AdminLogin = () => {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#172033]">
-                  Password
-                </label>
-              </div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#252720] mb-1.5">
+                Password
+              </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8A897C]">
                   <FiLock className="w-4 h-4" />
                 </div>
                 <input
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm text-[#172033] bg-[#FFFFFF] border border-[#E8ECF3] rounded-xl focus:border-[#4F46E5] focus:ring-4 focus:ring-[#4F46E5]/10 outline-none transition placeholder:text-[#94A3B8]"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm text-[#252720] bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none transition placeholder:text-[#8A897C]"
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -125,36 +126,24 @@ const AdminLogin = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-[#4F46E5] hover:bg-[#4338CA] active:scale-[0.99] text-white text-sm font-semibold py-2.5 px-4 rounded-xl shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-[#174B39] hover:bg-[#103728] active:scale-[0.99] text-white text-sm font-semibold py-3 px-4 rounded-full shadow-[0_4px_16px_rgba(23,75,57,0.25)] transition disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39]"
             >
               {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Authenticating...</span>
-                </>
+                <span>Authenticating...</span>
               ) : (
                 <>
-                  <span>Sign In to Dashboard</span>
-                  <FiArrowRight className="w-4 h-4" />
+                  <span>Sign In to Console</span>
+                  <FiArrowRight className="w-4 h-4 text-[#D7B875]" />
                 </>
               )}
             </button>
           </form>
-
-          {/* Security Note */}
-          <div className="mt-8 pt-6 border-t border-[#E8ECF3] text-center">
-            <p className="text-xs text-[#64748B]">
-              Restricted area. Authorized personnel only.
-            </p>
-          </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="text-center pb-2">
-        <p className="text-xs text-[#64748B]">
-          © {new Date().getFullYear()} {siteConfig.company.name}. Enterprise Systems.
-        </p>
+      <div className="text-xs text-[#8A897C] text-center pb-2">
+        DY&C Secure Enterprise Systems • Internal Use Only
       </div>
     </div>
   );

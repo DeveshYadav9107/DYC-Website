@@ -12,7 +12,6 @@ import {
   FiMenu,
   FiX,
   FiBell,
-  FiSearch,
   FiChevronRight,
   FiCheckCircle,
 } from 'react-icons/fi';
@@ -23,14 +22,13 @@ const AdminLayout = ({ children }) => {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [newInquiriesCount, setNewInquiriesCount] = useState(0);
-  const [followUpsDueCount, setFollowUpsDueCount] = useState(0);
 
   // Close mobile drawer on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  // Fetch count of new enquiries & follow-ups due for sidebar badge & notification
+  // Fetch count of new enquiries for sidebar badge & notification
   useEffect(() => {
     let isMounted = true;
     const fetchBadgeData = async () => {
@@ -38,10 +36,8 @@ const AdminLayout = ({ children }) => {
         const stats = await getInquiryStats();
         if (isMounted && stats) {
           setNewInquiriesCount(stats.newEnquiries || 0);
-          setFollowUpsDueCount(stats.followUpsDue || 0);
         }
-      } catch (err) {
-        // Fallback to getInquiries if stats fails
+      } catch {
         try {
           const data = await getInquiries();
           const list = Array.isArray(data) ? data : (data?.inquiries || data?.data || []);
@@ -50,13 +46,13 @@ const AdminLayout = ({ children }) => {
             setNewInquiriesCount(newCount);
           }
         } catch {
-          // Silently handle if unauthenticated or offline
+          // Silently handle
         }
       }
     };
 
     fetchBadgeData();
-    const interval = setInterval(fetchBadgeData, 60000); // 1 min sync
+    const interval = setInterval(fetchBadgeData, 60000);
     return () => {
       isMounted = false;
       clearInterval(interval);
@@ -88,7 +84,6 @@ const AdminLayout = ({ children }) => {
     },
   ];
 
-  // Helper for page title / breadcrumbs
   const getPageInfo = () => {
     if (location.pathname === '/admin') {
       return { title: 'Dashboard', section: 'Overview' };
@@ -99,57 +94,59 @@ const AdminLayout = ({ children }) => {
     if (location.pathname.startsWith('/admin/settings')) {
       return { title: 'Settings', section: 'System Configuration' };
     }
-    return { title: 'Admin Console', section: 'DYC Portal' };
+    return { title: 'Administration', section: 'Console' };
   };
 
   const pageInfo = getPageInfo();
 
-  // User initials
-  const adminName = user?.name || 'DYC Admin';
-  const adminRole = user?.role ? user.role.toUpperCase() : 'ADMINISTRATOR';
-  const initials = adminName
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase();
+  const initials = user?.name
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : 'AD';
+
+  const adminName = user?.name || 'Administrator';
+  const adminRole = user?.role === 'admin' ? 'Super Administrator' : 'Operations Editor';
 
   return (
-    <div className="flex h-screen bg-[#F6F8FC] text-[#172033] font-sans overflow-hidden selection:bg-[#F2EEFF] selection:text-[#4F46E5]">
-      {/* Mobile Backdrop */}
+    <div className="flex h-screen bg-[#F8F5EE] overflow-hidden font-sans">
+      {/* Mobile Drawer Overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-[#172033]/30 backdrop-blur-xs z-40 md:hidden transition-opacity"
+          className="fixed inset-0 bg-[#252720]/40 backdrop-blur-xs z-40 md:hidden transition-opacity"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#FFFFFF] border-r border-[#E8ECF3] flex flex-col justify-between transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#FFFFFF] border-r border-[#E7E0D3] flex flex-col justify-between transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
           mobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
         }`}
       >
         {/* Top Header / Branding */}
         <div>
-          <div className="h-16 px-6 flex items-center justify-between border-b border-[#E8ECF3]">
+          <div className="h-16 px-6 flex items-center justify-between border-b border-[#E7E0D3]">
             <Link to="/admin" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-lg bg-[#4F46E5] text-white flex items-center justify-center font-black tracking-wider text-sm shadow-sm group-hover:bg-[#4338CA] transition">
+              <div className="w-8 h-8 rounded-lg bg-[#174B39] text-white flex items-center justify-center font-bold tracking-wider text-sm shadow-sm group-hover:bg-[#103728] transition">
                 D
               </div>
               <div>
-                <span className="font-bold text-base tracking-tight text-[#172033] leading-none block">
+                <span className="font-serif font-bold text-base tracking-tight text-[#252720] leading-none block">
                   {siteConfig.company.shortName}
                 </span>
-                <span className="text-[10px] font-medium tracking-wider uppercase text-[#64748B] block mt-0.5">
-                  Enterprise Portal
+                <span className="text-[10px] font-semibold tracking-widest uppercase text-[#B88A3B] block mt-0.5">
+                  Enterprise Admin
                 </span>
               </div>
             </Link>
 
             <button
               onClick={() => setMobileOpen(false)}
-              className="p-1.5 rounded-lg text-[#64748B] hover:text-[#172033] hover:bg-[#F6F8FC] md:hidden transition"
+              className="p-1.5 rounded-lg text-[#66665D] hover:text-[#252720] hover:bg-[#FDFBF7] md:hidden transition cursor-pointer"
               aria-label="Close menu"
             >
               <FiX className="w-5 h-5" />
@@ -158,7 +155,7 @@ const AdminLayout = ({ children }) => {
 
           {/* Navigation Links */}
           <nav className="p-3.5 space-y-1">
-            <div className="px-3 pt-2 pb-1.5 text-[11px] font-semibold tracking-wider uppercase text-[#64748B]">
+            <div className="px-3 pt-2 pb-1.5 text-[11px] font-bold tracking-widest uppercase text-[#8A897C]">
               Management
             </div>
 
@@ -174,23 +171,23 @@ const AdminLayout = ({ children }) => {
                   to={item.path}
                   className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition group ${
                     isActive
-                      ? 'bg-[#F2EEFF] text-[#4F46E5] font-semibold'
-                      : 'text-[#64748B] hover:bg-[#F6F8FC] hover:text-[#172033]'
+                      ? 'bg-[#EAF0E8] text-[#174B39] font-bold'
+                      : 'text-[#66665D] hover:bg-[#FDFBF7] hover:text-[#252720]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       className={`w-4 h-4 transition ${
                         isActive
-                          ? 'text-[#4F46E5]'
-                          : 'text-[#64748B] group-hover:text-[#172033]'
+                          ? 'text-[#174B39]'
+                          : 'text-[#8A897C] group-hover:text-[#252720]'
                       }`}
                     />
                     <span>{item.name}</span>
                   </div>
 
                   {item.badge ? (
-                    <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FEF3C7]">
+                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#FDFBF7] text-[#B88A3B] border border-[#B88A3B]/30">
                       {item.badge}
                     </span>
                   ) : null}
@@ -198,7 +195,7 @@ const AdminLayout = ({ children }) => {
               );
             })}
 
-            <div className="pt-5 px-3 pb-1.5 text-[11px] font-semibold tracking-wider uppercase text-[#64748B]">
+            <div className="pt-5 px-3 pb-1.5 text-[11px] font-bold tracking-widest uppercase text-[#8A897C]">
               Quick Links
             </div>
 
@@ -206,29 +203,29 @@ const AdminLayout = ({ children }) => {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#64748B] hover:bg-[#F6F8FC] hover:text-[#172033] transition group"
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#66665D] hover:bg-[#FDFBF7] hover:text-[#252720] transition group"
             >
               <div className="flex items-center gap-3">
-                <FiExternalLink className="w-4 h-4 text-[#64748B] group-hover:text-[#172033] transition" />
+                <FiExternalLink className="w-4 h-4 text-[#8A897C] group-hover:text-[#252720] transition" />
                 <span>Live Website</span>
               </div>
-              <span className="text-xs text-[#94A3B8]">↗</span>
+              <span className="text-xs text-[#8A897C]">↗</span>
             </a>
           </nav>
         </div>
 
         {/* Sidebar Footer / User Profile & Logout */}
-        <div className="p-3.5 border-t border-[#E8ECF3] space-y-2">
+        <div className="p-3.5 border-t border-[#E7E0D3] space-y-2">
           {/* User Profile Card */}
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#F6F8FC] border border-[#E8ECF3]">
-            <div className="w-9 h-9 rounded-lg bg-[#EEF4FF] text-[#4F46E5] border border-[#E0E7FF] flex items-center justify-center text-xs font-bold shrink-0">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#FDFBF7] border border-[#E7E0D3]">
+            <div className="w-9 h-9 rounded-lg bg-[#EAF0E8] text-[#174B39] border border-[#174B39]/20 flex items-center justify-center text-xs font-bold shrink-0">
               {initials || 'AD'}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-[#172033] truncate leading-tight">
+              <p className="text-xs font-bold text-[#252720] truncate leading-tight">
                 {adminName}
               </p>
-              <p className="text-[10px] font-medium text-[#64748B] truncate mt-0.5">
+              <p className="text-[10px] font-medium text-[#66665D] truncate mt-0.5">
                 {adminRole}
               </p>
             </div>
@@ -237,7 +234,7 @@ const AdminLayout = ({ children }) => {
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-[#DC2626] hover:bg-[#FEF2F2] border border-transparent hover:border-[#FEE2E2] transition cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#DC2626] hover:bg-[#FEF2F2] border border-transparent hover:border-[#FEE2E2] transition cursor-pointer"
           >
             <FiLogOut className="w-3.5 h-3.5" />
             <span>Sign Out</span>
@@ -248,12 +245,12 @@ const AdminLayout = ({ children }) => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
         {/* Top Navigation Bar */}
-        <header className="h-16 bg-[#FFFFFF] border-b border-[#E8ECF3] flex items-center justify-between px-4 sm:px-6 md:px-8 z-10 shrink-0">
+        <header className="h-16 bg-[#FFFFFF] border-b border-[#E7E0D3] flex items-center justify-between px-4 sm:px-6 md:px-8 z-10 shrink-0">
           {/* Left: Mobile Toggle & Breadcrumbs */}
           <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 -ml-2 rounded-xl text-[#64748B] hover:text-[#172033] hover:bg-[#F6F8FC] md:hidden transition"
+              className="p-2 -ml-2 rounded-xl text-[#66665D] hover:text-[#252720] hover:bg-[#FDFBF7] md:hidden transition cursor-pointer"
               aria-label="Open sidebar"
             >
               <FiMenu className="w-5 h-5" />
@@ -261,11 +258,11 @@ const AdminLayout = ({ children }) => {
 
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-xs sm:text-sm">
-              <span className="text-[#64748B] font-medium hidden sm:inline">
+              <span className="text-[#66665D] font-medium hidden sm:inline">
                 {pageInfo.section}
               </span>
-              <FiChevronRight className="w-3.5 h-3.5 text-[#94A3B8] hidden sm:inline" />
-              <h1 className="text-[#172033] font-semibold text-sm sm:text-base">
+              <FiChevronRight className="w-3.5 h-3.5 text-[#8A897C] hidden sm:inline" />
+              <h1 className="text-[#252720] font-bold text-sm sm:text-base font-serif">
                 {pageInfo.title}
               </h1>
             </div>
@@ -274,20 +271,20 @@ const AdminLayout = ({ children }) => {
           {/* Right: Actions, System Indicator & Profile */}
           <div className="flex items-center gap-3 sm:gap-4">
             {/* System Status Pill */}
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ECFDF5] border border-[#D1FAE5] text-[#15803D] text-xs font-medium">
-              <FiCheckCircle className="w-3.5 h-3.5 text-[#15803D]" />
+            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-medium">
+              <FiCheckCircle className="w-3.5 h-3.5 text-[#174B39]" />
               <span>API Connected</span>
             </div>
 
             {/* Inquiries Notification Icon */}
             <Link
               to="/admin/inquiries"
-              className="relative p-2 rounded-xl text-[#64748B] hover:text-[#172033] hover:bg-[#F6F8FC] transition"
+              className="relative p-2 rounded-xl text-[#66665D] hover:text-[#252720] hover:bg-[#FDFBF7] transition"
               title={`${newInquiriesCount} new enquiries`}
             >
               <FiBell className="w-4 h-4" />
               {newInquiriesCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#4F46E5] ring-2 ring-[#FFFFFF]"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#B88A3B] ring-2 ring-[#FFFFFF]"></span>
               )}
             </Link>
 
@@ -296,22 +293,22 @@ const AdminLayout = ({ children }) => {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E8ECF3] text-xs font-medium text-[#64748B] hover:text-[#172033] hover:bg-[#F6F8FC] transition"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E7E0D3] text-xs font-semibold text-[#252720] hover:text-[#174B39] hover:bg-[#FDFBF7] transition"
             >
               <span>Live Site</span>
-              <FiExternalLink className="w-3 h-3 text-[#94A3B8]" />
+              <FiExternalLink className="w-3 h-3 text-[#B88A3B]" />
             </a>
 
             {/* Admin Avatar Chip */}
-            <div className="flex items-center gap-2 pl-2 border-l border-[#E8ECF3]">
-              <div className="w-8 h-8 rounded-lg bg-[#F2EEFF] text-[#4F46E5] flex items-center justify-center font-bold text-xs border border-[#E0E7FF]">
+            <div className="flex items-center gap-2 pl-2 border-l border-[#E7E0D3]">
+              <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center font-bold text-xs border border-[#174B39]/20">
                 {initials || 'A'}
               </div>
               <div className="hidden md:block text-left">
-                <span className="text-xs font-semibold text-[#172033] block leading-tight">
+                <span className="text-xs font-semibold text-[#252720] block leading-tight">
                   {adminName}
                 </span>
-                <span className="text-[10px] text-[#64748B] block">
+                <span className="text-[10px] text-[#66665D] block">
                   {adminRole}
                 </span>
               </div>
@@ -320,7 +317,7 @@ const AdminLayout = ({ children }) => {
         </header>
 
         {/* Page Content Viewport */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-[#F8F5EE]">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
