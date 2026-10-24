@@ -60,16 +60,6 @@ const BusinessValue = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleStepClick = (index) => {
-    setActiveStep(index);
-    const element = document.getElementById(`advantage-step-${index}`);
-    if (element) {
-      const yOffset = -140;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
-
   return (
     <section 
       id="dyc-advantage-section"
@@ -99,43 +89,9 @@ const BusinessValue = () => {
             </h2>
 
             {/* Short introductory paragraph */}
-            <p className="text-base sm:text-lg text-[#66665D] leading-relaxed font-sans mb-8 max-w-lg">
+            <p className="text-base sm:text-lg text-[#66665D] leading-relaxed font-sans mb-10 max-w-lg">
               Technology delivers greater value when systems, people, and business priorities work together. DYC brings SAP expertise, ERP capabilities, and staffing support into the conversation—shaped around your business requirements.
             </p>
-
-            {/* Reading Progress Card: matches user reference design */}
-            <div className="bg-white/95 backdrop-blur-xs p-5 sm:p-6 rounded-2xl border border-[#E7E0D3] shadow-[0_8px_24px_rgba(37,39,32,0.05)] mb-8 max-w-lg">
-              <div className="flex items-center justify-between mb-3 text-xs">
-                <span className="font-bold text-[#174B39] tracking-wider uppercase font-sans">
-                  READING PROGRESS
-                </span>
-                <span className="font-serif font-bold text-[#B88A3B] text-sm">
-                  {advantageSections[activeStep].number} / 04
-                </span>
-              </div>
-
-              {/* 4 Clickable Progress Segments */}
-              <div className="grid grid-cols-4 gap-2 mb-3">
-                {advantageSections.map((sec, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleStepClick(idx)}
-                    aria-label={`Jump to step ${sec.number}: ${sec.title}`}
-                    className="h-2 rounded-full transition-all duration-400 cursor-pointer hover:opacity-90"
-                    style={{
-                      backgroundColor: idx === activeStep ? '#B88A3B' : idx < activeStep ? '#174B39' : '#E7E0D3'
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Active title and click-to-jump label */}
-              <div className="text-xs text-[#66665D] font-medium flex items-center justify-between">
-                <span className="truncate pr-2 font-semibold text-[#252720]">{advantageSections[activeStep].title}</span>
-                <span className="text-[11px] text-[#B88A3B] italic shrink-0">Click to jump</span>
-              </div>
-            </div>
 
             {/* Closing Line */}
             <div className="pt-6 border-t border-[#E7E0D3] flex items-center gap-3.5 max-w-lg">
@@ -205,19 +161,6 @@ const BusinessValue = () => {
                     >
                       {item.description}
                     </p>
-
-                    {/* Active Focus Pill */}
-                    {isActive && (
-                      <motion.div 
-                        initial={{ opacity: 0, x: -6 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="mt-6 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-xs font-semibold text-[#174B39]"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#B88A3B] animate-pulse" />
-                        <span>Active Focus Point</span>
-                      </motion.div>
-                    )}
                   </motion.div>
                 </div>
               );
