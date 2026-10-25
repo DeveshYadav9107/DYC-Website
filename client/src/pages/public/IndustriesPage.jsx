@@ -14,11 +14,10 @@ const IndustriesPage = () => {
           <img 
             src="/images/industries-banner.png" 
             alt="Industries We Support - Manufacturing, Retail, Healthcare, Automotive, Logistics, Finance" 
-            className="w-full h-full object-cover object-bottom md:object-center" 
+            className="w-full h-full object-cover object-bottom md:object-center contrast-[1.05] saturate-[1.08]" 
           />
-          {/* Subtle gradient overlays to ensure text contrast while letting the panoramic industrial sectors shine */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/85 md:via-[#F8F5EE]/40 to-transparent z-0 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#F8F5EE]/50 via-transparent to-transparent z-0 pointer-events-none" />
+          {/* Subtle gradient overlay on left to guarantee text readability while keeping industrial sectors vibrant and clear */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/80 to-[#F8F5EE]/20 md:via-[#F8F5EE]/25 md:to-transparent md:max-w-2xl z-0 pointer-events-none" />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">

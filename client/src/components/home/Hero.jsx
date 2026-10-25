@@ -86,7 +86,7 @@ const Hero = () => {
 
             {/* Seamless Visual without white boundary, tall full height */}
             <img
-              src="/images/hero-sap-ecosystem.jpg"
+              src="/images/hero-sap-ecosystem.png"
               alt="Dinesh Yadav & Company SAP, ERP & Enterprise Capability Ecosystem"
               className="w-full max-w-[580px] lg:max-w-[660px] h-auto max-h-[560px] lg:max-h-[640px] object-contain mix-blend-multiply drop-shadow-[0_24px_48px_rgba(23,75,57,0.14)] transform hover:scale-[1.02] transition-transform duration-700 relative z-10"
             />

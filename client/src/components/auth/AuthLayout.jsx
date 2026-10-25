@@ -44,7 +44,7 @@ const AuthLayout = ({
       {/* Main Split Content */}
       <main className="flex-1 flex items-center justify-center p-3 sm:p-6 lg:p-8">
         <div className="w-full max-w-6xl bg-white rounded-3xl border border-[#E7E0D3] shadow-[0_20px_50px_rgba(23,75,57,0.08)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
-          
+
           {/* ================= LEFT VISUAL PANEL ================= */}
           <div className="lg:col-span-6 relative bg-[#FDFBF7] flex flex-col justify-between overflow-hidden min-h-[380px] lg:min-h-full border-b lg:border-b-0 lg:border-r border-[#E7E0D3]">
             {/* Visual Image */}
@@ -67,7 +67,7 @@ const AuthLayout = ({
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#66665D] hover:text-[#174B39] transition group"
               >
                 <FiArrowLeft className="text-xs transition-transform group-hover:-translate-x-0.5" />
-                <span>Back to Public Website</span>
+                <span>Back to Home Page</span>
               </Link>
               <div className="text-[11px] text-[#B88A3B] font-bold uppercase tracking-wider">
                 DY&C Enterprise Portal

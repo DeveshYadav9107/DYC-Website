@@ -303,10 +303,10 @@ const ContactPage = () => {
           <img
             src="/images/contact-banner.png"
             alt="Contact Us Banner"
-            className="w-full h-full object-cover object-right mix-blend-multiply opacity-100"
+            className="w-full h-full object-cover object-right md:object-center opacity-100"
           />
-          {/* Mobile-only backdrop protection; on desktop the artwork is 100% fully visible without any overlay */}
-          <div className="md:hidden absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/90 to-[#F8F5EE]/60 z-0 pointer-events-none" />
+          {/* Subtle gradient to protect text on mobile and ensure smooth blend */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/80 to-[#F8F5EE]/20 md:via-[#F8F5EE]/20 md:to-transparent md:max-w-2xl z-0 pointer-events-none" />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">
