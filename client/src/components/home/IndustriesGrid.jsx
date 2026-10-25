@@ -7,7 +7,7 @@ const industries = [
     name: 'Manufacturing',
     image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
     desc: 'Optimize supply chains, plant maintenance, and production planning.',
-    vertical: 'Enterprise Vertical',
+    vertical: 'Industrial & Manufacturing',
     heightClass: 'h-[420px] lg:h-[440px]'
   },
   {

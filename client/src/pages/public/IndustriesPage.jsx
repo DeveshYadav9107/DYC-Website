@@ -6,20 +6,47 @@ import { FiCheck } from 'react-icons/fi';
 const IndustriesPage = () => {
   return (
     <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
-      {/* Header */}
-      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
-        <div className="max-w-7xl mx-auto text-center relative z-10 pt-4 sm:pt-6">
+      {/* Header Banner */}
+      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
+        
+        {/* Background Banner Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/industries-banner.png" 
+            alt="Industries We Support - Manufacturing, Retail, Healthcare, Automotive, Logistics, Finance" 
+            className="w-full h-full object-cover object-bottom md:object-center" 
+          />
+          {/* Subtle gradient overlays to ensure text contrast while letting the panoramic industrial sectors shine */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/85 md:via-[#F8F5EE]/40 to-transparent z-0 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#F8F5EE]/50 via-transparent to-transparent z-0 pointer-events-none" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">
           <Reveal>
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-bold tracking-[0.2em] uppercase mb-6 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
-              <span>Vertical Solutions</span>
+            <div className="grid md:grid-cols-12 gap-8 items-center">
+              <div className="md:col-span-7 lg:col-span-7">
+                <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-serif font-bold mb-6 tracking-tight text-[#252720] leading-[1.14]">
+                  Industries We <span className="text-[#174B39] italic">Serve</span>
+                </h1>
+                <p className="text-lg sm:text-xl text-[#66665D] max-w-xl leading-relaxed font-sans mb-8">
+                  Our ERP solutions, SAP expertise, and specialized staffing services are tailored to meet the strict demands of diverse sectors.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm font-semibold text-[#174B39]">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 backdrop-blur-md border border-[#E7E0D3] shadow-xs">
+                    <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
+                    <span>Cross-Industry Architecture</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 backdrop-blur-md border border-[#E7E0D3] shadow-xs">
+                    <span className="w-2 h-2 rounded-full bg-[#174B39]"></span>
+                    <span>Domain-Specific Delivery</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right column kept clear so the panoramic industrial visual and global network shine */}
+              <div className="hidden md:flex md:col-span-5 lg:col-span-5 justify-end items-end h-full pointer-events-none" />
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 tracking-tight text-[#252720]">
-              Industries We <span className="text-[#174B39] italic">Serve</span>
-            </h1>
-            <p className="text-lg sm:text-xl text-[#66665D] max-w-2xl mx-auto leading-relaxed font-sans">
-              Our ERP solutions, SAP expertise, and specialized staffing services are tailored to meet the strict demands of diverse sectors.
-            </p>
           </Reveal>
         </div>
       </div>
