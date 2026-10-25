@@ -46,15 +46,14 @@ const AuthLayout = ({
         <div className="w-full max-w-6xl bg-white rounded-3xl border border-[#E7E0D3] shadow-[0_20px_50px_rgba(23,75,57,0.08)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
 
           {/* ================= LEFT VISUAL PANEL ================= */}
-          <div className="lg:col-span-6 relative bg-[#FDFBF7] flex flex-col justify-between overflow-hidden min-h-[380px] lg:min-h-full border-b lg:border-b-0 lg:border-r border-[#E7E0D3]">
+          <div className="lg:col-span-6 relative bg-[#FAF8F2] flex flex-col justify-between overflow-hidden min-h-[380px] lg:min-h-full border-b lg:border-b-0 lg:border-r border-[#E7E0D3]">
             {/* Visual Image */}
             <div className="absolute inset-0">
               <img
                 src="/images/auth-banner.png"
                 alt="DY&C Enterprise Technology and Consulting"
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-left"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#103728]/40 via-transparent to-transparent pointer-events-none" />
             </div>
           </div>
 

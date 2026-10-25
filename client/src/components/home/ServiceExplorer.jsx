@@ -70,7 +70,7 @@ const ServiceExplorer = () => {
   };
 
   return (
-    <section id="services" className="py-24 sm:py-32 bg-[#FDFBF7] px-4 sm:px-6 lg:px-8 relative border-b border-[#E7E0D3]">
+    <section id="service-explorer" className="py-24 sm:py-32 bg-[#FDFBF7] px-4 sm:px-6 lg:px-8 relative border-b border-[#E7E0D3]">
       <div className="max-w-7xl mx-auto relative z-10">
         <Reveal>
           <div className="text-center mb-16 sm:mb-20">
