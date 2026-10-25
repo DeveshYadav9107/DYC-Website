@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import siteConfig from '../../config/siteConfig';
 import { submitInquiry } from '../../services/api';
@@ -297,29 +297,47 @@ const ContactPage = () => {
   return (
     <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
       {/* Header Banner */}
-      <div className="bg-[#F8F5EE] text-[#252720] py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
+      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
         {/* Background Image */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
+        <div className="absolute inset-0 z-0 pointer-events-none">
           <img
             src="/images/contact-banner.png"
             alt="Contact Us Banner"
-            className="w-full h-full object-cover object-right md:object-center"
+            className="w-full h-full object-cover object-right mix-blend-multiply opacity-100"
           />
+          {/* Mobile-only backdrop protection; on desktop the artwork is 100% fully visible without any overlay */}
+          <div className="md:hidden absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/90 to-[#F8F5EE]/60 z-0 pointer-events-none" />
         </div>
 
-        <div className="max-w-7xl mx-auto relative z-10 pt-4">
+        <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">
           <Reveal>
-            <div className="max-w-3xl">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-[#EAF0E8] text-[#174B39] border border-[#174B39]/20 mb-4 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
-                Enterprise Intake & Proposal Desk
-              </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#252720] tracking-tight mb-4">
-                Discuss Your <span className="text-[#174B39] italic">Requirements</span>
-              </h1>
-              <p className="text-base sm:text-lg text-[#66665D] leading-relaxed font-sans">
-                Submit your business requirements to DY&C. Our functional leads and technical specialists will review your intake and formulate a tailored service proposal.
-              </p>
+            <div className="grid md:grid-cols-12 gap-8 items-center">
+              <div className="md:col-span-7 lg:col-span-7">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-white/90 backdrop-blur-sm text-[#174B39] border border-[#174B39]/20 mb-5 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
+                  Enterprise Intake & Proposal Desk
+                </span>
+                <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-serif font-bold text-[#252720] tracking-tight mb-5 leading-[1.14]">
+                  Discuss Your <span className="text-[#174B39] italic">Requirements</span>
+                </h1>
+                <p className="text-base sm:text-lg text-[#66665D] leading-relaxed font-sans max-w-xl mb-6">
+                  Submit your business requirements to DY&C. Our functional leads and technical specialists will review your intake and formulate a tailored service proposal.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm font-semibold text-[#174B39]">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 backdrop-blur-md border border-[#E7E0D3] shadow-xs">
+                    <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
+                    <span>Fast 24h Response</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 backdrop-blur-md border border-[#E7E0D3] shadow-xs">
+                    <span className="w-2 h-2 rounded-full bg-[#174B39]"></span>
+                    <span>Confidential NDA Assured</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right column kept clear so the contact banner artwork shines through */}
+              <div className="hidden md:flex md:col-span-5 lg:col-span-5 justify-end items-end h-full pointer-events-none" />
             </div>
           </Reveal>
         </div>

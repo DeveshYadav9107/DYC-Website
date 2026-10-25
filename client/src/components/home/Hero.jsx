@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiCpu, FiUsers, FiDatabase } from 'react-icons/fi';
 
 const Hero = () => {
   return (
@@ -75,75 +74,22 @@ const Hero = () => {
         </div>
 
         {/* ================= RIGHT COLUMN: REFINED CORPORATE VISUAL ================= */}
-        <div className="lg:col-span-6 relative">
+        <div className="lg:col-span-6 relative flex items-center justify-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.97, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
-            className="relative"
+            className="relative w-full flex items-center justify-center"
           >
-            {/* Outer Decorative Framing Accent */}
-            <div className="absolute -inset-2.5 rounded-[2.5rem] bg-gradient-to-tr from-[#174B39]/15 via-[#B88A3B]/15 to-transparent blur-xs pointer-events-none" />
+            {/* Ambient warm radial glow behind the visual */}
+            <div className="absolute inset-0 w-full h-full rounded-full bg-[radial-gradient(circle_at_center,rgba(184,138,59,0.09),transparent_70%)] blur-2xl pointer-events-none" />
 
-            {/* Main Visual Box with Editorial Card Treatment */}
-            <div className="relative p-2.5 sm:p-3 bg-[#FDFBF7] rounded-[2.2rem] border border-[#E7E0D3] shadow-[0_20px_50px_rgba(23,75,57,0.12)]">
-              <div className="relative overflow-hidden rounded-[1.8rem] aspect-[4/3]">
-                <img
-                  src="/images/hero-forest-consulting.jpg"
-                  alt="Dinesh Yadav & Company enterprise technology and consulting team"
-                  className="w-full h-full object-cover transform hover:scale-[1.02] transition-transform duration-700"
-                />
-
-                {/* Subtle warm gradient overlay to enhance visual richness */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#103728]/30 via-transparent to-transparent pointer-events-none" />
-              </div>
-
-              {/* Floating Restrained Card 1: SAP Solutions */}
-              <motion.div
-                animate={{ y: [0, -4, 0] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-4 -left-4 sm:-left-6 bg-white/95 backdrop-blur-md border border-[#E7E0D3] rounded-2xl p-3 sm:p-3.5 shadow-[0_8px_24px_rgba(37,39,32,0.1)] flex items-center gap-3"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center shrink-0">
-                  <FiCpu className="text-xl text-[#174B39]" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#252720]">SAP Solutions</p>
-                  <p className="text-[11px] text-[#66665D]">S/4HANA & ECC Advisory</p>
-                </div>
-              </motion.div>
-
-              {/* Floating Restrained Card 2: Skilled Professionals */}
-              <motion.div
-                animate={{ y: [0, 4, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -bottom-5 left-6 sm:left-8 bg-white/95 backdrop-blur-md border border-[#E7E0D3] rounded-2xl p-3 sm:p-3.5 shadow-[0_8px_24px_rgba(37,39,32,0.1)] flex items-center gap-3"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center shrink-0">
-                  <FiUsers className="text-xl text-[#174B39]" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#252720]">Skilled Professionals</p>
-                  <p className="text-[11px] text-[#66665D]">Functional & Technical Leads</p>
-                </div>
-              </motion.div>
-
-              {/* Floating Restrained Card 3: ERP Transformation */}
-              <motion.div
-                animate={{ y: [0, -4, 0] }}
-                transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                className="hidden sm:flex absolute top-1/2 -right-4 -translate-y-1/2 bg-white/95 backdrop-blur-md border border-[#E7E0D3] rounded-2xl p-3 sm:p-3.5 shadow-[0_8px_24px_rgba(37,39,32,0.1)] items-center gap-3"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#FDFBF7] border border-[#B88A3B]/30 text-[#B88A3B] flex items-center justify-center shrink-0">
-                  <FiDatabase className="text-xl text-[#B88A3B]" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#252720]">ERP Transformation</p>
-                  <p className="text-[11px] text-[#66665D]">Custom Software Systems</p>
-                </div>
-              </motion.div>
-
-            </div>
+            {/* Seamless Visual without white boundary, tall full height */}
+            <img
+              src="/images/hero-sap-ecosystem.jpg"
+              alt="Dinesh Yadav & Company SAP, ERP & Enterprise Capability Ecosystem"
+              className="w-full max-w-[580px] lg:max-w-[660px] h-auto max-h-[560px] lg:max-h-[640px] object-contain mix-blend-multiply drop-shadow-[0_24px_48px_rgba(23,75,57,0.14)] transform hover:scale-[1.02] transition-transform duration-700 relative z-10"
+            />
           </motion.div>
         </div>
 
