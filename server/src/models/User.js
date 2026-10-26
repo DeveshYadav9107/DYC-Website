@@ -8,10 +8,22 @@ const UserSchema = new mongoose.Schema({
   phone: { type: String, trim: true },
   email: { type: String, required: [true, 'Email is required'], unique: true, lowercase: true, trim: true },
   password: { type: String, required: [true, 'Password is required'], minlength: 6, select: false },
-  role: { type: String, enum: ['admin', 'editor', 'worker', 'customer', 'user'], default: 'customer' },
+  role: { type: String, enum: ['admin', 'editor', 'worker', 'customer', 'user', 'candidate', 'client'], default: 'customer' },
   isEmailVerified: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },
   lastLogin: { type: Date },
+  // Candidate Profile fields (for recruitment & staffing platform)
+  skills: [{ type: String }],
+  totalExperience: { type: String, trim: true },
+  designation: { type: String, trim: true },
+  company: { type: String, trim: true },
+  noticePeriod: { type: String, trim: true },
+  currentSalary: { type: String, trim: true },
+  expectedSalary: { type: String, trim: true },
+  resumeUrl: { type: String },
+  resumeFileName: { type: String },
+  location: { type: String, trim: true },
+  headline: { type: String, trim: true },
 }, { timestamps: true });
 
 // Auto-populate name if firstName and lastName are provided

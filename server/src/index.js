@@ -79,6 +79,13 @@ app.use('/api/v1', routes);
 app.use('/api', routes);
 app.use('/', routes);
 
+// Serve static uploads (resumes, documents)
+const uploadsPath = path.resolve(__dirname, '../uploads');
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsPath));
+
 // Serve client static build if available (for unified monorepo deployment)
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
 if (fs.existsSync(clientDistPath)) {

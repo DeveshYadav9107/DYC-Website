@@ -14,6 +14,9 @@ import {
   FiBell,
   FiChevronRight,
   FiCheckCircle,
+  FiBriefcase,
+  FiUsers,
+  FiLayers,
 } from 'react-icons/fi';
 
 const AdminLayout = ({ children }) => {
@@ -78,6 +81,16 @@ const AdminLayout = ({ children }) => {
       badge: newInquiriesCount > 0 ? newInquiriesCount : null,
     },
     {
+      name: 'Job Requisitions',
+      path: '/admin/jobs',
+      icon: FiBriefcase,
+    },
+    {
+      name: 'Candidate Database',
+      path: '/admin/candidates',
+      icon: FiUsers,
+    },
+    {
       name: 'Settings',
       path: '/admin/settings',
       icon: FiSliders,
@@ -90,6 +103,12 @@ const AdminLayout = ({ children }) => {
     }
     if (location.pathname.startsWith('/admin/inquiries')) {
       return { title: 'Enquiries', section: 'Customer Management' };
+    }
+    if (location.pathname.startsWith('/admin/jobs')) {
+      return { title: 'Job Requisitions', section: 'Recruitment & Staffing' };
+    }
+    if (location.pathname.startsWith('/admin/candidates')) {
+      return { title: 'Candidate Pipeline', section: 'Recruitment & Staffing' };
     }
     if (location.pathname.startsWith('/admin/settings')) {
       return { title: 'Settings', section: 'System Configuration' };

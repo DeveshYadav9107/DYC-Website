@@ -279,4 +279,129 @@ export const updateSettings = async (settingsData) => {
   return response.data;
 };
 
+// ================= PHASE 3: JOBS & CAREERS SERVICES =================
+export const getJobs = async (params = {}) => {
+  const response = await api.get('/jobs', { params });
+  return response.data?.data || response.data;
+};
+
+export const getJobBySlug = async (idOrSlug) => {
+  const response = await api.get(`/jobs/${idOrSlug}`);
+  return response.data?.data || response.data;
+};
+
+export const getAdminJobs = async (params = {}) => {
+  const response = await api.get('/jobs/admin/all', { params });
+  return response.data?.data || response.data;
+};
+
+export const createJob = async (jobData) => {
+  const response = await api.post('/jobs', jobData);
+  return response.data?.data || response.data;
+};
+
+export const updateJob = async (id, jobData) => {
+  const response = await api.put(`/jobs/${id}`, jobData);
+  return response.data?.data || response.data;
+};
+
+export const deleteJob = async (id) => {
+  const response = await api.delete(`/jobs/${id}`);
+  return response.data;
+};
+
+// ================= PHASE 3: CANDIDATE & APPLICATIONS SERVICES =================
+export const uploadResume = async (file) => {
+  const formData = new FormData();
+  formData.append('resume', file);
+  const response = await api.post('/applications/upload-resume', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data?.data || response.data;
+};
+
+export const submitJobApplication = async (applicationData) => {
+  const response = await api.post('/applications', applicationData);
+  return response.data?.data || response.data;
+};
+
+export const getMyApplications = async () => {
+  const response = await api.get('/applications/my');
+  return response.data?.data || response.data || [];
+};
+
+export const getAdminApplications = async (params = {}) => {
+  const response = await api.get('/applications', { params });
+  return response.data?.data || response.data;
+};
+
+export const getRecruitmentStats = async () => {
+  const response = await api.get('/applications/stats');
+  return response.data?.data || response.data;
+};
+
+export const getApplicationDetails = async (id) => {
+  const response = await api.get(`/applications/${id}`);
+  return response.data?.data || response.data;
+};
+
+export const updateApplicationStatus = async (id, payload) => {
+  const response = await api.patch(`/applications/${id}/status`, payload);
+  return response.data?.data || response.data;
+};
+
+export const scheduleInterviewRound = async (id, interviewData) => {
+  const response = await api.post(`/applications/${id}/interviews`, interviewData);
+  return response.data?.data || response.data;
+};
+
+export const updateInterviewRound = async (id, interviewId, data) => {
+  const response = await api.patch(`/applications/${id}/interviews/${interviewId}`, data);
+  return response.data?.data || response.data;
+};
+
+export const addApplicationNote = async (id, note) => {
+  const response = await api.post(`/applications/${id}/notes`, { note });
+  return response.data?.data || response.data;
+};
+
+// ================= PHASE 3: CLIENT MANPOWER & STAFFING SERVICES =================
+export const submitStaffingRequest = async (requestData) => {
+  const response = await api.post('/staffing-requests', requestData);
+  return response.data?.data || response.data;
+};
+
+export const getMyStaffingRequests = async () => {
+  const response = await api.get('/staffing-requests/my');
+  return response.data?.data || response.data || [];
+};
+
+export const getAdminStaffingRequests = async (params = {}) => {
+  const response = await api.get('/staffing-requests', { params });
+  return response.data?.data || response.data;
+};
+
+export const getStaffingRequestDetails = async (id) => {
+  const response = await api.get(`/staffing-requests/${id}`);
+  return response.data?.data || response.data;
+};
+
+export const updateStaffingRequestStatus = async (id, payload) => {
+  const response = await api.patch(`/staffing-requests/${id}/status`, payload);
+  return response.data?.data || response.data;
+};
+
+export const updateStaffingProgress = async (id, progressData) => {
+  const response = await api.patch(`/staffing-requests/${id}/progress`, progressData);
+  return response.data?.data || response.data;
+};
+
+export const addStaffingNote = async (id, note) => {
+  const response = await api.post(`/staffing-requests/${id}/notes`, { note });
+  return response.data?.data || response.data;
+};
+
 export default api;
+

@@ -13,6 +13,11 @@ import AboutPage from './pages/public/AboutPage';
 import IndustriesPage from './pages/public/IndustriesPage';
 import ServicePage from './pages/public/ServicePage';
 
+// Phase 3 — Careers & Manpower Pages
+import CareersPage from './pages/public/CareersPage';
+import JobDetailsPage from './pages/public/JobDetailsPage';
+import CandidatePortalPage from './pages/candidate/CandidatePortalPage';
+
 // Authentication Pages
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
@@ -30,6 +35,8 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminInquiries from './pages/admin/AdminInquiries';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminJobs from './pages/admin/AdminJobs';
+import AdminCandidates from './pages/admin/AdminCandidates';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -47,6 +54,31 @@ function App() {
             <Route path="/sap-capabilities" element={<PublicLayout><SAPCapabilitiesPage /></PublicLayout>} />
             <Route path="/services/:serviceId" element={<PublicLayout><ServicePage /></PublicLayout>} />
             <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+
+            {/* Phase 3 Public & Candidate Routes */}
+            <Route path="/careers" element={<PublicLayout><CareersPage /></PublicLayout>} />
+            <Route path="/careers/:slug" element={<PublicLayout><JobDetailsPage /></PublicLayout>} />
+            
+            <Route
+              path="/candidate/portal"
+              element={
+                <ProtectedRoute>
+                  <PublicLayout>
+                    <CandidatePortalPage />
+                  </PublicLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/candidate/applications"
+              element={
+                <ProtectedRoute>
+                  <PublicLayout>
+                    <CandidatePortalPage />
+                  </PublicLayout>
+                </ProtectedRoute>
+              }
+            />
 
             {/* Authentication Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -91,6 +123,26 @@ function App() {
                 <ProtectedRoute roles={['admin', 'editor']}>
                   <AdminLayout>
                     <AdminInquiries />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/jobs"
+              element={
+                <ProtectedRoute roles={['admin', 'editor']}>
+                  <AdminLayout>
+                    <AdminJobs />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/candidates"
+              element={
+                <ProtectedRoute roles={['admin', 'editor']}>
+                  <AdminLayout>
+                    <AdminCandidates />
                   </AdminLayout>
                 </ProtectedRoute>
               }

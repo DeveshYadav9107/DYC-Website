@@ -1,3 +1,12 @@
+export class ApiResponse {
+  constructor(statusCode, data, message = 'Success') {
+    this.statusCode = statusCode;
+    this.success = statusCode < 400;
+    this.message = message;
+    this.data = data;
+  }
+}
+
 export const successResponse = (res, statusCode, message, data = null) => {
   const response = {
     success: true,
@@ -19,3 +28,5 @@ export const errorResponse = (res, statusCode, message, errors = null) => {
   }
   return res.status(statusCode).json(response);
 };
+
+export default ApiResponse;

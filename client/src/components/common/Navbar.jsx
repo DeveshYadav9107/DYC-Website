@@ -14,6 +14,7 @@ import {
   FiLogOut,
   FiFileText,
   FiShield,
+  FiBriefcase,
 } from 'react-icons/fi';
 import siteConfig from '../../config/siteConfig';
 import { useAuth } from '../../context/AuthContext';
@@ -334,6 +335,18 @@ const Navbar = () => {
             Industries
           </Link>
 
+          {/* Careers */}
+          <Link
+            to="/careers"
+            className={`relative px-3 md:px-3 lg:px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 ${
+              location.pathname.startsWith('/careers')
+                ? 'bg-[#EAF0E8] text-[#174B39] font-bold shadow-xs after:content-[""] after:absolute after:bottom-1 after:left-3 after:right-3 after:h-[2px] after:bg-[#B88A3B] after:rounded-full'
+                : 'text-[#252720] hover:text-[#174B39] hover:bg-[#EAF0E8]/50'
+            }`}
+          >
+            Careers
+          </Link>
+
           {/* Contact */}
           <Link
             to="/contact"
@@ -418,6 +431,15 @@ const Navbar = () => {
                       >
                         <FiFileText className="text-sm text-[#66665D]" />
                         <span>My Enquiries</span>
+                      </Link>
+
+                      <Link
+                        to="/candidate/portal"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#252720] hover:bg-[#EAF0E8] hover:text-[#174B39] transition"
+                      >
+                        <FiBriefcase className="text-sm text-[#66665D]" />
+                        <span>Candidate Portal</span>
                       </Link>
 
                       {(user?.role === 'admin' || user?.role === 'editor') && (
@@ -610,6 +632,19 @@ const Navbar = () => {
                   }`}
                 >
                   Industries
+                </Link>
+
+                {/* Careers */}
+                <Link
+                  to="/careers"
+                  onClick={() => setMobileOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    location.pathname.startsWith('/careers')
+                      ? 'bg-[#EAF0E8] text-[#174B39] font-bold border-l-2 border-[#B88A3B]'
+                      : 'text-[#252720] hover:bg-[#EAF0E8]/50'
+                  }`}
+                >
+                  Careers & Jobs
                 </Link>
 
                 {/* Contact */}
