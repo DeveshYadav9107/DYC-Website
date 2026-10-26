@@ -24,6 +24,11 @@ const UserSchema = new mongoose.Schema({
   resumeFileName: { type: String },
   location: { type: String, trim: true },
   headline: { type: String, trim: true },
+  // SAP Client Support portal fields
+  sapModules: [{ type: String }],
+  sapSystem: { type: String, default: 'SAP S/4HANA Enterprise' },
+  supportAgreement: { type: String, default: 'Gold Tier (8x5 Standard AMS)' },
+  authorizedSupportUser: { type: Boolean, default: true },
 }, { timestamps: true });
 
 // Auto-populate name if firstName and lastName are provided

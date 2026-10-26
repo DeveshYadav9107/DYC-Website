@@ -6,6 +6,7 @@ import settingsRoutes from './settingsRoutes.js';
 import jobRoutes from './jobRoutes.js';
 import applicationRoutes from './applicationRoutes.js';
 import staffingRequestRoutes from './staffingRequestRoutes.js';
+import supportTicketRoutes from './supportTicketRoutes.js';
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use('/settings', settingsRoutes);
 router.use('/jobs', jobRoutes);
 router.use('/applications', applicationRoutes);
 router.use('/staffing-requests', staffingRequestRoutes);
+router.use('/support-tickets', supportTicketRoutes);
 
 export default router;

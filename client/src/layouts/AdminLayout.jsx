@@ -17,6 +17,7 @@ import {
   FiBriefcase,
   FiUsers,
   FiLayers,
+  FiCpu,
 } from 'react-icons/fi';
 
 const AdminLayout = ({ children }) => {
@@ -91,6 +92,11 @@ const AdminLayout = ({ children }) => {
       icon: FiUsers,
     },
     {
+      name: 'SAP Support Desk',
+      path: '/admin/sap-support',
+      icon: FiCpu,
+    },
+    {
       name: 'Settings',
       path: '/admin/settings',
       icon: FiSliders,
@@ -109,6 +115,9 @@ const AdminLayout = ({ children }) => {
     }
     if (location.pathname.startsWith('/admin/candidates')) {
       return { title: 'Candidate Pipeline', section: 'Recruitment & Staffing' };
+    }
+    if (location.pathname.startsWith('/admin/sap-support')) {
+      return { title: 'SAP Support Desk', section: 'Enterprise AMS & SLA' };
     }
     if (location.pathname.startsWith('/admin/settings')) {
       return { title: 'Settings', section: 'System Configuration' };
