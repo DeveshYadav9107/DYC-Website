@@ -17,6 +17,11 @@ import {
   FiAlertCircle,
   FiRefreshCw,
   FiFileText,
+  FiExternalLink,
+  FiUser,
+  FiMapPin,
+  FiBriefcase,
+  FiAward,
 } from 'react-icons/fi';
 import {
   getAdminApplications,
@@ -25,6 +30,7 @@ import {
   updateApplicationStatus,
   scheduleInterviewRound,
   addApplicationNote,
+  downloadCandidateResume,
 } from '../../services/api';
 
 const STAGES = ['Applied', 'Screening', 'Interview', 'Selected', 'Rejected', 'Placed'];
@@ -62,10 +68,115 @@ const AdminCandidates = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [skillFilter, setSkillFilter] = useState('');
 
-  // Candidate Dossier Drawer
+  // Candidate Dossier & CV Viewer State
   const [selectedApp, setSelectedApp] = useState(null);
+  const [viewingCv, setViewingCv] = useState(false);
+  const [downloadingResume, setDownloadingResume] = useState(false);
+  const [activeDossierTab, setActiveDossierTab] = useState('application'); // 'application' | 'candidateProfile'
   const [statusNote, setStatusNote] = useState('');
   const [statusUpdating, setStatusUpdating] = useState(false);
+
+  // Lock outer screen scroll while candidate dossier / CV preview is open
+  useEffect(() => {
+    if (selectedApp) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+      setViewingCv(false);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedApp]);
+
+  const getResumeFullUrl = (url) => {
+    if (!url) return '';
+    if (
+      url.startsWith('http://') ||
+      url.startsWith('https://') ||
+      url.startsWith('blob:') ||
+      url.startsWith('data:')
+    ) {
+      return url;
+    }
+    const apiBase = import.meta.env.VITE_API_URL || '';
+    if (apiBase && apiBase.startsWith('http')) {
+      try {
+        const origin = new URL(apiBase).origin;
+        return `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+      } catch {
+        // ignore
+      }
+    }
+    if (
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ) {
+      return `http://localhost:5000${url.startsWith('/') ? '' : '/'}${url}`;
+    }
+    return url;
+  };
+
+  const handleDownloadCV = async (app) => {
+    if (!app || !app.resumeUrl) {
+      alert('No CV file attached to this application.');
+      return;
+    }
+    try {
+      setDownloadingResume(true);
+      const fileName =
+        app.resumeFileName ||
+        `${(app.candidateName || 'Candidate').replace(/\s+/g, '_')}_Resume.pdf`;
+      await downloadCandidateResume(app._id, fileName);
+    } catch (err) {
+      console.warn('Backend resume download endpoint failed, trying direct blob fetch:', err);
+      try {
+        const fullUrl = getResumeFullUrl(app.resumeUrl);
+        const res = await fetch(fullUrl);
+        if (!res.ok) throw new Error('File fetch failed');
+        const blob = await res.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download =
+          app.resumeFileName ||
+          `${(app.candidateName || 'Candidate').replace(/\s+/g, '_')}_Resume.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        document.body.removeChild(a);
+      } catch (fallbackErr) {
+        window.open(getResumeFullUrl(app.resumeUrl), '_blank');
+      }
+    } finally {
+      setDownloadingResume(false);
+    }
+  };
+
+  const handleRejectCandidate = async (app) => {
+    if (!app) return;
+    const reason = window.prompt(
+      `Reject application for "${app.candidateName}"?\nEnter optional note/feedback for candidate portal:`,
+      'Application reviewed; currently not shortlisted for this role.'
+    );
+    if (reason === null) return; // User cancelled prompt
+
+    try {
+      setStatusUpdating(true);
+      const updated = await updateApplicationStatus(app._id, {
+        status: 'Rejected',
+        note: reason.trim() || 'Application rejected by recruiter.',
+      });
+      setSelectedApp(updated?.data || updated);
+      setStatusNote('');
+      fetchApplications();
+      fetchStats();
+    } catch (err) {
+      alert(err?.response?.data?.message || 'Failed to reject candidate');
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
 
   // Interview Scheduler State
   const [schedulingInterview, setSchedulingInterview] = useState(false);
@@ -352,15 +463,43 @@ const AdminCandidates = () => {
                   <tr
                     key={app._id}
                     className="hover:bg-[#FDFBF7] transition cursor-pointer"
-                    onClick={() => setSelectedApp(app)}
+                    onClick={() => {
+                      setSelectedApp(app);
+                      setActiveDossierTab('application');
+                    }}
                   >
                     <td className="py-4 px-5">
-                      <span className="font-bold text-[#252720] text-sm block">
-                        {app.candidateName}
-                      </span>
-                      <span className="text-[11px] text-[#66665D] block">
-                        {app.candidateEmail} · {app.candidatePhone}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        {app.candidate?.avatar ? (
+                          <img
+                            src={app.candidate.avatar}
+                            alt={app.candidateName}
+                            className="w-9 h-9 rounded-full object-cover border border-[#E7E0D3] shrink-0"
+                          />
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-[#174B39]/10 text-[#174B39] font-bold text-xs flex items-center justify-center border border-[#174B39]/20 shrink-0">
+                            {(app.candidateName || 'C').charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-[#252720] text-sm block">
+                              {app.candidateName}
+                            </span>
+                            {app.candidate && (
+                              <span
+                                className="text-[9px] font-bold text-[#174B39] bg-[#EAF0E8] px-1.5 py-0.2 rounded border border-[#174B39]/20"
+                                title="Registered Career Profile configured in Candidate Portal"
+                              >
+                                Registered
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[11px] text-[#66665D] block">
+                            {app.candidateEmail} · {app.candidatePhone}
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     <td className="py-4 px-4">
                       <span className="font-semibold text-[#252720] block">
@@ -390,15 +529,31 @@ const AdminCandidates = () => {
                     </td>
                     <td className="py-4 px-3" onClick={(e) => e.stopPropagation()}>
                       {app.resumeUrl ? (
-                        <a
-                          href={app.resumeUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-[#174B39] font-bold hover:underline"
-                        >
-                          <FiDownload className="text-xs" />
-                          <span>CV</span>
-                        </a>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleDownloadCV(app)}
+                            className="inline-flex items-center gap-1 text-xs text-[#174B39] font-bold hover:underline cursor-pointer"
+                            title="Download CV"
+                          >
+                            <FiDownload className="text-xs" />
+                            <span>Download</span>
+                          </button>
+                          <span className="text-[#C4C4BA]">|</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedApp(app);
+                              setViewingCv(true);
+                              setActiveDossierTab('application');
+                            }}
+                            className="inline-flex items-center gap-1 text-xs text-[#2980B9] font-bold hover:underline cursor-pointer"
+                            title="View CV in Left Preview"
+                          >
+                            <FiEye className="text-xs" />
+                            <span>View</span>
+                          </button>
+                        </div>
                       ) : (
                         <span className="text-[11px] text-[#8A897C]">None</span>
                       )}
@@ -417,6 +572,7 @@ const AdminCandidates = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedApp(app);
+                          setActiveDossierTab('application');
                         }}
                         className="bg-[#174B39] text-white px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-[#103728] transition cursor-pointer"
                       >
@@ -431,367 +587,810 @@ const AdminCandidates = () => {
         )}
       </div>
 
-      {/* ================= CANDIDATE DOSSIER DRAWER / MODAL ================= */}
+      {/* ================= CANDIDATE DOSSIER & CV VIEWER MODAL ================= */}
       {selectedApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-[#252720]/60 backdrop-blur-xs">
-          <div className="bg-white w-full max-w-2xl h-full shadow-2xl border-l border-[#E7E0D3] flex flex-col justify-between overflow-hidden">
-            {/* Header */}
-            <div className="p-6 border-b border-[#E7E0D3] flex items-center justify-between bg-[#FDFBF7]">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#B88A3B]">
-                  Candidate Dossier
-                </span>
-                <h2 className="text-xl font-serif font-bold text-[#252720]">
-                  {selectedApp.candidateName}
-                </h2>
-                <p className="text-xs text-[#66665D]">
-                  Applied for: <strong>{selectedApp.job?.title || 'Open Position'}</strong>
-                </p>
-              </div>
-
-              <button
-                onClick={() => setSelectedApp(null)}
-                className="p-2 rounded-full text-[#8A897C] hover:text-[#252720] hover:bg-white"
-              >
-                <FiX className="text-lg" />
-              </button>
-            </div>
-
-            {/* Content Scroll View */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {/* Profile Details Card */}
-              <div className="bg-[#F8F5EE] rounded-2xl p-5 border border-[#E7E0D3] text-xs space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
-                      Email
-                    </span>
-                    <span className="font-semibold text-[#252720]">
-                      {selectedApp.candidateEmail}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
-                      Phone
-                    </span>
-                    <span className="font-semibold text-[#252720]">
-                      {selectedApp.candidatePhone}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
-                      Total Experience
-                    </span>
-                    <span className="font-semibold text-[#252720]">
-                      {selectedApp.totalExperience}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
-                      Notice Period
-                    </span>
-                    <span className="font-semibold text-[#252720]">
-                      {selectedApp.noticePeriod || 'Not specified'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
-                      Current Company
-                    </span>
-                    <span className="font-semibold text-[#252720]">
-                      {selectedApp.currentCompany || 'Not stated'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
-                      Current / Expected CTC
-                    </span>
-                    <span className="font-semibold text-[#174B39]">
-                      {selectedApp.currentSalary || 'N/A'} ➔ {selectedApp.expectedSalary || 'N/A'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Skills tags */}
-                {selectedApp.skills?.length > 0 && (
-                  <div className="pt-2 border-t border-[#E7E0D3]">
-                    <span className="text-[#8A897C] block text-[10px] uppercase font-bold mb-1.5">
-                      Skills
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedApp.skills.map((s, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-white text-[#174B39] font-bold px-2 py-0.5 rounded border border-[#174B39]/20"
-                        >
-                          {s}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#141715]/80 backdrop-blur-xs overflow-hidden p-0 sm:p-3 lg:p-4">
+          <div
+            className={`bg-white w-full ${
+              viewingCv ? 'max-w-7xl h-full sm:h-[95vh] sm:rounded-3xl' : 'max-w-2xl h-full ml-auto'
+            } shadow-2xl border border-[#E7E0D3] flex flex-col lg:flex-row overflow-hidden transition-all duration-300`}
+          >
+            {/* ================= LEFT SIDE: VIEW CV PANEL ================= */}
+            {viewingCv && (
+              <div className="w-full lg:w-7/12 h-[50vh] lg:h-full flex flex-col bg-[#141815] border-b lg:border-b-0 lg:border-r border-[#2C332E] overflow-hidden shrink-0">
+                {/* CV Viewer Header */}
+                <div className="px-5 py-3.5 bg-[#191F1A] border-b border-[#2C332E] flex items-center justify-between text-white shrink-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-xl bg-[#174B39] text-[#78D6A2] flex items-center justify-center shrink-0">
+                      <FiFileText className="text-base" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-[#78D6A2]">
+                          Candidate CV Preview
                         </span>
-                      ))}
+                        <span className="text-[10px] text-[#8A897C]">• Independent Scroll</span>
+                      </div>
+                      <h3 className="text-xs font-semibold text-white truncate max-w-xs sm:max-w-sm">
+                        {selectedApp.resumeFileName || 'Candidate_Resume.pdf'}
+                      </h3>
                     </div>
                   </div>
-                )}
 
-                {/* Resume Download button */}
-                {selectedApp.resumeUrl && (
-                  <div className="pt-2 border-t border-[#E7E0D3] flex items-center justify-between">
-                    <span className="text-xs font-semibold text-[#252720]">
-                      Attached Resume: {selectedApp.resumeFileName || 'Resume.pdf'}
-                    </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadCV(selectedApp)}
+                      disabled={downloadingResume}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-bold transition cursor-pointer shadow-xs disabled:opacity-50"
+                      title="Download uploaded CV"
+                    >
+                      <FiDownload className={downloadingResume ? 'animate-bounce' : ''} />
+                      <span>{downloadingResume ? 'Downloading...' : 'Download CV'}</span>
+                    </button>
+
                     <a
-                      href={selectedApp.resumeUrl}
+                      href={getResumeFullUrl(selectedApp.resumeUrl)}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 bg-[#174B39] text-white px-3 py-1.5 rounded-xl font-bold shadow-xs hover:bg-[#103728]"
+                      className="p-2 rounded-xl bg-[#252C27] hover:bg-[#333C36] text-[#C4C4BA] hover:text-white transition cursor-pointer"
+                      title="Open CV in New Browser Tab"
                     >
-                      <FiDownload />
-                      <span>Download CV</span>
+                      <FiExternalLink className="text-sm" />
                     </a>
-                  </div>
-                )}
-              </div>
 
-              {/* Status Transition Action Box */}
-              <div className="bg-white rounded-2xl p-5 border border-[#E7E0D3] shadow-xs space-y-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#174B39] block">
-                  Workflow Stage: {selectedApp.status}
-                </span>
-
-                <div className="flex flex-wrap gap-2">
-                  {STAGES.map((st) => (
                     <button
-                      key={st}
                       type="button"
-                      disabled={statusUpdating || selectedApp.status === st}
-                      onClick={() => handleUpdateStatus(st)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
-                        selectedApp.status === st
-                          ? 'bg-[#174B39] text-white border-[#174B39]'
-                          : 'bg-[#F8F5EE] text-[#252720] border-[#E7E0D3] hover:bg-[#EAF0E8]'
-                      }`}
+                      onClick={() => setViewingCv(false)}
+                      className="p-2 rounded-xl bg-[#252C27] hover:bg-[#333C36] text-[#C4C4BA] hover:text-white transition cursor-pointer"
+                      title="Close Preview Panel"
                     >
-                      Move to {st}
+                      <FiX className="text-base" />
                     </button>
-                  ))}
+                  </div>
                 </div>
 
-                <div>
-                  <input
-                    type="text"
-                    value={statusNote}
-                    onChange={(e) => setStatusNote(e.target.value)}
-                    placeholder="Optional recruiter note for status change..."
-                    className="w-full px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720]"
-                  />
+                {/* CV Document Viewer Box (Screen stays fixed, ONLY this container scrolls) */}
+                <div className="flex-1 h-full overflow-y-auto p-3 sm:p-4 bg-[#0F1210]">
+                  {selectedApp.resumeUrl ? (
+                    <div className="w-full h-full min-h-[550px] lg:min-h-full flex flex-col">
+                      <iframe
+                        src={`${getResumeFullUrl(selectedApp.resumeUrl)}#toolbar=1&navpanes=0`}
+                        className="w-full h-full min-h-[550px] lg:min-h-full rounded-2xl bg-white shadow-2xl border border-gray-800"
+                        title={`CV Preview - ${selectedApp.candidateName}`}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-center p-8 text-[#8A897C]">
+                      <FiAlertCircle className="text-4xl mb-3 text-[#B88A3B]" />
+                      <p className="text-sm font-bold text-white">No CV File Uploaded</p>
+                      <p className="text-xs text-[#8A897C] mt-1">
+                        This candidate application does not have an attached resume.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
+            )}
 
-              {/* Interview Rounds & Scheduling */}
-              <div className="bg-white rounded-2xl p-5 border border-[#E7E0D3] shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#174B39]">
-                    Interview Rounds ({selectedApp.interviews?.length || 0})
-                  </span>
+            {/* ================= RIGHT SIDE: CANDIDATE DOSSIER & PROFILE ================= */}
+            <div
+              className={`w-full ${
+                viewingCv ? 'lg:w-5/12' : 'w-full'
+              } h-full flex flex-col bg-white overflow-hidden`}
+            >
+              {/* Header */}
+              <div className="p-5 border-b border-[#E7E0D3] bg-[#FDFBF7] flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  {selectedApp.candidate?.avatar ? (
+                    <img
+                      src={selectedApp.candidate.avatar}
+                      alt={selectedApp.candidateName}
+                      className="w-12 h-12 rounded-2xl object-cover border border-[#E7E0D3] shadow-xs shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-2xl bg-[#174B39]/10 text-[#174B39] font-bold text-lg flex items-center justify-center border border-[#174B39]/20 shrink-0">
+                      {(selectedApp.candidateName || 'C').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#B88A3B]">
+                        Candidate Dossier
+                      </span>
+                      {selectedApp.candidate && (
+                        <span className="text-[9px] font-bold text-[#174B39] bg-[#EAF0E8] px-2 py-0.5 rounded-full border border-[#174B39]/20">
+                          Portal Profile Connected
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="text-lg sm:text-xl font-serif font-bold text-[#252720] truncate">
+                      {selectedApp.candidateName}
+                    </h2>
+                    <p className="text-xs text-[#66665D] truncate">
+                      Applied for: <strong>{selectedApp.job?.title || 'Open Position'}</strong>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
                   <button
-                    onClick={() => setSchedulingInterview(!schedulingInterview)}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#174B39] bg-[#EAF0E8] px-3 py-1.5 rounded-xl hover:bg-[#174B39] hover:text-white transition cursor-pointer"
+                    onClick={() => {
+                      setSelectedApp(null);
+                      setViewingCv(false);
+                    }}
+                    className="p-2 rounded-xl text-[#8A897C] hover:text-[#252720] hover:bg-[#F8F5EE] transition cursor-pointer"
+                    title="Close"
                   >
-                    <FiCalendar className="text-xs" />
-                    <span>{schedulingInterview ? 'Cancel' : 'Schedule Round'}</span>
+                    <FiX className="text-lg" />
                   </button>
                 </div>
+              </div>
 
-                {/* Scheduling Form */}
-                {schedulingInterview && (
-                  <form
-                    onSubmit={handleScheduleInterviewSubmit}
-                    className="bg-[#F8F5EE] rounded-2xl p-4 border border-[#E7E0D3] space-y-3 text-xs"
-                  >
-                    <h4 className="font-bold text-[#252720]">Schedule Interview Round</h4>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#252720] mb-1">
-                        Round Title
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={interviewForm.roundName}
-                        onChange={(e) =>
-                          setInterviewForm({ ...interviewForm, roundName: e.target.value })
-                        }
-                        className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-[#252720] mb-1">
-                          Date
-                        </label>
-                        <input
-                          type="date"
-                          required
-                          value={interviewForm.scheduledDate}
-                          onChange={(e) =>
-                            setInterviewForm({ ...interviewForm, scheduledDate: e.target.value })
-                          }
-                          className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-semibold text-[#252720] mb-1">
-                          Time (IST)
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={interviewForm.time}
-                          onChange={(e) =>
-                            setInterviewForm({ ...interviewForm, time: e.target.value })
-                          }
-                          className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#252720] mb-1">
-                        Meeting Mode
-                      </label>
-                      <select
-                        value={interviewForm.meetingType}
-                        onChange={(e) =>
-                          setInterviewForm({ ...interviewForm, meetingType: e.target.value })
-                        }
-                        className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
-                      >
-                        <option value="Online (Google Meet / Zoom)">Online (Google Meet / Zoom)</option>
-                        <option value="In-person Office">In-person Office</option>
-                        <option value="Telephonic">Telephonic</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#252720] mb-1">
-                        Meeting Link or Venue Address
-                      </label>
-                      <input
-                        type="text"
-                        value={interviewForm.meetingLink}
-                        onChange={(e) =>
-                          setInterviewForm({ ...interviewForm, meetingLink: e.target.value })
-                        }
-                        placeholder="https://meet.google.com/..."
-                        className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#252720] mb-1">
-                        Interviewer Name / Panel
-                      </label>
-                      <input
-                        type="text"
-                        value={interviewForm.interviewerName}
-                        onChange={(e) =>
-                          setInterviewForm({ ...interviewForm, interviewerName: e.target.value })
-                        }
-                        className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
-                      />
-                    </div>
-                    <div className="flex justify-end gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => setSchedulingInterview(false)}
-                        className="px-3 py-1.5 rounded-xl text-xs font-semibold text-[#66665D]"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={statusUpdating}
-                        className="bg-[#174B39] text-white px-4 py-1.5 rounded-xl text-xs font-bold"
-                      >
-                        {statusUpdating ? 'Booking...' : 'Confirm & Notify Candidate'}
-                      </button>
-                    </div>
-                  </form>
-                )}
+              {/* Navigation Tabs (Application vs Registered Career Profile) */}
+              <div className="flex border-b border-[#E7E0D3] bg-[#FDFBF7] px-5 gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setActiveDossierTab('application')}
+                  className={`py-2.5 px-3 text-xs font-bold border-b-2 transition cursor-pointer ${
+                    activeDossierTab === 'application'
+                      ? 'border-[#174B39] text-[#174B39]'
+                      : 'border-transparent text-[#8A897C] hover:text-[#252720]'
+                  }`}
+                >
+                  Job Application Details
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveDossierTab('candidateProfile')}
+                  className={`py-2.5 px-3 text-xs font-bold border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
+                    activeDossierTab === 'candidateProfile'
+                      ? 'border-[#174B39] text-[#174B39]'
+                      : 'border-transparent text-[#8A897C] hover:text-[#252720]'
+                  }`}
+                >
+                  <FiUser className="text-xs" />
+                  <span>View Registered Profile</span>
+                  {selectedApp.candidate && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#174B39]"></span>
+                  )}
+                </button>
+              </div>
 
-                {/* List of existing rounds */}
-                {selectedApp.interviews?.length > 0 && (
-                  <div className="space-y-2.5">
-                    {selectedApp.interviews.map((round, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-[#FDFBF7] rounded-xl p-3 border border-[#E7E0D3] text-xs space-y-1"
-                      >
-                        <div className="flex items-center justify-between font-bold text-[#252720]">
-                          <span>{round.roundName}</span>
-                          <span className="text-[10px] text-[#B7950B] bg-[#FEF9E7] px-2 py-0.5 rounded border border-[#FAD7A0]">
-                            {round.status}
+              {/* Scrollable Content View */}
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+                {activeDossierTab === 'application' ? (
+                  <>
+                    {/* CV Action Bar (Download CV & View CV side-by-side) */}
+                    <div className="bg-[#174B39]/5 border border-[#174B39]/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-9 h-9 rounded-xl bg-[#174B39] text-white flex items-center justify-center shrink-0">
+                          <FiFileText className="text-lg" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[10px] uppercase font-bold text-[#174B39] tracking-wider block">
+                            Uploaded Resume
+                          </span>
+                          <span className="text-xs font-semibold text-[#252720] truncate block max-w-xs">
+                            {selectedApp.resumeFileName || 'Resume.pdf'}
                           </span>
                         </div>
-                        <p className="text-[#66665D]">
-                          {new Date(round.scheduledDate).toLocaleDateString()} at {round.time} ({round.meetingType})
-                        </p>
-                        {round.meetingLink && (
-                          <a
-                            href={round.meetingLink}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[#174B39] font-bold hover:underline block"
-                          >
-                            Link: {round.meetingLink}
-                          </a>
-                        )}
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
 
-              {/* Recruiter Evaluation Notes Thread */}
-              <div className="bg-white rounded-2xl p-5 border border-[#E7E0D3] shadow-xs space-y-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#174B39] block">
-                  Internal Recruiter Evaluation Notes
-                </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {/* Download CV Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadCV(selectedApp)}
+                          disabled={downloadingResume || !selectedApp.resumeUrl}
+                          className="inline-flex items-center gap-1.5 bg-[#174B39] text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs hover:bg-[#103728] transition cursor-pointer disabled:opacity-50"
+                          title="Download Candidate CV"
+                        >
+                          <FiDownload className={downloadingResume ? 'animate-bounce' : ''} />
+                          <span>{downloadingResume ? 'Downloading...' : 'Download CV'}</span>
+                        </button>
 
-                <form onSubmit={handleAddNote} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newNote}
-                    onChange={(e) => setNewNote(e.target.value)}
-                    placeholder="Log interview feedback, expected salary, remarks..."
-                    className="flex-1 px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720]"
-                  />
-                  <button
-                    type="submit"
-                    disabled={addingNote || !newNote.trim()}
-                    className="bg-[#174B39] text-white px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-50 cursor-pointer"
-                  >
-                    {addingNote ? 'Saving...' : 'Add Note'}
-                  </button>
-                </form>
+                        {/* View CV Button */}
+                        <button
+                          type="button"
+                          disabled={!selectedApp.resumeUrl}
+                          onClick={() => setViewingCv(!viewingCv)}
+                          className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer shadow-xs disabled:opacity-50 ${
+                            viewingCv
+                              ? 'bg-[#252720] text-white border-[#252720]'
+                              : 'bg-white text-[#174B39] border-[#174B39]/30 hover:bg-[#EAF0E8]'
+                          }`}
+                          title="Open Left Side CV Viewer"
+                        >
+                          <FiEye className="text-sm" />
+                          <span>{viewingCv ? 'Hide CV' : 'View CV'}</span>
+                        </button>
+                      </div>
+                    </div>
 
-                {selectedApp.recruiterNotes?.length > 0 && (
-                  <div className="space-y-2 pt-2">
-                    {selectedApp.recruiterNotes.map((n, i) => (
-                      <div key={i} className="bg-[#F8F5EE] rounded-xl p-3 border border-[#E7E0D3] text-xs">
-                        <p className="text-[#252720] leading-relaxed">{n.note}</p>
-                        <span className="text-[10px] text-[#8A897C] block mt-1">
-                          By {n.authorName} · {new Date(n.createdAt).toLocaleString()}
+                    {/* Profile Application Summary Box */}
+                    <div className="bg-[#F8F5EE] rounded-2xl p-4 sm:p-5 border border-[#E7E0D3] text-xs space-y-3">
+                      <div className="flex items-center justify-between pb-2 border-b border-[#E7E0D3]">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A897C]">
+                          Application Parameters
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setActiveDossierTab('candidateProfile')}
+                          className="text-[11px] font-bold text-[#174B39] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                        >
+                          <FiUser className="text-xs" />
+                          <span>
+                            {selectedApp.candidate ? 'View Full Profile ➔' : 'View Registered Profile'}
+                          </span>
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
+                            Email
+                          </span>
+                          <span className="font-semibold text-[#252720]">
+                            {selectedApp.candidateEmail}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
+                            Phone
+                          </span>
+                          <span className="font-semibold text-[#252720]">
+                            {selectedApp.candidatePhone}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
+                            Total Experience
+                          </span>
+                          <span className="font-semibold text-[#252720]">
+                            {selectedApp.totalExperience}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
+                            Notice Period
+                          </span>
+                          <span className="font-semibold text-[#252720]">
+                            {selectedApp.noticePeriod || 'Not specified'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
+                            Current Company
+                          </span>
+                          <span className="font-semibold text-[#252720]">
+                            {selectedApp.currentCompany || 'Not stated'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[#8A897C] block text-[10px] uppercase font-bold">
+                            Current / Expected CTC
+                          </span>
+                          <span className="font-semibold text-[#174B39]">
+                            {selectedApp.currentSalary || 'N/A'} ➔ {selectedApp.expectedSalary || 'N/A'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Skills tags */}
+                      {selectedApp.skills?.length > 0 && (
+                        <div className="pt-2 border-t border-[#E7E0D3]">
+                          <span className="text-[#8A897C] block text-[10px] uppercase font-bold mb-1.5">
+                            Skills Applied With
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {selectedApp.skills.map((s, idx) => (
+                              <span
+                                key={idx}
+                                className="bg-white text-[#174B39] font-bold px-2 py-0.5 rounded border border-[#174B39]/20"
+                              >
+                                {s}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Status Transition Action Box */}
+                    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#E7E0D3] shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#174B39] block">
+                          Workflow Pipeline Stage: {selectedApp.status}
+                        </span>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${getStatusBadgeStyle(
+                            selectedApp.status
+                          )}`}
+                        >
+                          {selectedApp.status}
                         </span>
                       </div>
-                    ))}
+
+                      <div className="flex flex-wrap gap-2">
+                        {STAGES.map((st) => (
+                          <button
+                            key={st}
+                            type="button"
+                            disabled={statusUpdating || selectedApp.status === st}
+                            onClick={() => handleUpdateStatus(st)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                              selectedApp.status === st
+                                ? 'bg-[#174B39] text-white border-[#174B39]'
+                                : 'bg-[#F8F5EE] text-[#252720] border-[#E7E0D3] hover:bg-[#EAF0E8]'
+                            }`}
+                          >
+                            Move to {st}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div>
+                        <input
+                          type="text"
+                          value={statusNote}
+                          onChange={(e) => setStatusNote(e.target.value)}
+                          placeholder="Optional recruiter note for status change..."
+                          className="w-full px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Interview Rounds & Scheduling */}
+                    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#E7E0D3] shadow-xs space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#174B39]">
+                          Interview Rounds ({selectedApp.interviews?.length || 0})
+                        </span>
+                        <button
+                          onClick={() => setSchedulingInterview(!schedulingInterview)}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-[#174B39] bg-[#EAF0E8] px-3 py-1.5 rounded-xl hover:bg-[#174B39] hover:text-white transition cursor-pointer"
+                        >
+                          <FiCalendar className="text-xs" />
+                          <span>{schedulingInterview ? 'Cancel' : 'Schedule Round'}</span>
+                        </button>
+                      </div>
+
+                      {/* Scheduling Form */}
+                      {schedulingInterview && (
+                        <form
+                          onSubmit={handleScheduleInterviewSubmit}
+                          className="bg-[#F8F5EE] rounded-2xl p-4 border border-[#E7E0D3] space-y-3 text-xs"
+                        >
+                          <h4 className="font-bold text-[#252720]">Schedule Interview Round</h4>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-[#252720] mb-1">
+                              Round Title
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={interviewForm.roundName}
+                              onChange={(e) =>
+                                setInterviewForm({ ...interviewForm, roundName: e.target.value })
+                              }
+                              className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[11px] font-semibold text-[#252720] mb-1">
+                                Date
+                              </label>
+                              <input
+                                type="date"
+                                required
+                                value={interviewForm.scheduledDate}
+                                onChange={(e) =>
+                                  setInterviewForm({ ...interviewForm, scheduledDate: e.target.value })
+                                }
+                                className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[11px] font-semibold text-[#252720] mb-1">
+                                Time (IST)
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                value={interviewForm.time}
+                                onChange={(e) =>
+                                  setInterviewForm({ ...interviewForm, time: e.target.value })
+                                }
+                                className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-[#252720] mb-1">
+                              Meeting Mode
+                            </label>
+                            <select
+                              value={interviewForm.meetingType}
+                              onChange={(e) =>
+                                setInterviewForm({ ...interviewForm, meetingType: e.target.value })
+                              }
+                              className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
+                            >
+                              <option value="Online (Google Meet / Zoom)">
+                                Online (Google Meet / Zoom)
+                              </option>
+                              <option value="In-person Office">In-person Office</option>
+                              <option value="Telephonic">Telephonic</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-[#252720] mb-1">
+                              Meeting Link or Venue Address
+                            </label>
+                            <input
+                              type="text"
+                              value={interviewForm.meetingLink}
+                              onChange={(e) =>
+                                setInterviewForm({ ...interviewForm, meetingLink: e.target.value })
+                              }
+                              placeholder="https://meet.google.com/..."
+                              className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-[#252720] mb-1">
+                              Interviewer Name / Panel
+                            </label>
+                            <input
+                              type="text"
+                              value={interviewForm.interviewerName}
+                              onChange={(e) =>
+                                setInterviewForm({
+                                  ...interviewForm,
+                                  interviewerName: e.target.value,
+                                })
+                              }
+                              className="w-full px-3 py-2 rounded-xl bg-white border border-[#E7E0D3]"
+                            />
+                          </div>
+                          <div className="flex justify-end gap-2 pt-2">
+                            <button
+                              type="button"
+                              onClick={() => setSchedulingInterview(false)}
+                              className="px-3 py-1.5 rounded-xl text-xs font-semibold text-[#66665D]"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="submit"
+                              disabled={statusUpdating}
+                              className="bg-[#174B39] text-white px-4 py-1.5 rounded-xl text-xs font-bold"
+                            >
+                              {statusUpdating ? 'Booking...' : 'Confirm & Notify Candidate'}
+                            </button>
+                          </div>
+                        </form>
+                      )}
+
+                      {/* List of existing rounds */}
+                      {selectedApp.interviews?.length > 0 && (
+                        <div className="space-y-2.5">
+                          {selectedApp.interviews.map((round, idx) => (
+                            <div
+                              key={idx}
+                              className="bg-[#FDFBF7] rounded-xl p-3 border border-[#E7E0D3] text-xs space-y-1"
+                            >
+                              <div className="flex items-center justify-between font-bold text-[#252720]">
+                                <span>{round.roundName}</span>
+                                <span className="text-[10px] text-[#B7950B] bg-[#FEF9E7] px-2 py-0.5 rounded border border-[#FAD7A0]">
+                                  {round.status}
+                                </span>
+                              </div>
+                              <p className="text-[#66665D]">
+                                {new Date(round.scheduledDate).toLocaleDateString()} at {round.time}{' '}
+                                ({round.meetingType})
+                              </p>
+                              {round.meetingLink && (
+                                <a
+                                  href={round.meetingLink}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-[#174B39] font-bold hover:underline block"
+                                >
+                                  Link: {round.meetingLink}
+                                </a>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Recruiter Evaluation Notes Thread */}
+                    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#E7E0D3] shadow-xs space-y-3">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#174B39] block">
+                        Internal Recruiter Evaluation Notes
+                      </span>
+
+                      <form onSubmit={handleAddNote} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newNote}
+                          onChange={(e) => setNewNote(e.target.value)}
+                          placeholder="Log interview feedback, expected salary, remarks..."
+                          className="flex-1 px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720]"
+                        />
+                        <button
+                          type="submit"
+                          disabled={addingNote || !newNote.trim()}
+                          className="bg-[#174B39] text-white px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-50 cursor-pointer"
+                        >
+                          {addingNote ? 'Saving...' : 'Add Note'}
+                        </button>
+                      </form>
+
+                      {selectedApp.recruiterNotes?.length > 0 && (
+                        <div className="space-y-2 pt-2">
+                          {selectedApp.recruiterNotes.map((n, i) => (
+                            <div
+                              key={i}
+                              className="bg-[#F8F5EE] rounded-xl p-3 border border-[#E7E0D3] text-xs"
+                            >
+                              <p className="text-[#252720] leading-relaxed">{n.note}</p>
+                              <span className="text-[10px] text-[#8A897C] block mt-1">
+                                By {n.authorName} · {new Date(n.createdAt).toLocaleString()}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  /* ================= REGISTERED CANDIDATE CAREER PROFILE VIEW ================= */
+                  <div className="space-y-5">
+                    {selectedApp.candidate ? (
+                      <>
+                        {/* Profile Hero Card */}
+                        <div className="bg-[#F8F5EE] rounded-3xl p-5 sm:p-6 border border-[#E7E0D3] text-xs space-y-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                            {selectedApp.candidate.avatar ? (
+                              <img
+                                src={selectedApp.candidate.avatar}
+                                alt={selectedApp.candidate.name}
+                                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-white shadow-md shrink-0"
+                              />
+                            ) : (
+                              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#174B39] text-white font-serif font-bold text-2xl flex items-center justify-center shrink-0 shadow-md">
+                                {(selectedApp.candidate.name || 'C').charAt(0).toUpperCase()}
+                              </div>
+                            )}
+
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-lg font-serif font-bold text-[#252720]">
+                                  {selectedApp.candidate.name || selectedApp.candidateName}
+                                </h3>
+                                <span className="bg-[#EAF0E8] text-[#174B39] px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#174B39]/20">
+                                  Verified Candidate
+                                </span>
+                              </div>
+                              <p className="text-xs font-semibold text-[#174B39]">
+                                {selectedApp.candidate.headline ||
+                                  selectedApp.candidate.designation ||
+                                  'Candidate Profile'}
+                              </p>
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-[#66665D] pt-1">
+                                <span>📧 {selectedApp.candidate.email || selectedApp.candidateEmail}</span>
+                                <span>📞 {selectedApp.candidate.phone || selectedApp.candidatePhone}</span>
+                                {selectedApp.candidate.location && (
+                                  <span>📍 {selectedApp.candidate.location}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Candidate Bio */}
+                          {selectedApp.candidate.bio ? (
+                            <div className="pt-3 border-t border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A897C] block mb-1">
+                                Professional Bio
+                              </span>
+                              <p className="text-[#252720] leading-relaxed bg-white p-3 rounded-xl border border-[#E7E0D3]">
+                                {selectedApp.candidate.bio}
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="pt-3 border-t border-[#E7E0D3] text-[#8A897C] italic text-[11px]">
+                              No professional bio has been added to their portal profile yet.
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Career Metrics & Work Details */}
+                        <div className="bg-white rounded-3xl p-5 border border-[#E7E0D3] shadow-xs text-xs space-y-4">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#174B39] block">
+                            Career Profile Metadata
+                          </span>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div className="p-3 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase text-[#8A897C] block">
+                                Current Role
+                              </span>
+                              <span className="font-semibold text-[#252720] block mt-0.5">
+                                {selectedApp.candidate.designation ||
+                                  selectedApp.currentDesignation ||
+                                  'Not specified'}
+                              </span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase text-[#8A897C] block">
+                                Current Company
+                              </span>
+                              <span className="font-semibold text-[#252720] block mt-0.5">
+                                {selectedApp.candidate.company ||
+                                  selectedApp.currentCompany ||
+                                  'Not specified'}
+                              </span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase text-[#8A897C] block">
+                                Total Experience
+                              </span>
+                              <span className="font-semibold text-[#252720] block mt-0.5">
+                                {selectedApp.candidate.totalExperience ||
+                                  selectedApp.totalExperience ||
+                                  '0 Years'}
+                              </span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase text-[#8A897C] block">
+                                Notice Period
+                              </span>
+                              <span className="font-semibold text-[#252720] block mt-0.5">
+                                {selectedApp.candidate.noticePeriod ||
+                                  selectedApp.noticePeriod ||
+                                  'Not specified'}
+                              </span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase text-[#8A897C] block">
+                                Preferred Location
+                              </span>
+                              <span className="font-semibold text-[#252720] block mt-0.5">
+                                {selectedApp.candidate.location || 'Pan India / Remote'}
+                              </span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase text-[#8A897C] block">
+                                Compensation Range
+                              </span>
+                              <span className="font-semibold text-[#174B39] block mt-0.5">
+                                {selectedApp.candidate.currentSalary ||
+                                  selectedApp.currentSalary ||
+                                  'N/A'}{' '}
+                                ➔{' '}
+                                {selectedApp.candidate.expectedSalary ||
+                                  selectedApp.expectedSalary ||
+                                  'N/A'}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Skills from Profile */}
+                          {selectedApp.candidate.skills?.length > 0 && (
+                            <div className="pt-3 border-t border-[#E7E0D3]">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A897C] block mb-2">
+                                Skills Configured in Career Profile ({selectedApp.candidate.skills.length})
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {selectedApp.candidate.skills.map((skill, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="bg-[#EAF0E8] text-[#174B39] font-bold px-2.5 py-1 rounded-lg border border-[#174B39]/20 text-xs"
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Master Resume in Profile */}
+                          {selectedApp.candidate.resumeUrl && (
+                            <div className="pt-3 border-t border-[#E7E0D3] flex items-center justify-between">
+                              <div>
+                                <span className="text-[10px] font-bold uppercase text-[#8A897C] block">
+                                  Default Profile Master Resume
+                                </span>
+                                <span className="text-xs font-semibold text-[#252720]">
+                                  {selectedApp.candidate.resumeFileName || 'Profile_Resume.pdf'}
+                                </span>
+                              </div>
+                              <a
+                                href={getResumeFullUrl(selectedApp.candidate.resumeUrl)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 bg-[#F8F5EE] border border-[#E7E0D3] text-[#174B39] hover:bg-[#EAF0E8] px-3 py-1.5 rounded-xl font-bold transition text-xs"
+                              >
+                                <FiExternalLink className="text-xs" />
+                                <span>Open Profile Resume</span>
+                              </a>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setActiveDossierTab('application')}
+                            className="text-xs font-bold text-[#174B39] hover:underline cursor-pointer"
+                          >
+                            ➔ Back to Job Application Evaluation
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="bg-[#F8F5EE] rounded-3xl p-8 border border-[#E7E0D3] text-center space-y-3">
+                        <FiUser className="text-4xl text-[#8A897C] mx-auto" />
+                        <h3 className="text-sm font-bold text-[#252720]">
+                          No Separate Profile Registered
+                        </h3>
+                        <p className="text-xs text-[#66665D] max-w-md mx-auto">
+                          This candidate submitted an application using the online job form with
+                          email <strong>{selectedApp.candidateEmail}</strong>. All candidate details
+                          are recorded directly in the Application tab.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setActiveDossierTab('application')}
+                          className="bg-[#174B39] text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#103728] transition"
+                        >
+                          View Application Details
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-[#E7E0D3] bg-[#FDFBF7] flex justify-end">
-              <button
-                onClick={() => setSelectedApp(null)}
-                className="px-5 py-2 rounded-xl text-xs font-semibold text-[#252720] bg-white border border-[#E7E0D3] hover:bg-[#F8F5EE] cursor-pointer"
-              >
-                Close Dossier
-              </button>
+              {/* ================= FOOTER (Reject button & Close button) ================= */}
+              <div className="p-4 border-t border-[#E7E0D3] bg-[#FDFBF7] flex items-center justify-between gap-3 shrink-0">
+                {/* Left Action: Reject Candidate */}
+                <button
+                  type="button"
+                  disabled={statusUpdating || selectedApp.status === 'Rejected'}
+                  onClick={() => handleRejectCandidate(selectedApp)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer border border-[#FADBD8] bg-[#FDEDEC] text-[#C0392B] hover:bg-[#FADBD8] disabled:opacity-50"
+                  title="Reject candidate application and notify candidate portal"
+                >
+                  <FiXCircle className="text-sm" />
+                  <span>
+                    {selectedApp.status === 'Rejected' ? 'Application Rejected' : 'Reject Candidate'}
+                  </span>
+                </button>
+
+                {/* Right Action: Close (renamed from Close Dossier) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedApp(null);
+                    setViewingCv(false);
+                  }}
+                  className="px-6 py-2 rounded-xl text-xs font-bold text-[#252720] bg-white border border-[#E7E0D3] hover:bg-[#F8F5EE] transition cursor-pointer shadow-xs"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

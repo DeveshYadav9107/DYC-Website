@@ -5,6 +5,12 @@ import ApiError from '../utils/apiError.js';
 import ApiResponse from '../utils/apiResponse.js';
 import nodemailer from 'nodemailer';
 import env from '../config/env.js';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Safe email sender for recruitment notifications
 const sendRecruitmentEmail = async ({ to, subject, html }) => {
@@ -282,15 +288,48 @@ export const getAdminApplications = async (req, res, next) => {
 
     const applications = await JobApplication.find(query)
       .populate('job', 'title department location type')
+      .populate(
+        'candidate',
+        'name email phone avatar bio designation company totalExperience noticePeriod location skills resumeUrl resumeFileName headline createdAt'
+      )
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
+
+    // Fallback: If any application has no populated candidate ref, look up User by candidateEmail
+    const unlinkedEmails = applications
+      .filter((app) => !app.candidate && app.candidateEmail)
+      .map((app) => app.candidateEmail.toLowerCase().trim());
+
+    let userEmailMap = {};
+    if (unlinkedEmails.length > 0) {
+      try {
+        const matchedUsers = await User.find({
+          email: { $in: unlinkedEmails },
+        }).select(
+          'name email phone avatar bio designation company totalExperience noticePeriod location skills resumeUrl resumeFileName headline createdAt'
+        );
+        matchedUsers.forEach((u) => {
+          if (u.email) userEmailMap[u.email.toLowerCase()] = u;
+        });
+      } catch (e) {
+        console.warn('Could not populate fallback candidate users:', e);
+      }
+    }
+
+    const enrichedApplications = applications.map((appDoc) => {
+      const appObj = appDoc.toObject ? appDoc.toObject() : appDoc;
+      if (!appObj.candidate && appObj.candidateEmail && userEmailMap[appObj.candidateEmail.toLowerCase()]) {
+        appObj.candidate = userEmailMap[appObj.candidateEmail.toLowerCase()];
+      }
+      return appObj;
+    });
 
     return res.status(200).json(
       new ApiResponse(
         200,
         {
-          applications,
+          applications: enrichedApplications,
           total,
           page: parseInt(page),
           pages: Math.ceil(total / parseInt(limit)) || 1,
@@ -352,9 +391,30 @@ export const getApplicationById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const application = await JobApplication.findById(id).populate('job');
+    const application = await JobApplication.findById(id)
+      .populate('job')
+      .populate(
+        'candidate',
+        'name email phone avatar bio designation company totalExperience noticePeriod location skills resumeUrl resumeFileName headline createdAt'
+      );
     if (!application) {
       return next(new ApiError(404, 'Application not found'));
+    }
+
+    const appObj = application.toObject ? application.toObject() : application;
+    if (!appObj.candidate && appObj.candidateEmail) {
+      try {
+        const candidateUser = await User.findOne({
+          email: appObj.candidateEmail.toLowerCase().trim(),
+        }).select(
+          'name email phone avatar bio designation company totalExperience noticePeriod location skills resumeUrl resumeFileName headline createdAt'
+        );
+        if (candidateUser) {
+          appObj.candidate = candidateUser;
+        }
+      } catch (e) {
+        console.warn('Fallback candidate lookup warning:', e);
+      }
     }
 
     // If regular candidate, ensure they own the application
@@ -367,7 +427,66 @@ export const getApplicationById = async (req, res, next) => {
       }
     }
 
-    return res.status(200).json(new ApiResponse(200, application, 'Application details retrieved'));
+    return res.status(200).json(new ApiResponse(200, appObj, 'Application details retrieved'));
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc Download candidate resume file
+ * @route GET /api/v1/applications/:id/download-resume
+ * @access Private (Admin, Editor, or Candidate Owner)
+ */
+export const downloadApplicationResume = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const application = await JobApplication.findById(id);
+    if (!application || !application.resumeUrl) {
+      return next(new ApiError(404, 'No resume attached to this application'));
+    }
+
+    // Access control
+    if (req.user?.role !== 'admin' && req.user?.role !== 'editor') {
+      const isOwner =
+        (application.candidate &&
+          application.candidate.toString() === req.user?._id?.toString()) ||
+        application.candidateEmail === req.user?.email;
+      if (!isOwner) {
+        return next(new ApiError(403, 'Not authorized to download this resume'));
+      }
+    }
+
+    const relPath = application.resumeUrl.replace(/^\/+/, '');
+    const cleanRelPath = relPath.replace(/^uploads[\\/]/, '');
+
+    const candidatePaths = [
+      path.resolve(__dirname, '../../uploads', cleanRelPath),
+      path.resolve(__dirname, '../../uploads/resumes', path.basename(application.resumeUrl)),
+      path.resolve(process.cwd(), 'uploads', cleanRelPath),
+      path.resolve(process.cwd(), 'uploads/resumes', path.basename(application.resumeUrl)),
+      path.resolve(process.cwd(), 'server/uploads/resumes', path.basename(application.resumeUrl)),
+      path.resolve(process.cwd(), relPath),
+    ];
+
+    let foundPath = null;
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        foundPath = p;
+        break;
+      }
+    }
+
+    if (!foundPath) {
+      return next(new ApiError(404, 'Resume file could not be located on the server disk'));
+    }
+
+    const safeCandidateName = (application.candidateName || 'Candidate').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const ext = path.extname(foundPath) || '.pdf';
+    const downloadFilename =
+      application.resumeFileName || `${safeCandidateName}_Resume${ext}`;
+
+    return res.download(foundPath, downloadFilename);
   } catch (error) {
     next(error);
   }

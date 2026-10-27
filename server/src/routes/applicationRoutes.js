@@ -6,6 +6,7 @@ import {
   getAdminApplications,
   getApplicationStats,
   getApplicationById,
+  downloadApplicationResume,
   updateApplicationStatus,
   scheduleInterview,
   updateInterviewRound,
@@ -28,6 +29,7 @@ router.get('/my', protect, getMyApplications);
 // Admin / Recruiter Dashboard
 router.get('/stats', protect, authorize('admin', 'editor'), getApplicationStats);
 router.get('/', protect, authorize('admin', 'editor'), getAdminApplications);
+router.get('/:id/download-resume', protect, downloadApplicationResume);
 router.get('/:id', protect, getApplicationById);
 
 // Admin / Recruiter actions

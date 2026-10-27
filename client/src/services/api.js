@@ -347,6 +347,24 @@ export const getApplicationDetails = async (id) => {
   return response.data?.data || response.data;
 };
 
+export const downloadCandidateResume = async (applicationId, filename = 'Candidate_Resume.pdf') => {
+  const response = await api.get(`/applications/${applicationId}/download-resume`, {
+    responseType: 'blob',
+  });
+  const blob = new Blob([response.data], {
+    type: response.headers['content-type'] || 'application/pdf',
+  });
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode.removeChild(link);
+  window.URL.revokeObjectURL(downloadUrl);
+  return true;
+};
+
 export const updateApplicationStatus = async (id, payload) => {
   const response = await api.patch(`/applications/${id}/status`, payload);
   return response.data?.data || response.data;
