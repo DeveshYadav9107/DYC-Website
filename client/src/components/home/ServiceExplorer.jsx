@@ -26,7 +26,7 @@ const ServiceExplorer = () => {
       ],
       link: '/services/sap-resources',
       cta: 'Request SAP Resources',
-      image: '/images/service-sap-resources.jpg',
+      image: '/images/service-sap-resources.png',
     },
     support: {
       title: 'Reliable SAP Support & Maintenance',
@@ -65,7 +65,7 @@ const ServiceExplorer = () => {
       ],
       link: '/services/erp-solutions',
       cta: 'Explore ERP Solutions',
-      image: '/images/service-erp-solutions.jpg',
+      image: '/images/service-erp-solutions.png',
     },
   };
 

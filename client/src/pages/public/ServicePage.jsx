@@ -26,7 +26,7 @@ const servicesData = {
       { title: 'S/4HANA Specialists', desc: 'Consultants experienced in greenfield and brownfield S/4HANA migrations.' }
     ],
     inquiryType: 'sap-resource-request',
-    image: '/images/service-sap-resources.jpg'
+    image: '/images/service-sap-resources.png'
   },
   'sap-support': {
     title: 'SAP Support & Maintenance',
@@ -50,7 +50,7 @@ const servicesData = {
       { title: 'Business Analytics', desc: 'Custom dashboards reporting on your most critical KPIs and metrics.' }
     ],
     inquiryType: 'erp-inquiry',
-    image: '/images/service-erp-solutions.jpg'
+    image: '/images/service-erp-solutions.png'
   }
 };
 
