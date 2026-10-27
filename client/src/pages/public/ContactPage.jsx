@@ -9,9 +9,13 @@ import {
   FiCheckCircle,
   FiAlertCircle,
   FiArrowRight,
+  FiPaperclip,
+  FiTrash2,
+  FiFile,
+  FiUploadCloud,
 } from 'react-icons/fi';
 import siteConfig from '../../config/siteConfig';
-import { submitInquiry } from '../../services/api';
+import { submitInquiry, uploadInquiryAttachment } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import Reveal from '../../components/animations/Reveal';
 
@@ -134,14 +138,50 @@ const ContactPage = () => {
     desiredFunctionality: '',
     integrationNeeds: '',
     businessObjectives: '',
+
+    // Attachments
+    attachments: [],
   });
+
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   const [submissionResult, setSubmissionResult] = useState({
     loading: false,
     success: false,
     enquiryNumber: '',
+    inquiryId: '',
     error: '',
   });
+
+  const handleAttachmentUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAttachment(true);
+    setUploadError('');
+    try {
+      const uploaded = await uploadInquiryAttachment(file);
+      if (uploaded && uploaded.fileUrl) {
+        setFormData((prev) => ({
+          ...prev,
+          attachments: [...(prev.attachments || []), uploaded],
+        }));
+      }
+    } catch (err) {
+      console.error('File upload error:', err);
+      setUploadError(err.response?.data?.message || 'Failed to upload attachment. Please check file format.');
+    } finally {
+      setUploadingAttachment(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleRemoveAttachment = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      attachments: prev.attachments.filter((_, i) => i !== index),
+    }));
+  };
 
   const handleCategorySelect = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -291,13 +331,17 @@ const ContactPage = () => {
         };
       }
 
+      payload.attachments = formData.attachments || [];
+
       const res = await submitInquiry(payload);
       const enqNumber = res?.data?.enquiryNumber || 'DYC-ENQ';
+      const createdId = res?.data?._id || '';
 
       setSubmissionResult({
         loading: false,
         success: true,
         enquiryNumber: enqNumber,
+        inquiryId: createdId,
         error: '',
       });
 
@@ -310,17 +354,19 @@ const ContactPage = () => {
         loading: false,
         success: false,
         enquiryNumber: '',
+        inquiryId: '',
         error: msg,
       });
     }
   };
 
   const handleReset = () => {
-    setSubmissionResult({ loading: false, success: false, enquiryNumber: '', error: '' });
+    setSubmissionResult({ loading: false, success: false, enquiryNumber: '', inquiryId: '', error: '' });
     setFormData((prev) => ({
       ...prev,
       subject: '',
       message: '',
+      attachments: [],
       workLocation: '',
       startDate: '',
       duration: '',
@@ -453,13 +499,23 @@ const ContactPage = () => {
                     <p>• A customized proposal with milestones and pricing will be prepared.</p>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={handleReset}
-                    className="px-6 py-2.5 rounded-lg font-semibold text-sm bg-slate-900 text-white hover:bg-slate-800 transition"
-                  >
-                    Submit Another Requirement
-                  </button>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <Link
+                      to={submissionResult.inquiryId ? `/my-enquiries?id=${submissionResult.inquiryId}` : '/my-enquiries'}
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm bg-[#174B39] hover:bg-[#103728] text-white shadow-sm transition"
+                    >
+                      <span>View & Track in My Enquiries</span>
+                      <FiArrowRight className="w-4 h-4 text-[#D7B875]" />
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={handleReset}
+                      className="w-full sm:w-auto px-6 py-2.5 rounded-lg font-semibold text-sm bg-white border border-[#E7E0D3] text-[#252720] hover:bg-[#FDFBF7] transition"
+                    >
+                      Submit Another Requirement
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -1117,6 +1173,67 @@ const ContactPage = () => {
                         placeholder="Please describe your project scope, technical expectations, or current bottlenecks so our team can prepare an accurate response."
                         className="w-full px-3.5 py-2.5 bg-[#FDFBF7] border border-[#E7E0D3] rounded-xl text-sm focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/20 outline-none resize-y text-[#252720] placeholder-[#8A897C]"
                       ></textarea>
+                    </div>
+
+                    {/* Optional Attachments / Technical Dump / Specifications */}
+                    <div className="mt-4 pt-4 border-t border-[#E7E0D3]/60">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-xs font-semibold text-[#252720] flex items-center gap-1.5">
+                          <FiPaperclip className="w-3.5 h-3.5 text-[#174B39]" />
+                          <span>Supporting Attachments / System Logs / Specs (Optional)</span>
+                        </label>
+                        <span className="text-[11px] text-[#66665D]">PDF, PNG, JPG, DOC, TXT, LOG (Max 15MB)</span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <label className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#FDFBF7] hover:bg-[#EAF0E8] border border-[#E7E0D3] text-[#174B39] transition cursor-pointer">
+                          <FiUploadCloud className="w-4 h-4 text-[#174B39]" />
+                          <span>{uploadingAttachment ? 'Uploading File...' : 'Attach File'}</span>
+                          <input
+                            type="file"
+                            onChange={handleAttachmentUpload}
+                            disabled={uploadingAttachment}
+                            className="hidden"
+                            accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.txt,.log,.xls,.xlsx,.csv"
+                          />
+                        </label>
+                        {uploadingAttachment && (
+                          <div className="w-4 h-4 border-2 border-[#174B39] border-t-transparent rounded-full animate-spin"></div>
+                        )}
+                      </div>
+
+                      {uploadError && (
+                        <p className="text-xs text-red-600 mb-2 font-medium">⚠️ {uploadError}</p>
+                      )}
+
+                      {formData.attachments && formData.attachments.length > 0 && (
+                        <div className="space-y-1.5">
+                          {formData.attachments.map((att, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#F8FAFC] border border-[#E7E0D3] text-xs text-[#252720]"
+                            >
+                              <div className="flex items-center gap-2 truncate max-w-[80%]">
+                                <FiFile className="w-3.5 h-3.5 text-[#174B39] shrink-0" />
+                                <span className="font-medium truncate">{att.fileName}</span>
+                                {att.fileSize && (
+                                  <span className="text-[10px] text-[#66665D]">
+                                    ({Math.round(att.fileSize / 1024)} KB)
+                                  </span>
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveAttachment(idx)}
+                                className="text-[#64748B] hover:text-red-600 p-1 transition"
+                                title="Remove file"
+                              >
+                                <FiTrash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 

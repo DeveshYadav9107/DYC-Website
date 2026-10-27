@@ -54,7 +54,7 @@ const Footer = () => {
             <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
             <li><Link to="/careers" className="hover:text-white transition-colors">Careers & Openings</Link></li>
             <li><Link to="/candidate/portal" className="hover:text-white transition-colors">Candidate Portal</Link></li>
-            <li><Link to="/support/tickets" className="hover:text-white transition-colors">SAP Client Support Portal</Link></li>
+            <li><Link to="/my-enquiries" className="hover:text-white transition-colors">Client Enquiries & Support</Link></li>
             <li><Link to="/sap-capabilities" className="hover:text-white transition-colors">SAP Capabilities</Link></li>
             <li><Link to="/industries" className="hover:text-white transition-colors">Industries We Serve</Link></li>
             <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>

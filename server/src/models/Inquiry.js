@@ -7,6 +7,28 @@ const NoteSchema = new mongoose.Schema({
   addedAt: { type: Date, default: Date.now },
 });
 
+const AttachmentSchema = new mongoose.Schema({
+  fileName: { type: String, required: true },
+  fileUrl: { type: String, required: true },
+  fileSize: { type: Number },
+  fileType: { type: String },
+  uploadedAt: { type: Date, default: Date.now },
+  uploadedByName: { type: String, default: 'User' },
+});
+
+const MessageSchema = new mongoose.Schema({
+  sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  senderName: { type: String, required: true },
+  senderRole: {
+    type: String,
+    enum: ['client', 'customer', 'admin', 'editor', 'consultant'],
+    default: 'customer',
+  },
+  message: { type: String, required: true, trim: true, maxlength: 5000 },
+  attachments: [AttachmentSchema],
+  createdAt: { type: Date, default: Date.now },
+});
+
 const ActivitySchema = new mongoose.Schema({
   type: {
     type: String,
@@ -30,6 +52,9 @@ const ActivitySchema = new mongoose.Schema({
       'proposal_accepted',
       'proposal_declined',
       'proposal_revised',
+      'ticket_closed',
+      'ticket_reopened',
+      'message_sent',
     ],
     required: true,
   },
@@ -152,6 +177,18 @@ const InquirySchema = new mongoose.Schema({
   // Private Internal Notes & Audit Trail
   notes: [NoteSchema],
   timeline: [ActivitySchema],
+
+  // File Attachments submitted with initial enquiry / ticket
+  attachments: [AttachmentSchema],
+
+  // Two-way conversation messages between customer and staff
+  messages: [MessageSchema],
+
+  // Ticket closure tracking & lock
+  closedAt: { type: Date },
+  closedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  closedByName: { type: String },
+  closureReason: { type: String, trim: true },
 
   source: { type: String, default: 'website', trim: true },
 }, { timestamps: true });

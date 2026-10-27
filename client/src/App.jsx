@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
 // Global scroll reset on route change
@@ -28,8 +28,6 @@ import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 // Customer Protected Pages
 import MyEnquiriesPage from './pages/customer/MyEnquiriesPage';
 import ProfilePage from './pages/customer/ProfilePage';
-import SapSupportPortal from './pages/customer/SapSupportPortal';
-import TicketDetailPage from './pages/customer/TicketDetailPage';
 
 // Admin Layout & Pages
 import AdminLayout from './layouts/AdminLayout';
@@ -39,7 +37,6 @@ import AdminInquiries from './pages/admin/AdminInquiries';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminJobs from './pages/admin/AdminJobs';
 import AdminCandidates from './pages/admin/AdminCandidates';
-import AdminSapSupport from './pages/admin/AdminSapSupport';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -107,22 +104,9 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/support/tickets"
-              element={
-                <ProtectedRoute>
-                  <SapSupportPortal />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/support/tickets/:id"
-              element={
-                <ProtectedRoute>
-                  <TicketDetailPage />
-                </ProtectedRoute>
-              }
-            />
+            {/* Legacy Support Portal Redirects to Unified My Enquiries */}
+            <Route path="/support/tickets" element={<Navigate to="/my-enquiries" replace />} />
+            <Route path="/support/tickets/:id" element={<Navigate to="/my-enquiries" replace />} />
 
             {/* Admin Routes (Restricted to admin & editor roles) */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -166,16 +150,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/admin/sap-support"
-              element={
-                <ProtectedRoute roles={['admin', 'editor']}>
-                  <AdminLayout>
-                    <AdminSapSupport />
-                  </AdminLayout>
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/admin/sap-support" element={<Navigate to="/admin/inquiries?type=sap-support" replace />} />
             <Route
               path="/admin/settings"
               element={

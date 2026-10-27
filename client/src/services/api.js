@@ -195,6 +195,35 @@ export const addInquiryNote = async (id, text) => {
   return response.data?.data || response.data;
 };
 
+export const getMyInquiryDetails = async (id) => {
+  const response = await api.get(`/inquiries/my/${id}`);
+  return response.data?.data || response.data;
+};
+
+export const addInquiryMessage = async (id, messageData) => {
+  const response = await api.post(`/inquiries/${id}/messages`, messageData);
+  return response.data?.data || response.data;
+};
+
+export const closeInquiry = async (id, reason) => {
+  const response = await api.patch(`/inquiries/${id}/close`, { reason });
+  return response.data?.data || response.data;
+};
+
+export const reopenInquiry = async (id) => {
+  const response = await api.patch(`/inquiries/${id}/reopen`);
+  return response.data?.data || response.data;
+};
+
+export const uploadInquiryAttachment = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api.post('/inquiries/upload-attachment', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data?.data || response.data;
+};
+
 export const deleteInquiry = async (id) => {
   const response = await api.delete(`/inquiries/${id}`);
   return response.data;
@@ -418,61 +447,6 @@ export const updateStaffingProgress = async (id, progressData) => {
 
 export const addStaffingNote = async (id, note) => {
   const response = await api.post(`/staffing-requests/${id}/notes`, { note });
-  return response.data?.data || response.data;
-};
-
-// ================= PHASE 4: SAP SUPPORT & CLIENT PORTAL SERVICES =================
-export const createSupportTicket = async (ticketData) => {
-  const response = await api.post('/support-tickets', ticketData);
-  return response.data?.data || response.data;
-};
-
-export const getMySupportTickets = async (params = {}) => {
-  const response = await api.get('/support-tickets/my', { params });
-  return response.data?.data || response.data;
-};
-
-export const getAdminSupportTickets = async (params = {}) => {
-  const response = await api.get('/support-tickets', { params });
-  return response.data?.data || response.data;
-};
-
-export const getSupportTicketStats = async () => {
-  const response = await api.get('/support-tickets/stats');
-  return response.data?.data || response.data;
-};
-
-export const getSupportTicketDetails = async (idOrNumber) => {
-  const response = await api.get(`/support-tickets/${idOrNumber}`);
-  return response.data?.data || response.data;
-};
-
-export const postTicketMessage = async (id, messageData) => {
-  const response = await api.post(`/support-tickets/${id}/messages`, messageData);
-  return response.data?.data || response.data;
-};
-
-export const updateTicketStatus = async (id, payload) => {
-  const response = await api.patch(`/support-tickets/${id}/status`, payload);
-  return response.data?.data || response.data;
-};
-
-export const assignTicket = async (id, assignData) => {
-  const response = await api.post(`/support-tickets/${id}/assign`, assignData);
-  return response.data?.data || response.data;
-};
-
-export const rateTicketCSAT = async (id, ratingData) => {
-  const response = await api.post(`/support-tickets/${id}/rating`, ratingData);
-  return response.data?.data || response.data;
-};
-
-export const uploadTicketAttachment = async (file) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  const response = await api.post('/support-tickets/upload-attachment', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
   return response.data?.data || response.data;
 };
 

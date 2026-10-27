@@ -10,6 +10,10 @@ import {
   addInquiryNote,
   deleteInquiry,
   exportInquiriesCsv,
+  addInquiryMessage,
+  closeInquiry,
+  reopenInquiry,
+  uploadInquiryAttachment,
 } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -45,6 +49,9 @@ import {
   FiCheckSquare,
   FiXCircle,
   FiFileText,
+  FiLock,
+  FiUnlock,
+  FiPaperclip,
 } from 'react-icons/fi';
 import ProposalEditorModal from '../../components/admin/ProposalEditorModal';
 import InquiryProposalsTab from '../../components/admin/InquiryProposalsTab';
@@ -75,11 +82,21 @@ const AdminInquiries = () => {
 
   // Selected Detail Modal & Workspace State
   const [selectedInquiry, setSelectedInquiry] = useState(null);
-  const [detailTab, setDetailTab] = useState('overview'); // 'overview' | 'actions' | 'followup' | 'notes' | 'timeline'
+  const [detailTab, setDetailTab] = useState('overview'); // 'overview' | 'conversation' | 'proposals' | 'actions' | 'followup' | 'notes' | 'timeline'
   const [detailLoading, setDetailLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
+  // Close Ticket Confirmation Modal State (replaces permanent delete)
+  const [closeConfirmInquiry, setCloseConfirmInquiry] = useState(null);
+  const [closeReasonText, setCloseReasonText] = useState('');
+
+  // Conversation & Admin Reply State
+  const [adminReplyText, setAdminReplyText] = useState('');
+  const [adminReplyAttachments, setAdminReplyAttachments] = useState([]);
+  const [sendingAdminReply, setSendingAdminReply] = useState(false);
+  const [uploadingAdminAttachment, setUploadingAdminAttachment] = useState(false);
+  const [reopeningTicket, setReopeningTicket] = useState(false);
 
   // Forms in detail modal
   const [newNoteText, setNewNoteText] = useState('');
@@ -336,22 +353,106 @@ const AdminInquiries = () => {
     }
   };
 
-  // Delete Inquiry
-  const handleDeleteInquiry = async (id) => {
+  // Close Ticket Handler (Locks conversation, preserves all records)
+  const handleCloseTicketSubmit = async (id, reason) => {
     setActionLoading(true);
     try {
-      await deleteInquiry(id);
-      setInquiries((prev) => prev.filter((item) => item._id !== id));
+      const updated = await closeInquiry(id, reason);
+      setInquiries((prev) =>
+        prev.map((item) => (item._id === id ? { ...item, ...updated, status: 'closed', leadStage: 'lost' } : item))
+      );
       if (selectedInquiry && selectedInquiry._id === id) {
-        setSelectedInquiry(null);
+        setSelectedInquiry((prev) => ({ ...prev, ...updated, status: 'closed', leadStage: 'lost' }));
       }
-      setDeleteConfirmId(null);
-      showFeedback('success', 'Enquiry permanently deleted.');
+      setCloseConfirmInquiry(null);
+      setCloseReasonText('');
+      showFeedback('success', 'Ticket closed successfully. Conversation is now read-only.');
     } catch (err) {
-      console.error('Failed to delete inquiry', err);
-      showFeedback('error', err.response?.data?.message || 'Failed to delete inquiry.');
+      console.error('Failed to close ticket', err);
+      showFeedback('error', err.response?.data?.message || 'Failed to close ticket.');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  // Reopen Ticket Handler
+  const handleReopenTicketSubmit = async (id) => {
+    setReopeningTicket(true);
+    try {
+      const updated = await reopenInquiry(id);
+      setInquiries((prev) =>
+        prev.map((item) => (item._id === id ? { ...item, ...updated, status: 'contacted', leadStage: 'contacted' } : item))
+      );
+      if (selectedInquiry && selectedInquiry._id === id) {
+        setSelectedInquiry((prev) => ({ ...prev, ...updated, status: 'contacted', leadStage: 'contacted', closedAt: null }));
+      }
+      showFeedback('success', 'Ticket reopened successfully. Conversation unlocked.');
+    } catch (err) {
+      console.error('Failed to reopen ticket', err);
+      showFeedback('error', err.response?.data?.message || 'Failed to reopen ticket.');
+    } finally {
+      setReopeningTicket(false);
+    }
+  };
+
+  // Upload Attachment for Admin Conversation
+  const handleAdminAttachmentUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingAdminAttachment(true);
+    try {
+      const res = await uploadInquiryAttachment(file);
+      if (res && res.fileUrl) {
+        setAdminReplyAttachments((prev) => [...prev, res]);
+      }
+    } catch (err) {
+      console.error('Attachment upload failed:', err);
+      showFeedback('error', err.response?.data?.message || 'Failed to upload attachment.');
+    } finally {
+      setUploadingAdminAttachment(false);
+      e.target.value = '';
+    }
+  };
+
+  // Send Two-Way Admin Message to Client
+  const handleSendAdminReply = async (e) => {
+    e.preventDefault();
+    if (!adminReplyText.trim() || !selectedInquiry) return;
+
+    if (selectedInquiry.status === 'closed') {
+      showFeedback('error', 'This ticket is closed. Please reopen it to post new replies.');
+      return;
+    }
+
+    setSendingAdminReply(true);
+    try {
+      const newMsg = await addInquiryMessage(selectedInquiry._id, {
+        message: adminReplyText.trim(),
+        attachments: adminReplyAttachments,
+      });
+
+      setSelectedInquiry((prev) => ({
+        ...prev,
+        messages: [...(prev.messages || []), newMsg],
+      }));
+
+      setInquiries((prev) =>
+        prev.map((item) =>
+          item._id === selectedInquiry._id
+            ? { ...item, messages: [...(item.messages || []), newMsg] }
+            : item
+        )
+      );
+
+      setAdminReplyText('');
+      setAdminReplyAttachments([]);
+      showFeedback('success', 'Official response delivered to customer.');
+    } catch (err) {
+      console.error('Failed to send admin reply:', err);
+      showFeedback('error', err.response?.data?.message || 'Failed to send message.');
+    } finally {
+      setSendingAdminReply(false);
     }
   };
 
@@ -875,16 +976,26 @@ const AdminInquiries = () => {
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-[#174B39] hover:bg-[#EAF0E8] transition cursor-pointer"
                           >
                             <FiEye className="w-3.5 h-3.5" />
-                            <span>Manage</span>
+                            <span>{inquiry.status === 'closed' ? 'View' : 'Manage'}</span>
                           </button>
 
-                          <button
-                            onClick={() => setDeleteConfirmId(inquiry._id)}
-                            className="p-1 rounded-lg text-[#64748B] hover:text-[#DC2626] hover:bg-[#FEF2F2] transition cursor-pointer"
-                            title="Delete Enquiry"
-                          >
-                            <FiTrash2 className="w-3.5 h-3.5" />
-                          </button>
+                          {inquiry.status !== 'closed' ? (
+                            <button
+                              onClick={() => {
+                                setCloseConfirmInquiry(inquiry);
+                                setCloseReasonText('');
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+                              title="Close Ticket (Lock conversation as read-only)"
+                            >
+                              <FiCheckSquare className="w-3.5 h-3.5 text-slate-500" />
+                              <span className="hidden sm:inline">Close</span>
+                            </button>
+                          ) : (
+                            <span className="text-[11px] font-semibold text-slate-400 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded-md">
+                              Closed
+                            </span>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -988,10 +1099,11 @@ const AdminInquiries = () => {
             <div className="px-5 sm:px-6 border-b border-[#E7E0D3] flex items-center gap-2 sm:gap-4 overflow-x-auto bg-[#FFFFFF] shrink-0 text-xs font-semibold">
               {[
                 { id: 'overview', label: 'Overview & Requirements', icon: FiInbox },
+                { id: 'conversation', label: `Conversation & Replies (${selectedInquiry.messages?.length || 0})`, icon: FiMessageSquare },
                 { id: 'proposals', label: 'Proposals & Quotations', icon: FiFileText },
                 { id: 'actions', label: 'Lead Stage & Ownership', icon: FiTarget },
                 { id: 'followup', label: 'Follow-up Scheduler', icon: FiClock },
-                { id: 'notes', label: `Private Notes (${selectedInquiry.notes?.length || 0})`, icon: FiMessageSquare },
+                { id: 'notes', label: `Staff Notes (${selectedInquiry.notes?.length || 0})`, icon: FiTag },
                 { id: 'timeline', label: `Audit Trail (${selectedInquiry.timeline?.length || 0})`, icon: FiActivity },
               ].map((tab) => {
                 const Icon = tab.icon;
@@ -1300,6 +1412,55 @@ const AdminInquiries = () => {
                     </div>
                   </div>
 
+                  {/* Attached Files & Submitted Media */}
+                  {selectedInquiry.attachments && selectedInquiry.attachments.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#252720] mb-2 flex items-center gap-1.5">
+                        <FiPaperclip className="w-3.5 h-3.5 text-[#174B39]" />
+                        <span>Uploaded Attachments & Documents ({selectedInquiry.attachments.length})</span>
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedInquiry.attachments.map((att, aIdx) => (
+                          <a
+                            key={aIdx}
+                            href={att.fileUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#F8FAFC] border border-[#E7E0D3] text-xs font-semibold text-[#174B39] hover:bg-[#EAF0E8] transition shadow-2xs"
+                          >
+                            <FiFileText className="w-4 h-4 text-[#174B39]" />
+                            <span className="truncate max-w-[220px]">{att.fileName}</span>
+                            {att.fileSize && (
+                              <span className="text-[10px] text-[#64748B]">
+                                ({Math.round(att.fileSize / 1024)} KB)
+                              </span>
+                            )}
+                            <FiDownload className="w-3.5 h-3.5 text-[#64748B]" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Closure Details if closed */}
+                  {selectedInquiry.status === 'closed' && (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1 text-slate-700">
+                      <div className="flex items-center gap-2 font-bold text-slate-900">
+                        <FiLock className="w-4 h-4 text-slate-500" />
+                        <span>Ticket Closed · Read-Only Conversation</span>
+                      </div>
+                      <p>
+                        Closed on {new Date(selectedInquiry.closedAt || selectedInquiry.updatedAt).toLocaleString()}
+                        {selectedInquiry.closedByName ? ` by ${selectedInquiry.closedByName}` : ''}
+                      </p>
+                      {selectedInquiry.closureReason && (
+                        <p className="text-slate-600">
+                          Closure Reason: <em>"{selectedInquiry.closureReason}"</em>
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {/* Existing Quick Approve / Reject Actions + Create Proposal CTA */}
                   <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E7E0D3] flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div>
@@ -1340,6 +1501,201 @@ const AdminInquiries = () => {
                       </button>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* TAB: TWO-WAY CONVERSATION & CLIENT REPLIES */}
+              {detailTab === 'conversation' && (
+                <div className="space-y-6">
+                  {/* Status Banner */}
+                  {selectedInquiry.status === 'closed' ? (
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-start gap-3">
+                        <FiLock className="w-5 h-5 text-slate-600 shrink-0 mt-0.5" />
+                        <div className="text-xs space-y-0.5">
+                          <p className="font-bold text-slate-900">This ticket is closed and conversation is read-only.</p>
+                          <p className="text-slate-600">
+                            Closed on {new Date(selectedInquiry.closedAt || selectedInquiry.updatedAt).toLocaleString()}
+                            {selectedInquiry.closedByName ? ` by ${selectedInquiry.closedByName}` : ''}
+                            {selectedInquiry.closureReason ? ` · Reason: "${selectedInquiry.closureReason}"` : ''}
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleReopenTicketSubmit(selectedInquiry._id)}
+                        disabled={reopeningTicket}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer shrink-0"
+                      >
+                        <FiUnlock className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>{reopeningTicket ? 'Reopening...' : 'Reopen Ticket'}</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-3.5 rounded-2xl bg-[#EAF0E8]/70 border border-[#174B39]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-2 text-xs text-[#174B39]">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="font-semibold">Active Two-Way Discussion with Client</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCloseConfirmInquiry(selectedInquiry);
+                          setCloseReasonText('');
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E7E0D3] text-xs font-semibold text-slate-700 hover:text-red-700 hover:border-red-200 transition cursor-pointer self-start sm:self-auto"
+                      >
+                        <FiLock className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Close Ticket</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Messages Timeline Thread */}
+                  <div className="space-y-4">
+                    {(!selectedInquiry.messages || selectedInquiry.messages.length === 0) ? (
+                      <div className="p-8 text-center bg-[#F8FAFC] rounded-2xl border border-dashed border-[#E7E0D3] text-xs text-[#64748B]">
+                        <FiMessageSquare className="w-8 h-8 text-[#94A3B8] mx-auto mb-2" />
+                        <p className="font-medium text-[#252720]">No conversation messages yet</p>
+                        <p className="mt-1">Send an official reply to the customer using the composer below.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {selectedInquiry.messages.map((msg, mIdx) => {
+                          const isStaff = msg.senderRole === 'admin' || msg.senderRole === 'editor' || msg.senderRole === 'consultant';
+                          const msgDate = new Date(msg.createdAt).toLocaleString();
+
+                          return (
+                            <div
+                              key={msg._id || mIdx}
+                              className={`flex flex-col ${isStaff ? 'items-end' : 'items-start'}`}
+                            >
+                              <div className="flex items-center gap-2 mb-1 px-1 text-[11px]">
+                                <span className="font-bold text-[#252720]">
+                                  {isStaff ? (msg.senderName || 'DY&C Team') : (msg.senderName || selectedInquiry.name || 'Customer')}
+                                </span>
+                                <span
+                                  className={`px-1.5 py-0.2 rounded-md font-bold text-[9px] uppercase border ${
+                                    isStaff
+                                      ? 'bg-[#174B39] text-white border-[#174B39]'
+                                      : 'bg-[#FDFBF7] text-[#B88A3B] border-[#B88A3B]/40'
+                                  }`}
+                                >
+                                  {isStaff ? 'DY&C Staff' : 'Client'}
+                                </span>
+                                <span className="text-[#94A3B8]">{msgDate}</span>
+                              </div>
+
+                              <div
+                                className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed shadow-xs ${
+                                  isStaff
+                                    ? 'bg-[#174B39] text-white rounded-br-xs'
+                                    : 'bg-[#F8FAFC] text-[#252720] border border-[#E7E0D3] rounded-bl-xs'
+                                }`}
+                              >
+                                <p className="whitespace-pre-wrap">{msg.message}</p>
+
+                                {msg.attachments && msg.attachments.length > 0 && (
+                                  <div
+                                    className={`mt-3 pt-2.5 border-t space-y-1.5 ${
+                                      isStaff ? 'border-white/20' : 'border-[#E7E0D3]'
+                                    }`}
+                                  >
+                                    {msg.attachments.map((att, aIdx) => (
+                                      <a
+                                        key={aIdx}
+                                        href={att.fileUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                                          isStaff
+                                            ? 'bg-white/10 hover:bg-white/20 text-white'
+                                            : 'bg-white hover:bg-[#EAF0E8] text-[#174B39] border border-[#E7E0D3]'
+                                        }`}
+                                      >
+                                        <FiPaperclip className="w-3.5 h-3.5 shrink-0" />
+                                        <span className="truncate max-w-[220px]">{att.fileName}</span>
+                                        <FiDownload className="w-3 h-3 ml-1" />
+                                      </a>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Admin Reply Composer */}
+                  {selectedInquiry.status === 'closed' ? (
+                    <div className="p-4 bg-slate-100 rounded-2xl text-center text-xs text-slate-600 font-medium border border-slate-200">
+                      This ticket is closed. Reopen the ticket to post additional replies.
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSendAdminReply} className="space-y-3 pt-2">
+                      {/* Attachments preview */}
+                      {adminReplyAttachments.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {adminReplyAttachments.map((att, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#F8FAFC] border border-[#E7E0D3] text-xs text-[#252720]"
+                            >
+                              <FiPaperclip className="w-3.5 h-3.5 text-[#174B39]" />
+                              <span className="truncate max-w-[150px] font-medium">{att.fileName}</span>
+                              <button
+                                type="button"
+                                onClick={() => setAdminReplyAttachments((prev) => prev.filter((_, i) => i !== idx))}
+                                className="text-[#64748B] hover:text-red-600"
+                              >
+                                <FiX className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="bg-white border border-[#E7E0D3] rounded-2xl p-3 focus-within:border-[#174B39] focus-within:ring-2 focus-within:ring-[#174B39]/10 transition space-y-2">
+                        <textarea
+                          rows="3"
+                          value={adminReplyText}
+                          onChange={(e) => setAdminReplyText(e.target.value)}
+                          placeholder="Type an official response to the customer (visible in their My Enquiries portal)..."
+                          className="w-full bg-transparent border-none outline-none text-xs sm:text-sm text-[#252720] resize-y placeholder-[#94A3B8]"
+                        />
+
+                        <div className="flex items-center justify-between pt-2 border-t border-[#E7E0D3]">
+                          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[#64748B] hover:text-[#174B39] hover:bg-[#F8FAFC] border border-dashed border-[#E7E0D3] transition cursor-pointer">
+                            <FiPaperclip className="w-3.5 h-3.5 text-[#174B39]" />
+                            <span>{uploadingAdminAttachment ? 'Uploading...' : 'Attach File / Dump'}</span>
+                            <input
+                              type="file"
+                              onChange={handleAdminAttachmentUpload}
+                              disabled={uploadingAdminAttachment}
+                              className="hidden"
+                              accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.txt,.log,.xls,.xlsx,.csv"
+                            />
+                          </label>
+
+                          <button
+                            type="submit"
+                            disabled={sendingAdminReply || !adminReplyText.trim()}
+                            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-semibold bg-[#174B39] text-white hover:bg-[#103728] shadow-xs transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                          >
+                            {sendingAdminReply ? (
+                              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <FiSend className="w-3.5 h-3.5 text-[#D7B875]" />
+                            )}
+                            <span>Send Reply to Customer</span>
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  )}
                 </div>
               )}
 
@@ -1670,49 +2026,93 @@ const AdminInquiries = () => {
 
             {/* Modal Actions Footer */}
             <div className="p-4 sm:px-6 border-t border-[#E7E0D3] bg-[#F8FAFC] flex items-center justify-between shrink-0">
-              <button
-                onClick={() => setDeleteConfirmId(selectedInquiry._id)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[#DC2626] hover:bg-[#FEF2F2] transition cursor-pointer"
-              >
-                <FiTrash2 className="w-3.5 h-3.5" />
-                <span>Delete Enquiry</span>
-              </button>
+              {selectedInquiry.status === 'closed' ? (
+                <button
+                  type="button"
+                  onClick={() => handleReopenTicketSubmit(selectedInquiry._id)}
+                  disabled={reopeningTicket}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition cursor-pointer"
+                >
+                  <FiUnlock className="w-3.5 h-3.5" />
+                  <span>{reopeningTicket ? 'Reopening...' : 'Reopen Ticket'}</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCloseConfirmInquiry(selectedInquiry);
+                    setCloseReasonText('');
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
+                >
+                  <FiLock className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Close Ticket</span>
+                </button>
+              )}
 
               <button
+                type="button"
                 onClick={handleCloseDetail}
                 className="px-5 py-2 rounded-xl bg-white border border-[#E7E0D3] text-[#252720] hover:bg-[#FDFBF7] text-xs font-semibold transition cursor-pointer shadow-xs"
               >
-                Close
+                Done
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmId && (
-        <div className="fixed inset-0 z-60 bg-[#252720]/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#FFFFFF] rounded-2xl max-w-sm w-full p-6 border border-[#E7E0D3] shadow-2xl text-center">
-            <div className="w-12 h-12 rounded-full bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center mx-auto mb-3">
-              <FiAlertTriangle className="w-6 h-6" />
+      {/* Close Ticket Confirmation Modal (Locks conversation, preserves all records) */}
+      {closeConfirmInquiry && (
+        <div className="fixed inset-0 z-60 bg-[#252720]/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-[#E7E0D3] shadow-2xl space-y-4">
+            <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center mx-auto">
+              <FiLock className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-[#252720]">Permanently Delete Enquiry?</h4>
-            <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed">
-              This action cannot be undone. All contact details, private notes, and audit timeline for this enquiry will be permanently removed.
-            </p>
-            <div className="flex items-center justify-center gap-3 mt-6">
+
+            <div className="text-center">
+              <span className="font-mono text-xs font-bold text-[#174B39] bg-[#EAF0E8] px-2.5 py-0.5 rounded-md border border-[#174B39]/20">
+                {closeConfirmInquiry.enquiryNumber || `DYC-${closeConfirmInquiry._id.slice(-6).toUpperCase()}`}
+              </span>
+              <h4 className="text-base font-bold text-[#252720] mt-2">Close Ticket & Lock Conversation?</h4>
+              <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed">
+                Closing this ticket marks its status as <strong>Closed</strong> and makes its two-way conversation read-only.
+                Both the client (<strong>{closeConfirmInquiry.name}</strong>) and DY&C team will still be able to review the complete submitted specifications, attachments, and message history, but new messages cannot be posted unless explicitly reopened.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#252720] mb-1.5">
+                Closure Reason / Resolution Summary (Optional)
+              </label>
+              <textarea
+                rows="2"
+                value={closeReasonText}
+                onChange={(e) => setCloseReasonText(e.target.value)}
+                placeholder="e.g. Issue resolved on PRD, delivered deliverables, customer confirmed."
+                className="w-full p-2.5 bg-[#F8FAFC] border border-[#E7E0D3] rounded-xl text-xs text-[#252720] outline-none focus:border-[#174B39] resize-none"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
               <button
-                onClick={() => setDeleteConfirmId(null)}
+                type="button"
+                onClick={() => {
+                  setCloseConfirmInquiry(null);
+                  setCloseReasonText('');
+                }}
                 className="px-4 py-2 rounded-xl bg-[#FDFBF7] hover:bg-[#E7E0D3] text-xs font-semibold text-[#252720] transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 disabled={actionLoading}
-                onClick={() => handleDeleteInquiry(deleteConfirmId)}
-                className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-xs font-semibold text-white shadow-xs transition cursor-pointer"
+                onClick={() => handleCloseTicketSubmit(closeConfirmInquiry._id, closeReasonText)}
+                className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-white shadow-xs transition cursor-pointer flex items-center gap-1.5"
               >
-                {actionLoading ? 'Deleting...' : 'Yes, Delete'}
+                <FiLock className="w-3.5 h-3.5 text-[#D7B875]" />
+                <span>{actionLoading ? 'Closing...' : 'Confirm & Close Ticket'}</span>
               </button>
             </div>
           </div>

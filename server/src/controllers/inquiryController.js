@@ -39,6 +39,10 @@ export const createInquiry = async (req, res, next) => {
     delete inquiryData.followUpNotes;
     delete inquiryData.followUpCompletedAt;
     delete inquiryData.followUpCompletedBy;
+    delete inquiryData.closedAt;
+    delete inquiryData.closedBy;
+    delete inquiryData.closedByName;
+    delete inquiryData.closureReason;
 
     // Public enquiries always start at initial stage
     inquiryData.leadStage = 'new';
@@ -57,6 +61,18 @@ export const createInquiry = async (req, res, next) => {
       );
     }
     inquiryData.user = req.user._id;
+
+    // Seed initial message if text was supplied
+    if (inquiryData.message && (!inquiryData.messages || inquiryData.messages.length === 0)) {
+      inquiryData.messages = [{
+        sender: req.user._id,
+        senderName: inquiryData.name || req.user.name || 'Customer',
+        senderRole: 'customer',
+        message: inquiryData.message,
+        attachments: Array.isArray(inquiryData.attachments) ? inquiryData.attachments : [],
+        createdAt: new Date(),
+      }];
+    }
 
     const initialTimeline = [{
       type: 'created',
@@ -735,6 +751,230 @@ export const exportInquiries = async (req, res, next) => {
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     return res.status(200).send(csvContent);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 13. Customer: Get Single Enquiry / Ticket Details
+ * Strictly verified: customer can only fetch tickets owned by their account or email.
+ */
+export const getMyInquiryDetails = async (req, res, next) => {
+  try {
+    const userEmail = req.user.email?.toLowerCase();
+    const userId = req.user._id;
+
+    const query = {
+      _id: req.params.id,
+      $or: [
+        ...(userId ? [{ user: userId }] : []),
+        ...(userEmail ? [{ email: userEmail }] : []),
+      ],
+    };
+
+    const inquiry = await Inquiry.findOne(query)
+      .select('-notes -timeline -followUpCompletedBy')
+      .populate('messages.sender', '_id name email role');
+
+    if (!inquiry) {
+      return next(new ApiError(404, 'Ticket / Enquiry not found or access denied'));
+    }
+
+    return successResponse(res, 200, 'Ticket details retrieved successfully', inquiry);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 14. Upload Attachment for Enquiry / Support Ticket
+ */
+export const uploadInquiryAttachment = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return next(new ApiError(400, 'Please select a file to upload'));
+    }
+
+    const fileUrl = `/uploads/tickets/${req.file.filename}`;
+    return successResponse(res, 200, 'Attachment uploaded successfully', {
+      fileUrl,
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
+      fileType: req.file.mimetype,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 15. Two-Way Message Creation for Tickets
+ * Rules:
+ * - Both client owner and authorized admin/editor can participate.
+ * - When closed, conversation is read-only; new messages are strictly rejected with 400.
+ */
+export const addInquiryMessage = async (req, res, next) => {
+  try {
+    const { message, attachments } = req.body;
+    if (!message || !String(message).trim()) {
+      return next(new ApiError(400, 'Message body cannot be empty'));
+    }
+
+    const cleanMessage = String(message).trim();
+    if (cleanMessage.length > 5000) {
+      return next(new ApiError(400, 'Message cannot exceed 5000 characters'));
+    }
+
+    const inquiry = await Inquiry.findById(req.params.id);
+    if (!inquiry) {
+      return next(new ApiError(404, 'Enquiry / Ticket not found'));
+    }
+
+    // MANDATORY REQUIREMENT: If ticket is closed, reject new messages
+    if (inquiry.status === 'closed') {
+      return next(new ApiError(400, 'This ticket has been closed. You can view the conversation history, but new replies are no longer available.'));
+    }
+
+    const isStaff = ['admin', 'editor'].includes(req.user.role);
+    const isOwner =
+      (inquiry.user && inquiry.user.toString() === req.user._id.toString()) ||
+      (inquiry.email && req.user.email && inquiry.email.toLowerCase() === req.user.email.toLowerCase());
+
+    if (!isStaff && !isOwner) {
+      return next(new ApiError(403, 'You are not authorized to post messages to this ticket.'));
+    }
+
+    const senderRole = isStaff ? (req.user.role === 'admin' ? 'admin' : 'editor') : 'customer';
+    const senderName = req.user.name || (isStaff ? 'DY&C Support' : 'Customer');
+
+    const validatedAttachments = Array.isArray(attachments)
+      ? attachments
+          .map((att) => ({
+            fileName: att.fileName || 'Attachment',
+            fileUrl: att.fileUrl,
+            fileSize: att.fileSize || 0,
+            fileType: att.fileType || '',
+            uploadedAt: new Date(),
+            uploadedByName: senderName,
+          }))
+          .filter((att) => att.fileUrl)
+      : [];
+
+    const newMessage = {
+      sender: req.user._id,
+      senderName,
+      senderRole,
+      message: cleanMessage,
+      attachments: validatedAttachments,
+      createdAt: new Date(),
+    };
+
+    inquiry.messages.push(newMessage);
+
+    inquiry.timeline.push({
+      type: 'message_sent',
+      description: `Message sent by ${senderName} (${senderRole})`,
+      performedBy: req.user._id,
+      performedByName: senderName,
+    });
+
+    await inquiry.save();
+
+    return successResponse(res, 201, 'Message sent successfully', newMessage);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 16. Admin Close Ticket Action
+ * Replaces permanent Delete with Close.
+ * Stores closedAt, closedBy, closureReason, and locks the conversation as read-only.
+ */
+export const closeInquiry = async (req, res, next) => {
+  try {
+    const { reason } = req.body;
+    const inquiry = await Inquiry.findById(req.params.id);
+    if (!inquiry) {
+      return next(new ApiError(404, 'Enquiry / Ticket not found'));
+    }
+
+    if (inquiry.status === 'closed') {
+      return next(new ApiError(400, 'This ticket is already closed'));
+    }
+
+    const actorName = req.user?.name || 'Administrator';
+    const actorId = req.user?._id;
+
+    inquiry.status = 'closed';
+    inquiry.leadStage = 'lost';
+    inquiry.closedAt = new Date();
+    inquiry.closedBy = actorId;
+    inquiry.closedByName = actorName;
+    inquiry.closureReason = reason ? String(reason).trim() : 'Closed by administrator';
+
+    inquiry.timeline.push({
+      type: 'ticket_closed',
+      description: `Ticket closed by ${actorName}${reason ? `: ${reason}` : ''}. Conversation is now read-only.`,
+      performedBy: actorId,
+      performedByName: actorName,
+      metadata: { reason: inquiry.closureReason, closedAt: inquiry.closedAt },
+    });
+
+    await inquiry.save();
+
+    const populated = await Inquiry.findById(inquiry._id)
+      .populate('assignedTo', '_id name email role')
+      .populate('notes.addedBy', '_id name email role')
+      .populate('timeline.performedBy', '_id name email role');
+
+    return successResponse(res, 200, 'Ticket closed successfully. Conversation is now read-only.', populated);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 17. Admin Reopen Ticket Action (Optional safe staff workflow)
+ * Restores conversation capabilities if admin explicitly reopens.
+ */
+export const reopenInquiry = async (req, res, next) => {
+  try {
+    const inquiry = await Inquiry.findById(req.params.id);
+    if (!inquiry) {
+      return next(new ApiError(404, 'Enquiry / Ticket not found'));
+    }
+
+    if (inquiry.status !== 'closed') {
+      return next(new ApiError(400, 'This ticket is not closed'));
+    }
+
+    const actorName = req.user?.name || 'Administrator';
+    const actorId = req.user?._id;
+
+    inquiry.status = 'contacted';
+    inquiry.leadStage = 'contacted';
+    inquiry.closedAt = null;
+    inquiry.closedBy = null;
+    inquiry.closedByName = null;
+    inquiry.closureReason = null;
+
+    inquiry.timeline.push({
+      type: 'ticket_reopened',
+      description: `Ticket reopened by ${actorName}. Conversation unlocked.`,
+      performedBy: actorId,
+      performedByName: actorName,
+    });
+
+    await inquiry.save();
+
+    const populated = await Inquiry.findById(inquiry._id)
+      .populate('assignedTo', '_id name email role')
+      .populate('notes.addedBy', '_id name email role')
+      .populate('timeline.performedBy', '_id name email role');
+
+    return successResponse(res, 200, 'Ticket reopened successfully', populated);
   } catch (error) {
     next(error);
   }

@@ -447,14 +447,6 @@ const Navbar = () => {
                         <span>Candidate Portal</span>
                       </Link>
 
-                      <Link
-                        to="/support/tickets"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#252720] hover:bg-[#EAF0E8] hover:text-[#174B39] transition"
-                      >
-                        <FiLifeBuoy className="text-sm text-[#174B39]" />
-                        <span>SAP Support Desk</span>
-                      </Link>
 
                       {(user?.role === 'admin' || user?.role === 'editor') && (
                         <Link
@@ -732,14 +724,6 @@ const Navbar = () => {
                         >
                           <FiBriefcase className="text-xs text-[#66665D]" />
                           Candidate Portal
-                        </Link>
-                        <Link
-                          to="/support/tickets"
-                          onClick={() => setMobileOpen(false)}
-                          className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold text-[#174B39] bg-[#EAF0E8] border border-[#174B39]/20 hover:bg-[#EAF0E8]/80 transition"
-                        >
-                          <FiLifeBuoy className="text-xs text-[#174B39]" />
-                          SAP Support Desk
                         </Link>
                       </div>
                       {(user?.role === 'admin' || user?.role === 'editor') && (

@@ -90,11 +90,6 @@ const AdminLayout = ({ children }) => {
       icon: FiUsers,
     },
     {
-      name: 'SAP Support Desk',
-      path: '/admin/sap-support',
-      icon: FiCpu,
-    },
-    {
       name: 'Settings',
       path: '/admin/settings',
       icon: FiSliders,
@@ -106,16 +101,13 @@ const AdminLayout = ({ children }) => {
       return { title: 'Dashboard', section: 'Overview' };
     }
     if (location.pathname.startsWith('/admin/inquiries')) {
-      return { title: 'Enquiries', section: 'Customer Management' };
+      return { title: 'Enquiries & Tickets', section: 'Customer & Ticket Management' };
     }
     if (location.pathname.startsWith('/admin/jobs')) {
       return { title: 'Job Requisitions', section: 'Recruitment & Staffing' };
     }
     if (location.pathname.startsWith('/admin/candidates')) {
       return { title: 'Candidate Pipeline', section: 'Recruitment & Staffing' };
-    }
-    if (location.pathname.startsWith('/admin/sap-support')) {
-      return { title: 'SAP Support Desk', section: 'Enterprise AMS & SLA' };
     }
     if (location.pathname.startsWith('/admin/settings')) {
       return { title: 'Settings', section: 'System Configuration' };
