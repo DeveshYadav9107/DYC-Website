@@ -14,7 +14,7 @@ const servicesData = {
       { title: 'Bulk Hiring', desc: 'Rapid deployment of large teams for immediate operational scale-up.' }
     ],
     inquiryType: 'staffing-request',
-    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80'
+    image: '/images/service-staffing.jpg'
   },
   'sap-resources': {
     title: 'SAP Resources',
@@ -26,7 +26,7 @@ const servicesData = {
       { title: 'S/4HANA Specialists', desc: 'Consultants experienced in greenfield and brownfield S/4HANA migrations.' }
     ],
     inquiryType: 'sap-resource-request',
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80'
+    image: '/images/service-sap-resources.jpg'
   },
   'sap-support': {
     title: 'SAP Support & Maintenance',
@@ -38,7 +38,7 @@ const servicesData = {
       { title: 'Custom Enhancements', desc: 'Development of custom Z-reports, workflows, and user exits as your needs evolve.' }
     ],
     inquiryType: 'sap-support',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80'
+    image: '/images/service-sap-support.jpg'
   },
   'erp-solutions': {
     title: 'Custom ERP Solutions',
@@ -50,7 +50,7 @@ const servicesData = {
       { title: 'Business Analytics', desc: 'Custom dashboards reporting on your most critical KPIs and metrics.' }
     ],
     inquiryType: 'erp-inquiry',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
+    image: '/images/service-erp-solutions.jpg'
   }
 };
 
@@ -65,28 +65,48 @@ const ServicePage = () => {
 
   return (
     <div className="bg-[#F8F5EE] min-h-screen text-[#252720]">
-      {/* Header */}
-      <div className="bg-[#F8F5EE] text-[#252720] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
+      {/* Header Banner */}
+      <div className="bg-[#F8F5EE] text-[#252720] py-14 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#E7E0D3]">
         
-        {/* Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 opacity-15">
-          <img src={service.image} alt={service.title} className="w-full h-full object-cover object-right" />
+        {/* Background Banner Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={service.image} 
+            alt={service.title} 
+            className="w-full h-full object-cover object-[75%_center] contrast-[1.05] saturate-[1.08]" 
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/images/sap-banner.png';
+            }}
+          />
+          {/* Subtle directional gradient to blend seamlessly into left edge while keeping image vivid */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE]/90 via-[#F8F5EE]/60 to-transparent md:w-3/5 z-0 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#F8F5EE]/40 via-transparent to-transparent z-0 pointer-events-none" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-[#F8F5EE]/90 to-transparent z-0"></div>
 
-        <div className="max-w-7xl mx-auto relative z-10 pt-4 sm:pt-6">
+        <div className="max-w-7xl mx-auto relative z-10">
           <Reveal>
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-bold tracking-[0.2em] uppercase mb-6 shadow-2xs">
+            <div className="max-w-xl lg:max-w-2xl bg-white/85 backdrop-blur-md border border-white/90 shadow-[0_12px_36px_rgba(23,75,57,0.07)] rounded-3xl p-7 sm:p-10">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-bold tracking-[0.2em] uppercase mb-5 shadow-2xs">
                 <span className="w-2 h-2 rounded-full bg-[#B88A3B]"></span>
                 <span>Service Capability</span>
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 tracking-tight text-[#252720]">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4 tracking-tight text-[#252720] leading-[1.18]">
                 {service.title}
               </h1>
-              <p className="text-lg sm:text-xl text-[#66665D] leading-relaxed font-sans">
+              <p className="text-base sm:text-lg text-[#55564E] font-medium leading-relaxed font-sans mb-6">
                 {service.subtitle}
               </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-[#174B39]">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F3] border border-[#E7E0D3]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#B88A3B]"></span>
+                  <span>Enterprise Grade</span>
+                </div>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF8F3] border border-[#E7E0D3]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#174B39]"></span>
+                  <span>Tailored Engagements</span>
+                </div>
+              </div>
             </div>
           </Reveal>
         </div>

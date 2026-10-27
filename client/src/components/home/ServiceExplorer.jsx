@@ -26,7 +26,7 @@ const ServiceExplorer = () => {
       ],
       link: '/services/sap-resources',
       cta: 'Request SAP Resources',
-      image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: '/images/service-sap-resources.jpg',
     },
     support: {
       title: 'Reliable SAP Support & Maintenance',
@@ -39,7 +39,7 @@ const ServiceExplorer = () => {
       ],
       link: '/services/sap-support',
       cta: 'Explore SAP Support',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: '/images/service-sap-support.jpg',
     },
     staffing: {
       title: 'Comprehensive IT & Non-IT Staffing',
@@ -52,7 +52,7 @@ const ServiceExplorer = () => {
       ],
       link: '/services/staffing',
       cta: 'Find Talent',
-      image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: '/images/service-staffing.jpg',
     },
     erp: {
       title: 'Custom ERP Built for Your Business',
@@ -65,7 +65,7 @@ const ServiceExplorer = () => {
       ],
       link: '/services/erp-solutions',
       cta: 'Explore ERP Solutions',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: '/images/service-erp-solutions.jpg',
     },
   };
 
@@ -164,6 +164,10 @@ const ServiceExplorer = () => {
                       src={content[activeTab].image}
                       alt={content[activeTab].title}
                       className="w-full h-full object-cover absolute inset-0"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/images/sap-banner.png';
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EE] via-transparent to-transparent z-10 w-1/4"></div>
                   </div>
