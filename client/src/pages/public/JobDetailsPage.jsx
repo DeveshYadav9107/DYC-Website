@@ -33,10 +33,10 @@ const JobDetailsPage = () => {
     candidatePhone: user?.phone || '',
     currentCompany: user?.company || '',
     currentDesignation: user?.designation || '',
-    totalExperience: user?.totalExperience || '3 years',
+    totalExperience: user?.totalExperience || '',
     currentSalary: user?.currentSalary || '',
     expectedSalary: user?.expectedSalary || '',
-    noticePeriod: user?.noticePeriod || '30 Days',
+    noticePeriod: user?.noticePeriod || '',
     skills: user?.skills ? user.skills.join(', ') : '',
     coverLetter: '',
     resumeUrl: user?.resumeUrl || '',
@@ -482,10 +482,12 @@ const JobDetailsPage = () => {
                           }
                           className="w-full px-2 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39]"
                         >
+                          <option value="">Select notice</option>
                           <option value="Immediate">Immediate</option>
                           <option value="15 Days">15 Days</option>
                           <option value="30 Days">30 Days</option>
                           <option value="60 Days">60 Days</option>
+                          <option value="90 Days">90 Days</option>
                         </select>
                       </div>
                     </div>

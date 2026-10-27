@@ -1,426 +1,574 @@
-﻿import { useState, useEffect } from 'react';
-import { getSettings, updateSettings } from '../../services/api';
+import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import {
+  FiCamera,
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiBriefcase,
+  FiLock,
+  FiEye,
+  FiEyeOff,
   FiSave,
   FiCheckCircle,
-  FiAlertTriangle,
-  FiBriefcase,
-  FiPhone,
-  FiGlobe,
-  FiToggleRight,
-  FiRefreshCw,
+  FiAlertCircle,
+  FiTrash2,
+  FiShield,
 } from 'react-icons/fi';
 
-const AdminSettings = () => {
-  const [formData, setFormData] = useState({
-    companyName: '',
-    companyTagline: '',
-    phone: '',
-    email: '',
-    address: '',
-    gst: '',
-    seo: {
-      defaultTitle: '',
-      defaultDescription: '',
-    },
-    features: {
-      showCareers: false,
-      showCaseStudies: false,
-      showEcommerce: false,
-      showBlog: true,
-    },
-  });
+/**
+ * Compresses an image file on an HTML5 canvas and converts it to a base64 Data URL.
+ * Stored directly in MongoDB Atlas so it works across Render, Vercel, and localhost
+ * without relying on ephemeral local container storage.
+ */
+const compressImageToBase64 = (file, maxWidth = 360, quality = 0.85) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const elem = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
 
-  const [status, setStatus] = useState({
-    loading: true,
-    saving: false,
-    error: null,
-    success: false,
-  });
-
-  useEffect(() => {
-    const fetchSettingsData = async () => {
-      try {
-        const response = await getSettings();
-        const data = response?.data || response;
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            ...data,
-            seo: { ...prev.seo, ...data.seo },
-            features: { ...prev.features, ...data.features },
-          }));
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxWidth) {
+            width = Math.round((width * maxWidth) / height);
+            height = maxWidth;
+          }
         }
-      } catch (err) {
-        setStatus((prev) => ({ ...prev, error: 'Failed to load system settings from server.' }));
-        console.error(err);
-      } finally {
-        setStatus((prev) => ({ ...prev, loading: false }));
-      }
+
+        elem.width = width;
+        elem.height = height;
+        const ctx = elem.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(elem.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = (err) => reject(err);
     };
-    fetchSettingsData();
-  }, []);
+    reader.onerror = (err) => reject(err);
+  });
+};
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+const AdminSettings = () => {
+  const { user, updateProfile } = useAuth();
+  const fileInputRef = useRef(null);
 
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: type === 'checkbox' ? checked : value,
-        },
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value,
-      }));
+  // Form State
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    designation: user?.designation || '',
+    company: user?.company || '',
+    bio: user?.bio || '',
+    avatar: user?.avatar || '',
+  });
+
+  // Password Update State
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const [showCurrentPass, setShowCurrentPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+
+  // UI Status
+  const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Sync user data when user changes
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        designation: user.designation || (user.role === 'admin' ? 'Super Administrator' : 'Operations Lead'),
+        company: user.company || 'DY&C - Dinesh Yadav & Company',
+        bio: user.bio || '',
+        avatar: user.avatar || '',
+      });
     }
-  };
+  }, [user]);
 
-  const handleToggle = (featureName) => {
-    setFormData((prev) => ({
-      ...prev,
-      features: {
-        ...prev.features,
-        [featureName]: !prev.features[featureName],
-      },
-    }));
-  };
+  // Handle Profile Photo Upload (Instagram / WhatsApp style)
+  const handlePhotoSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    setStatus((prev) => ({ ...prev, saving: true, error: null, success: false }));
+    if (!file.type.startsWith('image/')) {
+      setErrorMsg('Please select a valid image file (JPG, PNG, WebP).');
+      return;
+    }
+
     try {
-      await updateSettings(formData);
-      setStatus((prev) => ({ ...prev, saving: false, success: true }));
-      setTimeout(() => setStatus((prev) => ({ ...prev, success: false })), 3500);
+      setUploadingPhoto(true);
+      setErrorMsg('');
+
+      // Compress and convert to Base64 data URI
+      const base64Image = await compressImageToBase64(file, 360, 0.85);
+
+      // Update local state and immediately persist to MongoDB Atlas via updateProfile
+      setFormData((prev) => ({ ...prev, avatar: base64Image }));
+      await updateProfile({ avatar: base64Image });
+
+      setSuccessMsg('Profile photo updated and saved to database successfully!');
+      setTimeout(() => setSuccessMsg(''), 3500);
     } catch (err) {
-      setStatus((prev) => ({
-        ...prev,
-        saving: false,
-        error: err.response?.data?.message || 'Failed to persist settings.',
-      }));
-      console.error(err);
+      console.error('Failed to upload profile photo:', err);
+      setErrorMsg('Failed to process image. Please try a different photo.');
+    } finally {
+      setUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
-  if (status.loading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64 gap-3">
-        <div className="w-8 h-8 border-2 border-[#174B39] border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs text-[#64748B] font-medium">Loading system settings...</p>
-      </div>
-    );
-  }
+  // Handle Remove Photo
+  const handleRemovePhoto = async () => {
+    try {
+      setUploadingPhoto(true);
+      setErrorMsg('');
+      setFormData((prev) => ({ ...prev, avatar: '' }));
+      await updateProfile({ avatar: '' });
+      setSuccessMsg('Profile photo removed.');
+      setTimeout(() => setSuccessMsg(''), 3000);
+    } catch (err) {
+      setErrorMsg('Failed to remove photo.');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  // Handle Save All Profile Settings
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    // Validation for password change
+    if (passwordData.newPassword) {
+      if (!passwordData.currentPassword) {
+        setErrorMsg('Please enter your current password to set a new password.');
+        setSaving(false);
+        return;
+      }
+      if (passwordData.newPassword.length < 6) {
+        setErrorMsg('New password must be at least 6 characters long.');
+        setSaving(false);
+        return;
+      }
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setErrorMsg('New password and confirm password do not match.');
+        setSaving(false);
+        return;
+      }
+    }
+
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        designation: formData.designation.trim(),
+        company: formData.company.trim(),
+        bio: formData.bio.trim(),
+        avatar: formData.avatar,
+      };
+
+      if (passwordData.newPassword) {
+        payload.currentPassword = passwordData.currentPassword;
+        payload.newPassword = passwordData.newPassword;
+      }
+
+      await updateProfile(payload);
+
+      setSuccessMsg('Profile settings updated successfully.');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } catch (err) {
+      console.error('Failed to update profile settings:', err);
+      setErrorMsg(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Failed to save settings. Please try again.'
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const initials = formData.name
+    ? formData.name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : 'AD';
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Top Header & Save Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#252720]">
-            Global Site Settings
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#B88A3B] block">
+            System Administration
+          </span>
+          <h2 className="text-2xl font-serif font-bold text-[#252720] mt-0.5">
+            Admin Profile & Settings
           </h2>
-          <p className="text-sm text-[#64748B] mt-1">
-            Configure company identity, contact information, SEO defaults, and feature visibility.
+          <p className="text-xs text-[#66665D] mt-0.5">
+            Manage your executive account details, profile avatar, and login security credentials.
           </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleSubmit}
-            disabled={status.saving}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold shadow-xs transition cursor-pointer ${
-              status.saving ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
-          >
-            {status.saving ? (
-              <>
-                <FiRefreshCw className="w-3.5 h-3.5 animate-spin" />
-                <span>Saving Changes...</span>
-              </>
-            ) : (
-              <>
-                <FiSave className="w-3.5 h-3.5" />
-                <span>Save All Settings</span>
-              </>
-            )}
-          </button>
         </div>
       </div>
 
-      {/* Notifications */}
-      {status.error && (
-        <div className="p-4 rounded-xl bg-[#FEF2F2] border border-[#FEE2E2] text-xs font-medium text-[#DC2626] flex items-center gap-2.5">
-          <FiAlertTriangle className="w-4 h-4 shrink-0" />
-          <span>{status.error}</span>
+      {/* Feedback Alerts */}
+      {successMsg && (
+        <div className="p-4 rounded-2xl bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-semibold flex items-center gap-2.5 shadow-xs">
+          <FiCheckCircle className="text-base shrink-0" />
+          <span>{successMsg}</span>
         </div>
       )}
 
-      {status.success && (
-        <div className="p-4 rounded-xl bg-[#ECFDF5] border border-[#D1FAE5] text-xs font-medium text-[#15803D] flex items-center gap-2.5">
-          <FiCheckCircle className="w-4 h-4 shrink-0" />
-          <span>System configuration successfully updated and saved!</span>
+      {errorMsg && (
+        <div className="p-4 rounded-2xl bg-[#FEF2F2] border border-[#FEE2E2] text-[#DC2626] text-xs font-semibold flex items-center gap-2.5 shadow-xs">
+          <FiAlertCircle className="text-base shrink-0" />
+          <span>{errorMsg}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* 1. Company Identity Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
-            <div className="w-9 h-9 rounded-xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
-              <FiBriefcase className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
-                Company Identity
-              </h3>
-              <p className="text-xs text-[#64748B] mt-0.5">
-                Official enterprise legal name and branding slogan
-              </p>
-            </div>
-          </div>
+      <form onSubmit={handleSaveSettings} className="space-y-6">
+        {/* ================= 1. INSTAGRAM / WHATSAPP STYLE PROFILE PHOTO CARD ================= */}
+        <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E0D3] p-6 sm:p-8 shadow-xs text-center relative overflow-hidden">
+          <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-r from-[#EAF0E8] via-[#FDFBF7] to-[#EAF0E8] border-b border-[#E7E0D3]/60 -z-0"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                Company Legal Name
-              </label>
+          <div className="relative z-10 pt-4 flex flex-col items-center">
+            {/* Avatar Circle Container */}
+            <div className="relative inline-block mb-3">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-xl ring-2 ring-[#174B39]/20 overflow-hidden bg-[#EAF0E8] flex items-center justify-center text-3xl font-serif font-bold text-[#174B39]">
+                {formData.avatar ? (
+                  <img
+                    src={formData.avatar}
+                    alt={formData.name || 'Admin'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>{initials}</span>
+                )}
+              </div>
+
+              {/* Instagram / WhatsApp Camera Upload Button Overlay */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                className="absolute bottom-1 right-1 w-10 h-10 rounded-full bg-[#174B39] text-white flex items-center justify-center shadow-lg border-2 border-white hover:bg-[#103728] hover:scale-105 active:scale-95 transition cursor-pointer"
+                title="Change Profile Photo"
+                aria-label="Upload profile photo"
+              >
+                <FiCamera className="text-base" />
+              </button>
+
+              {/* Hidden File Input */}
               <input
-                type="text"
-                name="companyName"
-                value={formData.companyName || ''}
-                onChange={handleChange}
-                placeholder="e.g. Dinesh Yadav & Company"
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
+                type="file"
+                ref={fileInputRef}
+                accept="image/png,image/jpeg,image/webp,image/jpg"
+                onChange={handlePhotoSelect}
+                className="hidden"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                Company Tagline / Subtitle
-              </label>
-              <input
-                type="text"
-                name="companyTagline"
-                value={formData.companyTagline || ''}
-                onChange={handleChange}
-                placeholder="e.g. We help businesses run smarter with the right people and the right systems."
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
-              />
+            {/* Name & Role Text */}
+            <h3 className="font-serif font-bold text-lg text-[#252720] mt-1">
+              {formData.name || 'Administrator'}
+            </h3>
+            <p className="text-xs text-[#66665D] mt-0.5">
+              {formData.designation || 'Super Administrator'} · {formData.company || 'DY&C'}
+            </p>
+
+            {/* Quick Actions */}
+            <div className="flex items-center gap-3 mt-4">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#EAF0E8] text-[#174B39] text-xs font-semibold hover:bg-[#174B39] hover:text-white transition cursor-pointer"
+              >
+                <FiCamera className="text-xs" />
+                <span>{uploadingPhoto ? 'Processing...' : 'Upload New Photo'}</span>
+              </button>
+
+              {formData.avatar && (
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  disabled={uploadingPhoto}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E7E0D3] text-[#64748B] text-xs font-semibold hover:text-[#DC2626] hover:border-[#DC2626]/40 transition cursor-pointer"
+                >
+                  <FiTrash2 className="text-xs" />
+                  <span>Remove</span>
+                </button>
+              )}
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                GST / Tax Registration Number
-              </label>
-              <input
-                type="text"
-                name="gst"
-                value={formData.gst || ''}
-                onChange={handleChange}
-                placeholder="e.g. 06AOZPY8747D1ZX"
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition uppercase"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 2. Contact Information Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
-            <div className="w-9 h-9 rounded-xl bg-[#EAF0E8] text-[#7C3AED] flex items-center justify-center shrink-0 border border-[#DDD6FE]">
-              <FiPhone className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
-                Contact & Office Details
-              </h3>
-              <p className="text-xs text-[#64748B] mt-0.5">
-                Displayed in website footer, header, and inquiry auto-replies
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                Primary Phone Number
-              </label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone || ''}
-                onChange={handleChange}
-                placeholder="+91 95883 09979"
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                Primary Support Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email || ''}
-                onChange={handleChange}
-                placeholder="info@dycinfo.com"
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                Corporate Office Address
-              </label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address || ''}
-                onChange={handleChange}
-                placeholder="E-52A, Suncity, Rewari, Haryana, India"
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
-              />
-            </div>
+            <p className="text-[11px] text-[#8A897C] mt-3">
+              Stored directly in MongoDB Atlas database. Renders seamlessly on Vercel and Render cloud servers.
+            </p>
           </div>
         </div>
 
-        {/* 3. SEO Defaults Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
-            <div className="w-9 h-9 rounded-xl bg-[#E8F8FC] text-[#0284C7] flex items-center justify-center shrink-0 border border-[#BAE6FD]">
-              <FiGlobe className="w-4 h-4" />
+        {/* ================= 2. ACCOUNT & IDENTITY DATA (LIKE SIGN UP PAGE) ================= */}
+        <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E0D3] p-6 sm:p-8 shadow-xs space-y-5">
+          <div className="border-b border-[#E7E0D3] pb-3 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center">
+              <FiUser className="text-sm" />
             </div>
             <div>
-              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
-                Search Engine Optimization (SEO)
-              </h3>
-              <p className="text-xs text-[#64748B] mt-0.5">
-                Default metadata tags used for search indexing and social previews
-              </p>
+              <h3 className="font-bold text-sm text-[#252720]">Account & Personal Details</h3>
+              <p className="text-[11px] text-[#64748B]">Personal identity and primary contact records</p>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Full Name */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                Default Meta Title
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Full Name *
               </label>
-              <input
-                type="text"
-                name="seo.defaultTitle"
-                value={formData.seo?.defaultTitle || ''}
-                onChange={handleChange}
-                placeholder="e.g. Dinesh Yadav & Company | Enterprise SAP & ERP Consulting"
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiUser className="text-sm" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g. Dinesh Yadav"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                />
+              </div>
             </div>
 
+            {/* Email Address */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#252720] mb-1.5">
-                Default Meta Description
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Email Address (Account ID)
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiMail className="text-sm" />
+                </div>
+                <input
+                  type="email"
+                  disabled
+                  value={formData.email}
+                  className="w-full pl-10 pr-20 py-2.5 rounded-xl bg-[#F8FAFC] border border-[#E7E0D3] text-xs text-[#64748B] cursor-not-allowed"
+                />
+                <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-[10px] font-bold uppercase text-[#15803D]">
+                  Verified
+                </span>
+              </div>
+            </div>
+
+            {/* Phone Number */}
+            <div>
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Contact Phone
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiPhone className="text-sm" />
+                </div>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+91 98765 43210"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                />
+              </div>
+            </div>
+
+            {/* Designation / Role Title */}
+            <div>
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Designation / Position
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiBriefcase className="text-sm" />
+                </div>
+                <input
+                  type="text"
+                  value={formData.designation}
+                  onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                  placeholder="e.g. Managing Director & CEO"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                />
+              </div>
+            </div>
+
+            {/* Organization / Company */}
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Company / Organization Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiBriefcase className="text-sm" />
+                </div>
+                <input
+                  type="text"
+                  value={formData.company}
+                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  placeholder="DY&C - Dinesh Yadav & Company"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                />
+              </div>
+            </div>
+
+            {/* Executive Bio */}
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Executive Bio / Description
               </label>
               <textarea
-                name="seo.defaultDescription"
-                value={formData.seo?.defaultDescription || ''}
-                onChange={handleChange}
-                rows="3"
-                placeholder="Enterprise SAP consulting, staffing solutions and custom ERP software."
-                className="w-full px-3.5 py-2.5 text-xs text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] focus:ring-2 focus:ring-[#174B39]/10 outline-none transition resize-none leading-relaxed"
-              ></textarea>
+                rows={3}
+                value={formData.bio}
+                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                placeholder="Brief summary of professional background, focus areas, and leadership responsibilities..."
+                className="w-full px-3 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+              />
             </div>
           </div>
         </div>
 
-        {/* 4. Feature Flags Card */}
-        <div className="bg-[#FFFFFF] p-6 sm:p-7 rounded-2xl border border-[#E7E0D3] shadow-xs">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-[#E7E0D3]">
-            <div className="w-9 h-9 rounded-xl bg-[#ECFDF5] text-[#15803D] flex items-center justify-center shrink-0 border border-[#D1FAE5]">
-              <FiToggleRight className="w-4 h-4" />
+        {/* ================= 3. SECURITY & PASSWORD CHANGE CARD ================= */}
+        <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E0D3] p-6 sm:p-8 shadow-xs space-y-5">
+          <div className="border-b border-[#E7E0D3] pb-3 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center">
+              <FiShield className="text-sm" />
             </div>
             <div>
-              <h3 className="font-bold text-[#252720] text-sm sm:text-base">
-                Feature Flags & Visibility
-              </h3>
-              <p className="text-xs text-[#64748B] mt-0.5">
-                Toggle public visibility of upcoming sections and service modules
+              <h3 className="font-bold text-sm text-[#252720]">Account Security</h3>
+              <p className="text-[11px] text-[#64748B]">
+                Leave blank if you do not wish to change your password
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              {
-                id: 'showCareers',
-                title: 'Careers & Hiring Section',
-                desc: 'Show job openings and application forms on public website',
-              },
-              {
-                id: 'showCaseStudies',
-                title: 'Client Case Studies',
-                desc: 'Display success stories and enterprise implementation portfolios',
-              },
-              {
-                id: 'showEcommerce',
-                title: 'E-Commerce Services',
-                desc: 'Enable commerce solutions & product catalog features',
-              },
-              {
-                id: 'showBlog',
-                title: 'Enterprise Insights / Blog',
-                desc: 'Publish industry articles, SAP updates, and tech guides',
-              },
-            ].map((feature) => {
-              const enabled = Boolean(formData.features?.[feature.id]);
-              return (
-                <div
-                  key={feature.id}
-                  onClick={() => handleToggle(feature.id)}
-                  className={`p-4 rounded-xl border transition cursor-pointer flex items-center justify-between gap-4 select-none ${
-                    enabled
-                      ? 'bg-[#EAF0E8]/30 border-[#174B39]/30'
-                      : 'bg-[#FFFFFF] border-[#E7E0D3] hover:bg-[#F8FAFC]'
-                  }`}
-                >
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-[#252720]">{feature.title}</p>
-                    <p className="text-[11px] text-[#64748B] mt-0.5">{feature.desc}</p>
-                  </div>
-
-                  {/* Switch Pill */}
-                  <div
-                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors shrink-0 ${
-                      enabled ? 'bg-[#174B39]' : 'bg-[#E2E8F0]'
-                    }`}
-                  >
-                    <div
-                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                        enabled ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    ></div>
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Current Password */}
+            <div>
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Current Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiLock className="text-sm" />
                 </div>
-              );
-            })}
+                <input
+                  type={showCurrentPass ? 'text' : 'password'}
+                  value={passwordData.currentPassword}
+                  onChange={(e) =>
+                    setPasswordData({ ...passwordData, currentPassword: e.target.value })
+                  }
+                  placeholder="Enter current password"
+                  className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPass(!showCurrentPass)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#94A3B8] hover:text-[#252720]"
+                >
+                  {showCurrentPass ? <FiEyeOff className="text-xs" /> : <FiEye className="text-xs" />}
+                </button>
+              </div>
+            </div>
+
+            {/* New Password */}
+            <div>
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                New Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiLock className="text-sm" />
+                </div>
+                <input
+                  type={showNewPass ? 'text' : 'password'}
+                  value={passwordData.newPassword}
+                  onChange={(e) =>
+                    setPasswordData({ ...passwordData, newPassword: e.target.value })
+                  }
+                  placeholder="Min 6 characters"
+                  className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPass(!showNewPass)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#94A3B8] hover:text-[#252720]"
+                >
+                  {showNewPass ? <FiEyeOff className="text-xs" /> : <FiEye className="text-xs" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm New Password */}
+            <div>
+              <label className="block text-xs font-semibold text-[#252720] mb-1">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <FiLock className="text-sm" />
+                </div>
+                <input
+                  type={showConfirmPass ? 'text' : 'password'}
+                  value={passwordData.confirmPassword}
+                  onChange={(e) =>
+                    setPasswordData({ ...passwordData, confirmPassword: e.target.value })
+                  }
+                  placeholder="Re-enter new password"
+                  className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPass(!showConfirmPass)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#94A3B8] hover:text-[#252720]"
+                >
+                  {showConfirmPass ? <FiEyeOff className="text-xs" /> : <FiEye className="text-xs" />}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Save Action */}
-        <div className="flex justify-end pt-2">
+        {/* Submit Action Bar */}
+        <div className="flex items-center justify-end gap-3 pt-2">
           <button
             type="submit"
-            disabled={status.saving}
-            className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-semibold shadow-xs transition cursor-pointer ${
-              status.saving ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
+            disabled={saving || uploadingPhoto}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#174B39] hover:bg-[#103728] text-white text-xs font-bold shadow-md hover:shadow-lg transition cursor-pointer disabled:opacity-60"
           >
-            {status.saving ? 'Saving Changes...' : 'Save All Settings'}
+            <FiSave className="text-sm" />
+            <span>{saving ? 'Saving Changes...' : 'Save Settings'}</span>
           </button>
         </div>
       </form>

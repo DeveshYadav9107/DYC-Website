@@ -104,7 +104,7 @@ const AdminDashboard = () => {
   const urgentCount = stats?.priorities?.urgent ?? 0;
   const highCount = stats?.priorities?.high ?? 0;
 
-  const recentInquiries = stats?.recentInquiries || [];
+  const recentInquiries = (stats?.recentInquiries || []).slice(0, 5);
   const typeCounts = stats?.serviceBreakdown || {};
 
   // Status & Stage Badge Formatter

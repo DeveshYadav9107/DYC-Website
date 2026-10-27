@@ -171,7 +171,7 @@ export const getInquiryStats = async (req, res, next) => {
         .select('name company email type status leadStage priority createdAt nextFollowUpAt followUpStatus')
         .populate('assignedTo', 'name email role')
         .sort({ createdAt: -1 })
-        .limit(6),
+        .limit(5),
     ]);
 
     const serviceBreakdown = typeAgg.reduce((acc, curr) => {

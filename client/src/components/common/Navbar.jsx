@@ -388,8 +388,12 @@ const Navbar = () => {
                 onClick={() => setUserMenuOpen((prev) => !prev)}
                 className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[#E7E0D3] hover:border-[#174B39] bg-[#FDFBF7] hover:bg-white shadow-xs transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#174B39]"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#174B39] to-[#B88A3B] text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                  {userInitials}
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#174B39] to-[#B88A3B] text-white flex items-center justify-center text-xs font-bold shadow-xs overflow-hidden shrink-0">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt={user?.name || 'User'} className="w-full h-full object-cover" />
+                  ) : (
+                    userInitials
+                  )}
                 </div>
                 <span className="text-xs lg:text-sm font-semibold text-[#252720] max-w-[130px] truncate">
                   {user?.firstName || user?.name?.split(' ')[0] || 'My Account'}
@@ -692,8 +696,12 @@ const Navbar = () => {
                   ) : (
                     <div className="space-y-2">
                       <div className="flex items-center gap-2.5 px-3 py-2 bg-white rounded-xl border border-[#E7E0D3]">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#174B39] to-[#B88A3B] text-white flex items-center justify-center text-xs font-bold shrink-0">
-                          {userInitials}
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#174B39] to-[#B88A3B] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+                          {user?.avatar ? (
+                            <img src={user.avatar} alt={user?.name || 'User'} className="w-full h-full object-cover" />
+                          ) : (
+                            userInitials
+                          )}
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-bold text-[#252720] truncate">{user?.name}</p>

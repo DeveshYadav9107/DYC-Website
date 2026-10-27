@@ -309,8 +309,12 @@ const AdminLayout = ({ children }) => {
 
             {/* Admin Avatar Chip */}
             <div className="flex items-center gap-2 pl-2 border-l border-[#E7E0D3]">
-              <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center font-bold text-xs border border-[#174B39]/20">
-                {initials || 'A'}
+              <div className="w-8 h-8 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center font-bold text-xs border border-[#174B39]/20 overflow-hidden shrink-0">
+                {user?.avatar ? (
+                  <img src={user.avatar} alt={adminName} className="w-full h-full object-cover" />
+                ) : (
+                  initials || 'A'
+                )}
               </div>
               <div className="hidden md:block text-left">
                 <span className="text-xs font-semibold text-[#252720] block leading-tight">

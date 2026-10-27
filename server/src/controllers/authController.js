@@ -272,12 +272,28 @@ export const getMe = async (req, res, next) => {
 
     return successResponse(res, 200, 'User data retrieved', {
       id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      name: user.name,
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      name: user.name || '',
       email: user.email,
-      phone: user.phone,
+      phone: user.phone || '',
       role: user.role,
+      avatar: user.avatar || '',
+      bio: user.bio || '',
+      designation: user.designation || '',
+      company: user.company || '',
+      skills: user.skills || [],
+      totalExperience: user.totalExperience || '',
+      noticePeriod: user.noticePeriod || '',
+      currentSalary: user.currentSalary || '',
+      expectedSalary: user.expectedSalary || '',
+      location: user.location || '',
+      headline: user.headline || '',
+      resumeUrl: user.resumeUrl || '',
+      resumeFileName: user.resumeFileName || '',
+      sapModules: user.sapModules || [],
+      sapSystem: user.sapSystem || '',
+      supportAgreement: user.supportAgreement || '',
       isEmailVerified: user.isEmailVerified,
       createdAt: user.createdAt,
     });
@@ -293,35 +309,106 @@ export const getMe = async (req, res, next) => {
  */
 export const updateProfile = async (req, res, next) => {
   try {
-    const { firstName, lastName, phone } = req.body;
+    const {
+      firstName,
+      lastName,
+      name,
+      phone,
+      avatar,
+      bio,
+      designation,
+      company,
+      skills,
+      totalExperience,
+      noticePeriod,
+      currentSalary,
+      expectedSalary,
+      location,
+      headline,
+      currentPassword,
+      newPassword,
+    } = req.body;
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select('+password');
     if (!user) {
       return next(new ApiError(404, 'User not found'));
     }
 
-    if (firstName) user.firstName = firstName.trim();
-    if (lastName) user.lastName = lastName.trim();
-    if (firstName || lastName) {
+    if (name) {
+      user.name = name.trim();
+      const parts = user.name.split(' ');
+      user.firstName = parts[0] || '';
+      user.lastName = parts.slice(1).join(' ') || '';
+    } else if (firstName !== undefined || lastName !== undefined) {
+      if (firstName !== undefined) user.firstName = firstName.trim();
+      if (lastName !== undefined) user.lastName = lastName.trim();
       user.name = `${user.firstName || ''} ${user.lastName || ''}`.trim();
     }
-    if (phone) {
-      if (!isValidPhone(phone)) {
-        return next(new ApiError(400, 'Please enter a valid phone number'));
-      }
+
+    if (phone !== undefined) {
       user.phone = phone.trim();
+    }
+
+    if (avatar !== undefined) {
+      user.avatar = avatar; // Stored directly in MongoDB Atlas document (base64 or URL)
+    }
+
+    if (bio !== undefined) user.bio = bio.trim();
+    if (designation !== undefined) user.designation = designation.trim();
+    if (company !== undefined) user.company = company.trim();
+    if (location !== undefined) user.location = location.trim();
+    if (headline !== undefined) user.headline = headline.trim();
+    if (totalExperience !== undefined) user.totalExperience = totalExperience.trim();
+    if (noticePeriod !== undefined) user.noticePeriod = noticePeriod.trim();
+    if (currentSalary !== undefined) user.currentSalary = currentSalary.trim();
+    if (expectedSalary !== undefined) user.expectedSalary = expectedSalary.trim();
+
+    if (skills !== undefined) {
+      if (Array.isArray(skills)) {
+        user.skills = skills;
+      } else if (typeof skills === 'string') {
+        user.skills = skills.split(',').map((s) => s.trim()).filter(Boolean);
+      }
+    }
+
+    // Optional password change
+    if (newPassword) {
+      if (!currentPassword) {
+        return next(new ApiError(400, 'Current password is required to change password'));
+      }
+      const isMatch = await user.comparePassword(currentPassword);
+      if (!isMatch) {
+        return next(new ApiError(400, 'Current password is incorrect'));
+      }
+      if (newPassword.length < 6) {
+        return next(new ApiError(400, 'New password must be at least 6 characters'));
+      }
+      user.password = newPassword;
     }
 
     await user.save();
 
     return successResponse(res, 200, 'Profile updated successfully', {
       id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      name: user.name,
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      name: user.name || '',
       email: user.email,
-      phone: user.phone,
+      phone: user.phone || '',
       role: user.role,
+      avatar: user.avatar || '',
+      bio: user.bio || '',
+      designation: user.designation || '',
+      company: user.company || '',
+      skills: user.skills || [],
+      totalExperience: user.totalExperience || '',
+      noticePeriod: user.noticePeriod || '',
+      currentSalary: user.currentSalary || '',
+      expectedSalary: user.expectedSalary || '',
+      location: user.location || '',
+      headline: user.headline || '',
+      resumeUrl: user.resumeUrl || '',
+      resumeFileName: user.resumeFileName || '',
       isEmailVerified: user.isEmailVerified,
     });
   } catch (error) {

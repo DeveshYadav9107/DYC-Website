@@ -491,7 +491,7 @@ const AdminCandidates = () => {
                       Notice Period
                     </span>
                     <span className="font-semibold text-[#252720]">
-                      {selectedApp.noticePeriod || '30 Days'}
+                      {selectedApp.noticePeriod || 'Not specified'}
                     </span>
                   </div>
                   <div>
