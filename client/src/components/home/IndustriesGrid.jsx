@@ -5,21 +5,21 @@ import { motion, useReducedMotion } from 'framer-motion';
 const industries = [
   {
     name: 'Manufacturing',
-    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
+    image: '/images/manufacturing.jpg',
     desc: 'Optimize supply chains, plant maintenance, and production planning.',
     vertical: 'Industrial & Manufacturing',
     heightClass: 'h-[420px] lg:h-[440px]'
   },
   {
     name: 'Retail & FMCG',
-    image: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=800&q=80',
+    image: '/images/retail.jpg',
     desc: 'Streamline inventory, order execution, and customer experiences.',
     vertical: 'Consumer & Retail',
     heightClass: 'h-[420px] lg:h-[470px]'
   },
   {
     name: 'Healthcare',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
+    image: '/images/healthcare.jpg',
     desc: 'Secure data management, clinical resources, and compliance tracking.',
     vertical: 'Life Sciences',
     heightClass: 'h-[420px] lg:h-[430px]'
@@ -33,14 +33,14 @@ const industries = [
   },
   {
     name: 'Logistics',
-    image: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=800&q=80',
+    image: '/images/logistics.jpg',
     desc: 'Real-time fleet tracking, global freight, and warehouse management.',
     vertical: 'Supply & Transport',
     heightClass: 'h-[420px] lg:h-[430px]'
   },
   {
     name: 'Finance',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    image: '/images/finance.jpg',
     desc: 'Strict regulatory compliance, financial accounting, and risk management.',
     vertical: 'Banking & Financial',
     heightClass: 'h-[420px] lg:h-[460px]'
@@ -226,19 +226,23 @@ const IndustriesGrid = () => {
                   <div className={`relative rounded-2xl overflow-hidden ${ind.heightClass} flex flex-col justify-between p-7 sm:p-8 border border-[#E7E0D3] group-hover:border-[#174B39]/40 transition-all duration-500 shadow-[0_4px_20px_rgba(37,39,32,0.04)] group-hover:shadow-[0_16px_40px_rgba(23,75,57,0.12)] group-hover:-translate-y-1.5 bg-[#FDFBF7]`}>
                     
                     {/* Background Image Layer with Controlled Clarity & Subtle Zoom */}
-                    <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute inset-0 overflow-hidden bg-slate-100">
                       <img
                         src={ind.image}
                         alt={ind.name}
                         loading="lazy"
-                        className="w-full h-full object-cover object-center transform group-hover:scale-[1.04] transition-transform duration-800 ease-out"
+                        className="w-full h-full object-cover object-center transform group-hover:scale-[1.04] transition-transform duration-700 ease-out"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/images/industries-banner.png';
+                        }}
                       />
                       
                       {/* Top Vignette for Photographic Definition */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
 
                       {/* Controlled Warm Cream Gradient near the text area to ensure readability without washing out the photo */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-[#FDFBF7]/92 via-42% to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-[#FDFBF7]/85 via-35% to-transparent pointer-events-none" />
 
                       {/* Subtle Forest Green Hover Glow */}
                       <div className="absolute inset-0 bg-[#174B39]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
