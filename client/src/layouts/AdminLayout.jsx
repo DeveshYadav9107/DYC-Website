@@ -11,9 +11,7 @@ import {
   FiExternalLink,
   FiMenu,
   FiX,
-  FiBell,
   FiChevronRight,
-  FiCheckCircle,
   FiBriefcase,
   FiUsers,
   FiLayers,
@@ -296,26 +294,8 @@ const AdminLayout = ({ children }) => {
             </div>
           </div>
 
-          {/* Right: Actions, System Indicator & Profile */}
+          {/* Right: Actions & Profile */}
           <div className="flex items-center gap-3 sm:gap-4">
-            {/* System Status Pill */}
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF0E8] border border-[#174B39]/20 text-[#174B39] text-xs font-medium">
-              <FiCheckCircle className="w-3.5 h-3.5 text-[#174B39]" />
-              <span>API Connected</span>
-            </div>
-
-            {/* Inquiries Notification Icon */}
-            <Link
-              to="/admin/inquiries"
-              className="relative p-2 rounded-xl text-[#66665D] hover:text-[#252720] hover:bg-[#FDFBF7] transition"
-              title={`${newInquiriesCount} new enquiries`}
-            >
-              <FiBell className="w-4 h-4" />
-              {newInquiriesCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#B88A3B] ring-2 ring-[#FFFFFF]"></span>
-              )}
-            </Link>
-
             {/* Live Site Shortcut */}
             <a
               href="/"

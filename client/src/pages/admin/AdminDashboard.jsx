@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getInquiryStats, updateInquiryStatus } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -23,7 +23,6 @@ import {
   FiChevronRight,
   FiSend,
   FiAward,
-  FiAlertCircle,
   FiTarget,
   FiTrendingUp,
 } from 'react-icons/fi';
@@ -98,14 +97,9 @@ const AdminDashboard = () => {
   // Real backend calculations from stats payload
   const totalCount = stats?.totalEnquiries ?? 0;
   const newCount = stats?.newEnquiries ?? 0;
-  const followUpsDueCount = stats?.followUpsDue ?? 0;
   const qualifiedCount = stats?.qualifiedLeads ?? 0;
   const proposalCount = stats?.proposalsSent ?? 0;
   const wonCount = stats?.wonLeads ?? 0;
-
-  const overdueFollowUps = stats?.followUps?.overdue ?? 0;
-  const todayFollowUps = stats?.followUps?.today ?? 0;
-  const upcomingFollowUps = stats?.followUps?.upcoming ?? 0;
 
   const urgentCount = stats?.priorities?.urgent ?? 0;
   const highCount = stats?.priorities?.high ?? 0;
@@ -261,8 +255,8 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* 2. Primary 6 KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 sm:gap-4">
+      {/* 2. Primary 5 KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 sm:gap-4">
         {/* KPI 1: Total Enquiries */}
         <Link
           to="/admin/inquiries"
@@ -311,41 +305,7 @@ const AdminDashboard = () => {
           </div>
         </Link>
 
-        {/* KPI 3: Follow-ups Due */}
-        <Link
-          to="/admin/inquiries?followUp=due"
-          className={`p-4 sm:p-5 rounded-2xl border shadow-xs hover:shadow-sm transition group cursor-pointer flex flex-col justify-between ${
-            followUpsDueCount > 0
-              ? 'bg-[#FEF2F2]/60 border-[#FECACA] hover:border-[#DC2626]'
-              : 'bg-[#FFFFFF] border-[#E7E0D3] hover:border-[#DC2626]/40'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] group-hover:text-[#DC2626] transition">
-              Follow-ups Due
-            </span>
-            <div
-              className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
-                followUpsDueCount > 0
-                  ? 'bg-[#FEE2E2] text-[#DC2626] border-[#FCA5A5]'
-                  : 'bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0]'
-              }`}
-            >
-              <FiAlertCircle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#252720]">
-              {loading ? '—' : followUpsDueCount}
-            </span>
-            <p className="text-[11px] text-[#DC2626] font-medium mt-0.5 flex items-center justify-between">
-              <span>{overdueFollowUps > 0 ? `${overdueFollowUps} overdue` : 'Scheduled today'}</span>
-              <span className="font-semibold text-[10px] group-hover:translate-x-0.5 transition">Action →</span>
-            </p>
-          </div>
-        </Link>
-
-        {/* KPI 4: Qualified Leads */}
+        {/* KPI 3: Qualified Leads */}
         <Link
           to="/admin/inquiries?leadStage=qualified"
           className="bg-[#FFFFFF] p-4 sm:p-5 rounded-2xl border border-[#E7E0D3] shadow-xs hover:border-[#7C3AED]/40 hover:shadow-sm transition group cursor-pointer flex flex-col justify-between"
@@ -418,87 +378,8 @@ const AdminDashboard = () => {
         </Link>
       </div>
 
-      {/* 3. Operational Insights: Follow-ups Schedule & Priority Leads */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Left: Follow-up Operations Radar */}
-        <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between pb-3.5 border-b border-[#E7E0D3] mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-[#EAF0E8] text-[#174B39] flex items-center justify-center">
-                  <FiClock className="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-[#252720] text-sm">
-                    Follow-up Operations
-                  </h3>
-                  <p className="text-[11px] text-[#64748B]">
-                    Status of client scheduling commitments
-                  </p>
-                </div>
-              </div>
-
-              <Link
-                to="/admin/inquiries?followUp=due"
-                className="text-[11px] font-semibold text-[#174B39] hover:underline"
-              >
-                View all
-              </Link>
-            </div>
-
-            <div className="space-y-3">
-              {/* Overdue */}
-              <Link
-                to="/admin/inquiries?followUp=overdue"
-                className="flex items-center justify-between p-3 rounded-xl bg-[#FEF2F2] border border-[#FEE2E2] hover:border-[#DC2626]/30 transition group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626]"></span>
-                  <span className="text-xs font-semibold text-[#991B1B]">Overdue Follow-ups</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#DC2626]">{overdueFollowUps}</span>
-                  <FiChevronRight className="w-3.5 h-3.5 text-[#DC2626] group-hover:translate-x-0.5 transition" />
-                </div>
-              </Link>
-
-              {/* Today */}
-              <Link
-                to="/admin/inquiries?followUp=today"
-                className="flex items-center justify-between p-3 rounded-xl bg-[#FFFBEB] border border-[#FEF3C7] hover:border-[#D97706]/30 transition group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>
-                  <span className="text-xs font-semibold text-[#92400E]">Due Today</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#D97706]">{todayFollowUps}</span>
-                  <FiChevronRight className="w-3.5 h-3.5 text-[#D97706] group-hover:translate-x-0.5 transition" />
-                </div>
-              </Link>
-
-              {/* Upcoming */}
-              <Link
-                to="/admin/inquiries?followUp=upcoming"
-                className="flex items-center justify-between p-3 rounded-xl bg-[#F0F9FF] border border-[#E0F2FE] hover:border-[#0284C7]/30 transition group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#0284C7]"></span>
-                  <span className="text-xs font-semibold text-[#075985]">Upcoming Scheduled</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#0284C7]">{upcomingFollowUps}</span>
-                  <FiChevronRight className="w-3.5 h-3.5 text-[#0284C7] group-hover:translate-x-0.5 transition" />
-                </div>
-              </Link>
-            </div>
-          </div>
-
-          <div className="pt-4 mt-4 border-t border-[#E7E0D3] flex items-center justify-between text-xs text-[#64748B]">
-            <span>Urgent/High priority leads:</span>
-            <span className="font-bold text-[#252720]">{urgentCount + highCount} leads</span>
-          </div>
-        </div>
+      {/* 3. Operational Insights: Distribution & Quick Shortcuts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
         {/* Center: Service Classification Breakdown */}
         <div className="bg-[#FFFFFF] rounded-2xl border border-[#E7E0D3] p-5 sm:p-6 shadow-xs flex flex-col justify-between">
@@ -636,11 +517,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="pt-3 mt-3 border-t border-[#E7E0D3] flex items-center justify-between text-[11px] text-[#64748B]">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#15803D]"></span>
-              MongoDB Atlas Live
-            </span>
+          <div className="pt-3 mt-3 border-t border-[#E7E0D3] flex items-center justify-end text-[11px] text-[#64748B]">
             <Link to="/admin/settings" className="hover:text-[#252720] font-medium">
               Settings →
             </Link>

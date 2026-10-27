@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   getInquiries,
@@ -400,9 +400,7 @@ const AdminInquiries = () => {
     debouncedSearch ||
     stageFilter !== 'all' ||
     priorityFilter !== 'all' ||
-    assignedFilter !== 'all' ||
-    typeFilter !== 'all' ||
-    followUpFilter !== 'all';
+    typeFilter !== 'all';
 
   // Badges & Labels Helpers
   const renderStageBadge = (stage) => {
@@ -617,7 +615,6 @@ const AdminInquiries = () => {
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
             { id: 'all', label: 'All Leads' },
-            { id: 'new', label: 'New / Pending' },
             { id: 'contacted', label: 'Contacted' },
             { id: 'qualified', label: 'Qualified' },
             { id: 'proposal-sent', label: 'Proposal Sent' },
@@ -642,7 +639,7 @@ const AdminInquiries = () => {
         </div>
 
         {/* Search, Filters Dropdowns, and Sort Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 pt-3 border-t border-[#E7E0D3]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-[#E7E0D3]">
           {/* 1. Search Box */}
           <div className="lg:col-span-2 relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
@@ -683,47 +680,7 @@ const AdminInquiries = () => {
             </select>
           </div>
 
-          {/* 3. Follow-up Filter */}
-          <div>
-            <select
-              value={followUpFilter}
-              onChange={(e) => {
-                setFollowUpFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full px-3 py-2 text-xs font-medium text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition cursor-pointer"
-            >
-              <option value="all">All Follow-ups</option>
-              <option value="due">Follow-ups Due</option>
-              <option value="overdue">Overdue Only</option>
-              <option value="today">Due Today</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="completed">Completed</option>
-              <option value="none">No Follow-up Set</option>
-            </select>
-          </div>
-
-          {/* 4. Assigned Team Filter */}
-          <div>
-            <select
-              value={assignedFilter}
-              onChange={(e) => {
-                setAssignedFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full px-3 py-2 text-xs font-medium text-[#252720] bg-[#FFFFFF] border border-[#E7E0D3] rounded-xl focus:border-[#174B39] outline-none transition cursor-pointer"
-            >
-              <option value="all">All Team Members</option>
-              <option value="unassigned">Unassigned Only</option>
-              {teamMembers.map((m) => (
-                <option key={m._id} value={m._id}>
-                  {m.name} ({m.role})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* 5. Service Classification Filter */}
+          {/* 3. Service Classification Filter */}
           <div>
             <select
               value={typeFilter}
