@@ -86,8 +86,26 @@ export const submitApplication = async (req, res, next) => {
       portfolioLink,
     } = req.body;
 
+    // 1. Enforce Candidate Authentication
+    const candidateUserId = req.user?._id;
+    if (!candidateUserId) {
+      return next(
+        new ApiError(401, 'Please log in or create an account to submit your job application.')
+      );
+    }
+
+    // 2. Validate mandatory fields (including mandatory resume)
     if (!jobId || !candidateName || !candidateEmail || !candidatePhone) {
       return next(new ApiError(400, 'Please provide Job ID, Name, Email, and Phone'));
+    }
+
+    if (!resumeUrl || !resumeUrl.trim()) {
+      return next(
+        new ApiError(
+          400,
+          'Resume upload is mandatory. Please upload your CV / Resume (PDF or DOCX) to apply.'
+        )
+      );
     }
 
     const job = await Job.findById(jobId);
@@ -95,14 +113,33 @@ export const submitApplication = async (req, res, next) => {
       return next(new ApiError(404, 'The requested job posting does not exist'));
     }
 
+    if (job.status !== 'published' || !job.isActive) {
+      return next(new ApiError(400, 'This job position is no longer accepting new applications.'));
+    }
+
+    // 3. Prevent duplicate applications if candidate already has an ACTIVE (non-rejected) application
+    const existingApp = await JobApplication.findOne({
+      job: job._id,
+      $or: [
+        { candidate: candidateUserId },
+        { candidateEmail: candidateEmail.toLowerCase().trim() },
+      ],
+    }).sort({ createdAt: -1 });
+
+    if (existingApp && existingApp.status !== 'Rejected') {
+      return next(
+        new ApiError(
+          400,
+          `You have already applied for "${job.title}". Current pipeline stage: "${existingApp.status}". You can track your application in your Candidate Portal.`
+        )
+      );
+    }
+
     const parsedSkills = Array.isArray(skills)
       ? skills
       : typeof skills === 'string'
       ? skills.split(',').map((s) => s.trim()).filter(Boolean)
       : [];
-
-    // Optional user association if candidate is logged in
-    const candidateUserId = req.user?._id || null;
 
     const application = await JobApplication.create({
       job: job._id,
@@ -115,7 +152,7 @@ export const submitApplication = async (req, res, next) => {
       totalExperience: totalExperience || '0 years',
       currentSalary: currentSalary || '',
       expectedSalary: expectedSalary || '',
-      noticePeriod: noticePeriod || '30 Days',
+      noticePeriod: noticePeriod || 'Not specified',
       skills: parsedSkills,
       resumeUrl: resumeUrl || '',
       resumeFileName: resumeFileName || (resumeUrl ? 'Candidate_Resume.pdf' : ''),
@@ -194,7 +231,7 @@ export const getMyApplications = async (req, res, next) => {
     const applications = await JobApplication.find({
       $or: [{ candidate: candidateId }, { candidateEmail }],
     })
-      .populate('job', 'title department location type salaryRange workplaceType')
+      .populate('job', 'title department location type salaryRange workplaceType status isActive slug')
       .sort({ createdAt: -1 });
 
     return res.status(200).json(

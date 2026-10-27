@@ -189,7 +189,7 @@ const LoginPage = () => {
           <p className="text-xs text-[#66665D]">
             Don't have an account yet?{' '}
             <Link
-              to="/signup"
+              to={returnTo && returnTo !== '/' ? `/signup?returnTo=${encodeURIComponent(returnTo)}` : '/signup'}
               className="font-bold text-[#174B39] hover:text-[#103728] transition"
             >
               Create Account

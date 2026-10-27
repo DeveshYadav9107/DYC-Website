@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -16,8 +16,18 @@ import {
   FiX,
   FiAlertCircle,
   FiStar,
+  FiCheck,
+  FiLock,
+  FiLogIn,
+  FiUserPlus,
+  FiRefreshCw,
 } from 'react-icons/fi';
-import { getJobs, submitJobApplication, uploadResume } from '../../services/api';
+import {
+  getJobs,
+  submitJobApplication,
+  uploadResume,
+  getMyApplications,
+} from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
 const departmentsList = [
@@ -31,6 +41,8 @@ const departmentsList = [
 
 const CareersPage = () => {
   const { user, isAuthenticated } = useAuth();
+  const location = useLocation();
+
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDept, setSelectedDept] = useState('All');
@@ -38,12 +50,18 @@ const CareersPage = () => {
   const [selectedType, setSelectedType] = useState('All');
   const [deptCounts, setDeptCounts] = useState({});
 
+  // User Applications (to detect already applied vs rejected vs new)
+  const [myApplications, setMyApplications] = useState([]);
+
+  // Auth requirement modal state
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalTargetJob, setAuthModalTargetJob] = useState(null);
+
   // Application Modal state
   const [applyModalJob, setApplyModalJob] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(null);
   const [submitError, setSubmitError] = useState('');
-  const [resumeFile, setResumeFile] = useState(null);
   const [resumeUploading, setResumeUploading] = useState(false);
 
   // Form State
@@ -103,9 +121,27 @@ const CareersPage = () => {
     }
   };
 
+  // Fetch candidate applications
+  const fetchUserApplications = async () => {
+    if (!isAuthenticated) {
+      setMyApplications([]);
+      return;
+    }
+    try {
+      const data = await getMyApplications();
+      setMyApplications(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.warn('Could not load user applications on careers page:', err);
+    }
+  };
+
   useEffect(() => {
     fetchJobs();
   }, [selectedDept, selectedType]);
+
+  useEffect(() => {
+    fetchUserApplications();
+  }, [isAuthenticated]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -113,6 +149,13 @@ const CareersPage = () => {
   };
 
   const handleOpenApplyModal = (job) => {
+    // If not authenticated, prompt login/signup immediately
+    if (!isAuthenticated) {
+      setAuthModalTargetJob(job);
+      setShowAuthModal(true);
+      return;
+    }
+
     setApplyModalJob(job);
     setSubmitSuccess(null);
     setSubmitError('');
@@ -127,9 +170,9 @@ const CareersPage = () => {
       return;
     }
 
-    setResumeFile(file);
     try {
       setResumeUploading(true);
+      setSubmitError('');
       const uploadRes = await uploadResume(file);
       if (uploadRes?.url) {
         setFormData((prev) => ({
@@ -137,7 +180,6 @@ const CareersPage = () => {
           resumeUrl: uploadRes.url,
           resumeFileName: uploadRes.fileName || file.name,
         }));
-        setSubmitError('');
       }
     } catch (err) {
       console.warn('Resume upload issue, using file reference:', err);
@@ -153,8 +195,25 @@ const CareersPage = () => {
 
   const handleSubmitApplication = async (e) => {
     e.preventDefault();
+
+    // 1. Enforce Authentication Requirement
+    if (!isAuthenticated) {
+      setApplyModalJob(null);
+      setShowAuthModal(true);
+      return;
+    }
+
+    // 2. Validate mandatory personal contact details
     if (!formData.candidateName || !formData.candidateEmail || !formData.candidatePhone) {
       setSubmitError('Please fill in your name, email, and mobile number.');
+      return;
+    }
+
+    // 3. Enforce Mandatory Resume Upload
+    if (!formData.resumeUrl || !formData.resumeUrl.trim()) {
+      setSubmitError(
+        'Resume upload is mandatory. Please upload your CV / Resume document (PDF or DOCX) to proceed.'
+      );
       return;
     }
 
@@ -168,8 +227,12 @@ const CareersPage = () => {
 
       const res = await submitJobApplication(payload);
       setSubmitSuccess(res?.data || res);
+      // Refresh user applications so the card button updates to "Applied"
+      await fetchUserApplications();
     } catch (err) {
-      setSubmitError(err?.response?.data?.message || 'Failed to submit application. Please try again.');
+      setSubmitError(
+        err?.response?.data?.message || 'Failed to submit application. Please try again.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -219,12 +282,12 @@ const CareersPage = () => {
               <p className="text-xs text-[#EAF0E8]/70 mt-0.5">Industry Staffing Legacy</p>
             </div>
             <div>
-              <p className="text-2xl font-bold font-serif text-[#D7B875]">48 Hrs</p>
-              <p className="text-xs text-[#EAF0E8]/70 mt-0.5">Screening Turnaround</p>
+              <p className="text-2xl font-bold font-serif text-[#D7B875]">100%</p>
+              <p className="text-xs text-[#EAF0E8]/70 mt-0.5">Statutory & Labor Compliance</p>
             </div>
             <div>
-              <p className="text-2xl font-bold font-serif text-[#D7B875]">100%</p>
-              <p className="text-xs text-[#EAF0E8]/70 mt-0.5">PF & ESIC Compliance</p>
+              <p className="text-2xl font-bold font-serif text-[#D7B875]">24-48 Hrs</p>
+              <p className="text-xs text-[#EAF0E8]/70 mt-0.5">Fast-Track Screening</p>
             </div>
           </div>
         </div>
@@ -232,69 +295,74 @@ const CareersPage = () => {
 
       {/* ================= 2. SEARCH & FILTER STRIP ================= */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-        <div className="bg-[#FFFFFF] rounded-2xl shadow-[0_8px_30px_rgba(23,75,57,0.08)] border border-[#E7E0D3] p-4 sm:p-5">
-          <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3">
+        <div className="bg-white rounded-2xl border border-[#E7E0D3] shadow-lg p-4 sm:p-5">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center"
+          >
             {/* Search Input */}
-            <div className="flex-1 relative flex items-center">
-              <FiSearch className="absolute left-3.5 text-[#8A897C] text-base" />
+            <div className="md:col-span-6 relative">
+              <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A897C] text-base" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search job title, skills (e.g. SAP FICO, CNC, Logistics)..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-sm text-[#252720] placeholder-[#8A897C] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                placeholder="Search job title, skills (e.g. SAP FICO, PLC, CNC, ABAP)..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs sm:text-sm text-[#252720] focus:outline-none focus:border-[#174B39] transition"
               />
             </div>
 
-            {/* Employment Type */}
-            <div className="w-full md:w-48">
+            {/* Employment Type Dropdown */}
+            <div className="md:col-span-4">
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-sm text-[#252720] focus:outline-none focus:border-[#174B39] focus:bg-white transition"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs sm:text-sm text-[#252720] focus:outline-none focus:border-[#174B39] transition"
               >
-                <option value="All">All Job Types</option>
-                <option value="full-time">Full Time</option>
+                <option value="All">All Employment Types</option>
+                <option value="full-time">Full-Time Permanent</option>
                 <option value="contract">Contract Staffing</option>
-                <option value="part-time">Part Time</option>
-                <option value="remote">Remote</option>
+                <option value="remote">Remote / Telecommute</option>
               </select>
             </div>
 
             {/* Search Button */}
-            <button
-              type="submit"
-              className="bg-[#174B39] hover:bg-[#103728] text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <FiSearch className="text-sm" />
-              <span>Search Roles</span>
-            </button>
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                className="w-full bg-[#174B39] hover:bg-[#103728] text-white py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <FiFilter className="text-xs" />
+                <span>Filter Jobs</span>
+              </button>
+            </div>
           </form>
 
           {/* Department Pills */}
-          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#E7E0D3]/60 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-xs font-semibold text-[#8A897C] uppercase tracking-wider shrink-0 flex items-center gap-1">
-              <FiFilter className="text-xs" /> Dept:
+          <div className="flex items-center gap-2 overflow-x-auto pt-4 mt-3 border-t border-[#E7E0D3]/60 pb-1 scrollbar-none">
+            <span className="text-[11px] font-bold text-[#8A897C] uppercase tracking-wider whitespace-nowrap mr-1">
+              Verticals:
             </span>
             {departmentsList.map((dept) => {
-              const count = dept === 'All' ? jobs.length : deptCounts[dept] || 0;
               const isSelected = selectedDept === dept;
+              const count = deptCounts[dept];
               return (
                 <button
                   key={dept}
-                  type="button"
                   onClick={() => setSelectedDept(dept)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
                     isSelected
-                      ? 'bg-[#174B39] text-white shadow-xs font-bold'
+                      ? 'bg-[#174B39] text-white shadow-xs'
                       : 'bg-[#F8F5EE] text-[#66665D] hover:bg-[#EAF0E8] hover:text-[#174B39]'
                   }`}
                 >
                   {dept}
-                  {count > 0 && (
+                  {count !== undefined && (
                     <span
-                      className={`ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] ${
-                        isSelected ? 'bg-white/20 text-white' : 'bg-[#E7E0D3] text-[#252720]'
+                      className={`ml-1.5 text-[10px] px-1.5 py-0.2 rounded-full ${
+                        isSelected
+                          ? 'bg-white/20 text-white'
+                          : 'bg-[#E7E0D3] text-[#252720]'
                       }`}
                     >
                       {count}
@@ -307,200 +375,196 @@ const CareersPage = () => {
         </div>
       </section>
 
-      {/* ================= 3. CANDIDATE PORTAL TEASER BANNER ================= */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div className="bg-[#EAF0E8] border border-[#174B39]/20 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-[#174B39] text-white flex items-center justify-center shrink-0 shadow-xs">
-              <FiBriefcase className="text-lg" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-[#174B39] font-serif">
-                Already Applied for a Role with DY&C?
-              </h3>
-              <p className="text-xs text-[#252720]/80 mt-0.5">
-                Check your screening status, interview schedule, and recruiter feedback on your dedicated Candidate Portal.
-              </p>
-            </div>
+      {/* ================= 3. OPEN POSITIONS LISTING ================= */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#252720]">
+              Available Positions ({jobs.length})
+            </h2>
+            <p className="text-xs text-[#66665D] mt-0.5">
+              Verified corporate requisitions with guaranteed compliance and direct recruiter contact.
+            </p>
           </div>
+
+          {/* Candidate Portal Shortcut */}
           <Link
-            to={isAuthenticated ? '/candidate/portal' : '/login'}
-            className="shrink-0 inline-flex items-center gap-1.5 bg-white hover:bg-[#FDFBF7] text-[#174B39] border border-[#174B39]/30 px-4 py-2 rounded-xl text-xs font-bold shadow-xs transition"
+            to="/candidate/portal"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#174B39] hover:text-[#103728] transition bg-white px-3.5 py-2 rounded-xl border border-[#E7E0D3] shadow-xs"
           >
-            <span>{isAuthenticated ? 'Open Candidate Portal' : 'Login to Track Application'}</span>
+            <FiBriefcase className="text-xs text-[#B88A3B]" />
+            <span>My Candidate Portal</span>
             <FiArrowRight className="text-xs" />
           </Link>
         </div>
-      </section>
-
-      {/* ================= 4. JOB LISTINGS GRID ================= */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#252720]">
-              Open Job Positions
-            </h2>
-            <p className="text-xs sm:text-sm text-[#66665D] mt-0.5">
-              Showing {jobs.length} active opportunities available for immediate consideration
-            </p>
-          </div>
-        </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
             {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl p-6 border border-[#E7E0D3] animate-pulse space-y-4"
-              >
-                <div className="h-5 bg-[#E7E0D3] rounded w-2/3" />
-                <div className="h-4 bg-[#E7E0D3] rounded w-1/3" />
-                <div className="h-16 bg-[#F8F5EE] rounded" />
+              <div key={i} className="bg-white rounded-3xl p-6 border border-[#E7E0D3] space-y-4">
+                <div className="h-4 bg-[#E7E0D3] rounded w-1/4" />
+                <div className="h-6 bg-[#E7E0D3] rounded w-3/4" />
+                <div className="h-12 bg-[#F8F5EE] rounded" />
               </div>
             ))}
           </div>
         ) : jobs.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-[#E7E0D3] p-10 sm:p-14 text-center max-w-xl mx-auto shadow-xs">
-            <div className="w-14 h-14 rounded-full bg-[#EAF0E8] text-[#174B39] flex items-center justify-center mx-auto mb-4 border border-[#174B39]/20 shadow-xs">
-              <FiBriefcase className="text-2xl" />
-            </div>
-            <h3 className="text-xl font-bold font-serif text-[#252720]">
-              {searchQuery || selectedDept !== 'All' || selectedType !== 'All'
-                ? 'No matching jobs found'
-                : 'No Open Positions at the Moment'}
+          <div className="bg-white rounded-3xl border border-[#E7E0D3] p-12 text-center">
+            <FiBriefcase className="w-12 h-12 text-[#8A897C] mx-auto mb-3" />
+            <h3 className="text-lg font-serif font-bold text-[#252720]">
+              No Openings Found Matching Your Filter
             </h3>
-            <p className="text-xs sm:text-sm text-[#66665D] mt-2 mb-6 leading-relaxed">
-              {searchQuery || selectedDept !== 'All' || selectedType !== 'All'
-                ? 'Try adjusting your search criteria or resetting filters to see other openings.'
-                : 'Our recruitment desk regularly publishes verified enterprise openings. Please check back soon or track your existing applications on the Candidate Portal.'}
+            <p className="text-xs text-[#66665D] max-w-sm mx-auto mt-1 mb-6">
+              Try choosing a different department or clearing your search term to see all current job openings.
             </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {(searchQuery || selectedDept !== 'All' || selectedType !== 'All') && (
-                <button
-                  onClick={() => {
-                    setSelectedDept('All');
-                    setSelectedType('All');
-                    setSearchQuery('');
-                  }}
-                  className="bg-[#F8F5EE] hover:bg-[#EAF0E8] text-[#174B39] px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer"
-                >
-                  Reset all filters
-                </button>
-              )}
-
-              {user && (user.role === 'admin' || user.role === 'editor') && (
-                <Link
-                  to="/admin/jobs"
-                  className="inline-flex items-center gap-1.5 bg-[#174B39] hover:bg-[#103728] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-xs transition"
-                >
-                  <span>+ Post Job via Admin Console</span>
-                </Link>
-              )}
-            </div>
+            <button
+              onClick={() => {
+                setSelectedDept('All');
+                setSelectedType('All');
+                setSearchQuery('');
+              }}
+              className="bg-[#174B39] text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#103728] transition cursor-pointer"
+            >
+              Reset All Filters
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {jobs.map((job) => (
-              <motion.div
-                key={job._id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl border border-[#E7E0D3] p-5 sm:p-6 shadow-xs hover:shadow-[0_8px_24px_rgba(23,75,57,0.08)] hover:border-[#174B39]/40 transition-all duration-200 flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Top tags row */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#174B39] bg-[#EAF0E8] px-2.5 py-1 rounded-full border border-[#174B39]/15">
-                      {job.department}
-                    </span>
+            {jobs.map((job) => {
+              // Check user application status for this specific job
+              const userApp = myApplications.find(
+                (a) =>
+                  a.job?._id === job._id ||
+                  a.job === job._id ||
+                  a.job?.slug === job.slug
+              );
 
-                    <div className="flex items-center gap-1.5">
-                      {job.urgent && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#DC2626] bg-[#FEF2F2] px-2 py-0.5 rounded-full border border-[#FEE2E2]">
-                          Urgent Hiring
+              const isAppliedActive = userApp && userApp.status !== 'Rejected';
+              const isRejected = userApp && userApp.status === 'Rejected';
+
+              return (
+                <motion.div
+                  key={job._id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-3xl border border-[#E7E0D3] p-6 shadow-xs hover:shadow-md hover:border-[#174B39]/40 transition-all flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Top Tag Row */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#174B39] bg-[#EAF0E8] px-2.5 py-0.5 rounded-full border border-[#174B39]/20">
+                        {job.department}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px] font-medium text-[#66665D] bg-[#F8F5EE] px-2 py-0.5 rounded-md border border-[#E7E0D3]">
+                          {job.workplaceType}
                         </span>
-                      )}
-                      <span className="text-[11px] font-semibold text-[#66665D] bg-[#F8F5EE] px-2 py-0.5 rounded-full capitalize">
-                        {job.type}
+                        {job.urgent && (
+                          <span className="text-[10px] font-bold text-[#C0392B] bg-[#FDEDEC] px-2 py-0.5 rounded-full border border-[#FADBD8]">
+                            Urgent
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Title & Slug Link */}
+                    <Link
+                      to={`/careers/${job.slug}`}
+                      className="text-lg font-serif font-bold text-[#252720] group-hover:text-[#174B39] transition-colors leading-snug block"
+                    >
+                      {job.title}
+                    </Link>
+
+                    {/* Metadata line: Location, Exp, Compensation */}
+                    <div className="flex flex-wrap items-center gap-y-1.5 gap-x-4 text-xs text-[#66665D] mt-3 mb-4">
+                      <span className="flex items-center gap-1">
+                        <FiMapPin className="text-[#B88A3B]" />
+                        <span>{job.location}</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <FiClock className="text-[#B88A3B]" />
+                        <span>{job.experience}</span>
+                      </span>
+                      <span className="flex items-center gap-1 font-semibold text-[#252720]">
+                        <FiDollarSign className="text-[#174B39]" />
+                        <span>{job.salaryRange}</span>
                       </span>
                     </div>
+
+                    {/* Description snippet */}
+                    <p className="text-xs sm:text-sm text-[#66665D] line-clamp-2 leading-relaxed mb-4">
+                      {job.description}
+                    </p>
+
+                    {/* Skills tags */}
+                    {job.skills?.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {job.skills.slice(0, 4).map((skill, idx) => (
+                          <span
+                            key={idx}
+                            className="text-[11px] font-medium bg-[#F8F5EE] text-[#252720] px-2 py-0.5 rounded-md border border-[#E7E0D3]"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                        {job.skills.length > 4 && (
+                          <span className="text-[11px] text-[#8A897C] self-center">
+                            +{job.skills.length - 4} more
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Title & Slug Link */}
-                  <Link
-                    to={`/careers/${job.slug}`}
-                    className="text-lg font-serif font-bold text-[#252720] group-hover:text-[#174B39] transition-colors leading-snug block"
-                  >
-                    {job.title}
-                  </Link>
+                  {/* Card Actions */}
+                  <div className="pt-4 border-t border-[#E7E0D3]/60 flex items-center justify-between gap-3">
+                    <Link
+                      to={`/careers/${job.slug}`}
+                      className="text-xs font-semibold text-[#174B39] hover:underline flex items-center gap-1"
+                    >
+                      <span>Role Details</span>
+                      <FiArrowRight className="text-xs" />
+                    </Link>
 
-                  {/* Metadata line: Location, Exp, Compensation */}
-                  <div className="flex flex-wrap items-center gap-y-1.5 gap-x-4 text-xs text-[#66665D] mt-3 mb-4">
-                    <span className="flex items-center gap-1">
-                      <FiMapPin className="text-[#B88A3B]" />
-                      <span>{job.location}</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <FiClock className="text-[#B88A3B]" />
-                      <span>{job.experience}</span>
-                    </span>
-                    <span className="flex items-center gap-1 font-semibold text-[#252720]">
-                      <FiDollarSign className="text-[#174B39]" />
-                      <span>{job.salaryRange}</span>
-                    </span>
+                    {/* APPLY ACTION BUTTON / STATUS BADGE */}
+                    {isAppliedActive ? (
+                      /* 1. Already Applied & Active */
+                      <Link
+                        to="/candidate/portal"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#EAF0E8] hover:bg-[#174B39] text-[#174B39] hover:text-white border border-[#174B39]/20 text-xs font-bold transition shadow-xs"
+                        title={`Already applied (Stage: ${userApp.status}). Click to view candidate portal.`}
+                      >
+                        <FiCheck className="text-xs" />
+                        <span>Applied ({userApp.status})</span>
+                      </Link>
+                    ) : isRejected ? (
+                      /* 2. Previous application was Rejected, job is still open -> Can Re-Apply */
+                      <button
+                        onClick={() => handleOpenApplyModal(job)}
+                        className="bg-[#174B39] hover:bg-[#103728] text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+                        title="Your previous application was not shortlisted. Click to re-apply with an updated resume."
+                      >
+                        <FiRefreshCw className="text-xs" />
+                        <span>Re-Apply Now</span>
+                      </button>
+                    ) : (
+                      /* 3. Not yet applied */
+                      <button
+                        onClick={() => handleOpenApplyModal(job)}
+                        className="bg-[#174B39] hover:bg-[#103728] text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+                      >
+                        <span>Apply Now</span>
+                      </button>
+                    )}
                   </div>
-
-                  {/* Description snippet */}
-                  <p className="text-xs sm:text-sm text-[#66665D] line-clamp-2 leading-relaxed mb-4">
-                    {job.description}
-                  </p>
-
-                  {/* Skills tags */}
-                  {job.skills?.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-5">
-                      {job.skills.slice(0, 4).map((skill, idx) => (
-                        <span
-                          key={idx}
-                          className="text-[11px] font-medium bg-[#F8F5EE] text-[#252720] px-2 py-0.5 rounded-md border border-[#E7E0D3]"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                      {job.skills.length > 4 && (
-                        <span className="text-[11px] text-[#8A897C] self-center">
-                          +{job.skills.length - 4} more
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Card Actions */}
-                <div className="pt-4 border-t border-[#E7E0D3]/60 flex items-center justify-between gap-3">
-                  <Link
-                    to={`/careers/${job.slug}`}
-                    className="text-xs font-semibold text-[#174B39] hover:underline flex items-center gap-1"
-                  >
-                    <span>Role Details</span>
-                    <FiArrowRight className="text-xs" />
-                  </Link>
-
-                  <button
-                    onClick={() => handleOpenApplyModal(job)}
-                    className="bg-[#174B39] hover:bg-[#103728] text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
-                  >
-                    <span>Apply Now</span>
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </section>
 
-      {/* ================= 5. QUICK APPLICATION MODAL ================= */}
+      {/* ================= 4. QUICK APPLICATION MODAL ================= */}
       <AnimatePresence>
         {applyModalJob && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#252720]/60 backdrop-blur-xs overflow-y-auto">
@@ -598,11 +662,10 @@ const CareersPage = () => {
                           onChange={(e) =>
                             setFormData({ ...formData, candidateName: e.target.value })
                           }
-                          placeholder="e.g. Rahul Sharma"
+                          placeholder="e.g. Devesh Yadav"
                           className="w-full px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39]"
                         />
                       </div>
-
                       <div>
                         <label className="block text-xs font-semibold text-[#252720] mb-1">
                           Email Address *
@@ -614,7 +677,7 @@ const CareersPage = () => {
                           onChange={(e) =>
                             setFormData({ ...formData, candidateEmail: e.target.value })
                           }
-                          placeholder="rahul@example.com"
+                          placeholder="name@company.com"
                           className="w-full px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39]"
                         />
                       </div>
@@ -624,7 +687,7 @@ const CareersPage = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-semibold text-[#252720] mb-1">
-                          Mobile Number *
+                          Phone Number *
                         </label>
                         <input
                           type="tel"
@@ -637,7 +700,6 @@ const CareersPage = () => {
                           className="w-full px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39]"
                         />
                       </div>
-
                       <div>
                         <label className="block text-xs font-semibold text-[#252720] mb-1">
                           Total Experience
@@ -648,13 +710,13 @@ const CareersPage = () => {
                           onChange={(e) =>
                             setFormData({ ...formData, totalExperience: e.target.value })
                           }
-                          placeholder="e.g. 4.5 years"
+                          placeholder="e.g. 5 years"
                           className="w-full px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39]"
                         />
                       </div>
                     </div>
 
-                    {/* Current Company & Notice Period */}
+                    {/* Company & Notice */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-semibold text-[#252720] mb-1">
@@ -706,57 +768,63 @@ const CareersPage = () => {
                       />
                     </div>
 
-                    {/* Resume Upload Box */}
-                    <div className="border-2 border-dashed border-[#E7E0D3] hover:border-[#174B39]/60 rounded-2xl p-4 text-center bg-[#FDFBF7] transition">
-                      <input
-                        type="file"
-                        id="resume-file-input"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleResumeChange}
-                        className="hidden"
-                      />
-                      <label
-                        htmlFor="resume-file-input"
-                        className="cursor-pointer flex flex-col items-center justify-center"
-                      >
-                        <div className="w-9 h-9 rounded-full bg-[#EAF0E8] text-[#174B39] flex items-center justify-center mb-2">
-                          <FiUpload className="text-base" />
-                        </div>
-                        {formData.resumeFileName ? (
-                          <div>
-                            <p className="text-xs font-bold text-[#174B39]">
-                              Selected: {formData.resumeFileName}
-                            </p>
-                            <span className="text-[10px] text-[#8A897C]">Click to replace file</span>
-                          </div>
-                        ) : (
-                          <div>
-                            <p className="text-xs font-semibold text-[#252720]">
-                              {resumeUploading ? 'Uploading Resume...' : 'Upload Resume / CV (PDF, DOCX)'}
-                            </p>
-                            <span className="text-[10px] text-[#8A897C]">
-                              Maximum file size: 10MB
-                            </span>
-                          </div>
-                        )}
-                      </label>
-                    </div>
-
-                    {/* Pitch / Cover Note */}
+                    {/* MANDATORY RESUME UPLOAD */}
                     <div>
-                      <label className="block text-xs font-semibold text-[#252720] mb-1">
-                        Brief Cover Note / Pitch (Optional)
-                      </label>
-                      <textarea
-                        rows={2}
-                        value={formData.coverLetter}
-                        onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}
-                        placeholder="Highlight your domain strengths or shift preferences..."
-                        className="w-full px-3 py-2 rounded-xl bg-[#F8F5EE]/60 border border-[#E7E0D3] text-xs text-[#252720] focus:outline-none focus:border-[#174B39]"
-                      />
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold text-[#252720]">
+                          Resume / CV Document <span className="text-[#DC2626]">* (Mandatory)</span>
+                        </label>
+                        {formData.resumeUrl && (
+                          <span className="text-[10px] font-bold text-[#174B39]">✓ Attached</span>
+                        )}
+                      </div>
+
+                      <div
+                        className={`border-2 border-dashed rounded-2xl p-4 text-center transition ${
+                          formData.resumeUrl
+                            ? 'border-[#174B39]/50 bg-[#EAF0E8]/40'
+                            : 'border-[#E7E0D3] hover:border-[#174B39]/60 bg-[#FDFBF7]'
+                        }`}
+                      >
+                        <input
+                          type="file"
+                          id="careers-resume-input"
+                          accept=".pdf,.doc,.docx"
+                          onChange={handleResumeChange}
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="careers-resume-input"
+                          className="cursor-pointer flex flex-col items-center justify-center"
+                        >
+                          <div className="w-9 h-9 rounded-full bg-[#EAF0E8] text-[#174B39] flex items-center justify-center mb-2">
+                            <FiUpload className="text-base" />
+                          </div>
+                          {formData.resumeFileName ? (
+                            <div>
+                              <p className="text-xs font-bold text-[#174B39]">
+                                Selected: {formData.resumeFileName}
+                              </p>
+                              <span className="text-[10px] text-[#8A897C] underline mt-0.5 block">
+                                Click to replace file
+                              </span>
+                            </div>
+                          ) : (
+                            <div>
+                              <p className="text-xs font-semibold text-[#174B39]">
+                                {resumeUploading
+                                  ? 'Uploading Resume...'
+                                  : 'Click to Upload Resume / CV (PDF or DOCX) *'}
+                              </p>
+                              <span className="text-[10px] text-[#8A897C]">
+                                Maximum file size: 10MB · Mandatory for screening
+                              </span>
+                            </div>
+                          )}
+                        </label>
+                      </div>
                     </div>
 
-                    {/* Submit Button */}
                     <div className="pt-2 flex items-center justify-end gap-3">
                       <button
                         type="button"
@@ -768,14 +836,99 @@ const CareersPage = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting || resumeUploading}
-                        className="bg-[#174B39] hover:bg-[#103728] disabled:opacity-50 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer flex items-center gap-1.5"
+                        className="bg-[#174B39] hover:bg-[#103728] text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-xs transition disabled:opacity-50 cursor-pointer flex items-center gap-2"
                       >
-                        {isSubmitting ? 'Submitting...' : 'Send Application'}
+                        {isSubmitting ? (
+                          <>
+                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Submitting Application...</span>
+                          </>
+                        ) : (
+                          <span>Submit Application</span>
+                        )}
                       </button>
                     </div>
                   </form>
                 </>
               )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ================= AUTH REQUIREMENT MODAL (IF NOT LOGGED IN) ================= */}
+      <AnimatePresence>
+        {showAuthModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#252720]/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              className="bg-white rounded-3xl border border-[#E7E0D3] shadow-2xl max-w-md w-full p-6 sm:p-8 relative overflow-hidden"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => {
+                  setShowAuthModal(false);
+                  setAuthModalTargetJob(null);
+                }}
+                className="absolute top-4 right-4 p-2 rounded-full text-[#8A897C] hover:text-[#252720] hover:bg-[#F8F5EE] transition cursor-pointer"
+              >
+                <FiX className="text-lg" />
+              </button>
+
+              <div className="text-center pt-2">
+                <div className="w-14 h-14 rounded-2xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center mx-auto mb-4 border border-[#174B39]/20 shadow-xs">
+                  <FiLock className="text-2xl" />
+                </div>
+
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B88A3B] block mb-1">
+                  Candidate Verification
+                </span>
+                <h3 className="text-xl font-serif font-bold text-[#252720]">
+                  Login or Sign Up to Apply
+                </h3>
+                <p className="text-xs text-[#66665D] mt-2 leading-relaxed">
+                  {authModalTargetJob ? (
+                    <>
+                      To apply for <strong className="text-[#252720]">"{authModalTargetJob.title}"</strong> and track your real-time application pipeline, interview rounds, and recruiter notes, please sign in or create an account.
+                    </>
+                  ) : (
+                    'To apply for open positions and access your real-time recruitment pipeline, interview schedule, and recruiter messages, please log in or create an account.'
+                  )}
+                </p>
+
+                {/* Direct Action Buttons */}
+                <div className="space-y-2.5 mt-6">
+                  <Link
+                    to={`/login?returnTo=${encodeURIComponent(
+                      authModalTargetJob
+                        ? `/careers/${authModalTargetJob.slug}`
+                        : location.pathname
+                    )}`}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#174B39] hover:bg-[#103728] text-white py-3 rounded-full text-xs font-bold shadow-md hover:shadow-lg transition cursor-pointer"
+                  >
+                    <FiLogIn className="text-sm" />
+                    <span>Login to Existing Account</span>
+                  </Link>
+
+                  <Link
+                    to={`/signup?returnTo=${encodeURIComponent(
+                      authModalTargetJob
+                        ? `/careers/${authModalTargetJob.slug}`
+                        : location.pathname
+                    )}`}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-[#F8F5EE] border border-[#E7E0D3] text-[#252720] py-3 rounded-full text-xs font-bold shadow-xs transition cursor-pointer"
+                  >
+                    <FiUserPlus className="text-sm text-[#B88A3B]" />
+                    <span>Create Free Candidate Account</span>
+                  </Link>
+                </div>
+
+                <p className="text-[11px] text-[#8A897C] mt-4">
+                  After logging in, you will be brought straight back to your application.
+                </p>
+              </div>
             </motion.div>
           </div>
         )}

@@ -1,5 +1,5 @@
 import { useState, useId } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import AuthLayout from '../../components/auth/AuthLayout';
 import {
@@ -14,6 +14,10 @@ import {
 } from 'react-icons/fi';
 
 const SignupPage = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnTo = searchParams.get('returnTo') || '/';
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -119,7 +123,7 @@ const SignupPage = () => {
       };
 
       await signup(payload);
-      navigate('/', { replace: true });
+      navigate(returnTo, { replace: true });
     } catch (err) {
       setServerError(
         err.response?.data?.message ||
@@ -405,7 +409,7 @@ const SignupPage = () => {
           <p className="text-xs text-[#66665D]">
             Already have a DY&C account?{' '}
             <Link
-              to="/login"
+              to={returnTo && returnTo !== '/' ? `/login?returnTo=${encodeURIComponent(returnTo)}` : '/login'}
               className="font-bold text-[#174B39] hover:text-[#103728] transition"
             >
               Sign In

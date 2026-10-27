@@ -632,8 +632,41 @@ const CandidatePortalPage = () => {
                       </div>
                     </div>
 
-                    {/* Recruiter Status Notification Banner */}
-                    {app.statusNotification?.message && (
+                    {/* Recruiter Status Notification Banner / Rejection Status */}
+                    {app.status === 'Rejected' ? (
+                      <div className="bg-[#FDEDEC] border border-[#FADBD8] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                          <FiAlertCircle className="text-[#C0392B] mt-0.5 text-base shrink-0" />
+                          <div>
+                            <p className="text-xs font-bold text-[#C0392B]">
+                              Application Status: Rejected / Not Shortlisted
+                            </p>
+                            <p className="text-xs text-[#252720]/85 mt-0.5 leading-relaxed">
+                              {app.statusNotification?.message ||
+                                'Thank you for applying. Your profile was not shortlisted for this specific opening.'}
+                            </p>
+                            <span className="text-[10px] text-[#8A897C] block mt-1">
+                              Updated {new Date(app.statusNotification?.updatedAt || app.updatedAt).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Re-apply action if job is still active & published */}
+                        {app.job?.status === 'published' && app.job?.isActive ? (
+                          <Link
+                            to={`/careers/${app.job.slug}`}
+                            className="inline-flex items-center gap-1.5 bg-[#174B39] hover:bg-[#103728] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-xs transition shrink-0 self-end sm:self-center"
+                          >
+                            <FiRefreshCw className="text-xs" />
+                            <span>Re-Apply for Job</span>
+                          </Link>
+                        ) : (
+                          <span className="text-[11px] font-semibold text-[#8A897C] bg-white px-3 py-1 rounded-lg border border-[#E7E0D3] shrink-0 self-end sm:self-center">
+                            Position Closed
+                          </span>
+                        )}
+                      </div>
+                    ) : app.statusNotification?.message ? (
                       <div className="bg-[#EAF0E8]/70 border border-[#174B39]/20 rounded-2xl p-4 flex items-start gap-3">
                         <FiAlertCircle className="text-[#174B39] mt-0.5 text-base shrink-0" />
                         <div>
@@ -648,7 +681,7 @@ const CandidatePortalPage = () => {
                           </span>
                         </div>
                       </div>
-                    )}
+                    ) : null}
 
                     {/* Interview Rounds Scheduled for this job */}
                     {app.interviews?.length > 0 && (

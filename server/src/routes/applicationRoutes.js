@@ -19,8 +19,8 @@ const router = express.Router();
 // File upload
 router.post('/upload-resume', uploadResume.single('resume'), uploadResumeFile);
 
-// Public / Candidate submission
-router.post('/', optionalAuth, submitApplication);
+// Authenticated Candidate submission
+router.post('/', protect, submitApplication);
 
 // Candidate portal
 router.get('/my', protect, getMyApplications);
