@@ -1288,7 +1288,7 @@ const AdminInquiries = () => {
                     selectedInquiry.currentSystem ||
                     selectedInquiry.requiredERPArea ||
                     selectedInquiry.numberOfUsers ||
-                    selectedInquiry.timeline) && (
+                    selectedInquiry.duration) && (
                     <div className="p-4 sm:p-5 rounded-2xl bg-[#EAF0E8]/40 border border-[#DBEAFE] space-y-3">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#252720] flex items-center gap-2">
                         <FiLayers className="w-4 h-4 text-[#174B39]" />
@@ -1373,10 +1373,10 @@ const AdminInquiries = () => {
                             <strong className="text-[#252720]">{selectedInquiry.deploymentPreference}</strong>
                           </div>
                         )}
-                        {(selectedInquiry.duration || selectedInquiry.timeline) && (
+                        {selectedInquiry.duration && (
                           <div>
                             <span className="text-[#64748B] block text-[10px] uppercase">Target Duration</span>
-                            <strong className="text-[#252720]">{selectedInquiry.duration || selectedInquiry.timeline}</strong>
+                            <strong className="text-[#252720]">{selectedInquiry.duration}</strong>
                           </div>
                         )}
                       </div>
