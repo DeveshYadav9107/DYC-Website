@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  FiLock,
+  FiLogIn,
+  FiUserPlus,
+  FiX,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiArrowRight,
+} from 'react-icons/fi';
 import siteConfig from '../../config/siteConfig';
 import { submitInquiry } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import Reveal from '../../components/animations/Reveal';
 
 const ENQUIRY_CATEGORIES = [
@@ -49,6 +60,10 @@ const ENQUIRY_CATEGORIES = [
 
 const ContactPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const { user, isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
   const initialCategory = searchParams.get('type') || searchParams.get('category') || 'staffing-request';
 
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
@@ -60,6 +75,20 @@ const ContactPage = () => {
       setSelectedCategory(queryType);
     }
   }, [searchParams]);
+
+  // Pre-fill user data when user changes
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+        company: user.company || prev.company,
+        designation: user.designation || prev.designation,
+      }));
+    }
+  }, [user]);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -164,6 +193,13 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 1. Enforce Authentication Requirement
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+
     setSubmissionResult({ loading: true, success: false, enquiryNumber: '', error: '' });
 
     try {
@@ -1084,6 +1120,24 @@ const ContactPage = () => {
                     </div>
                   </div>
 
+                  {/* Account requirement strip */}
+                  {!isAuthenticated ? (
+                    <div className="mb-4 p-3.5 rounded-2xl bg-[#EAF0E8] border border-[#174B39]/20 text-xs text-[#174B39] flex items-start gap-3">
+                      <FiLock className="w-4 h-4 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold block">Account Required to Submit Requirement</span>
+                        <span className="text-[11px] text-[#252720]/80">
+                          Please sign in or create an account to submit your enquiry. All quotation proposals, SLA tracking, and responses will be saved directly in your Client Portal.
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mb-3 text-[11px] text-[#174B39] font-medium flex items-center gap-1.5 bg-[#EAF0E8]/50 px-3 py-1.5 rounded-lg border border-[#174B39]/10">
+                      <FiCheckCircle className="text-xs" />
+                      <span>Submitting as <strong>{user?.name || user?.email}</strong> · Responses will be tracked in your Client Portal</span>
+                    </div>
+                  )}
+
                   {/* Error Notification */}
                   {submissionResult.error && (
                     <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
@@ -1102,6 +1156,11 @@ const ContactPage = () => {
                         <>
                           <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                           Submitting Requirement Intake...
+                        </>
+                      ) : !isAuthenticated ? (
+                        <>
+                          <FiLock className="text-base" />
+                          <span>Sign In & Submit Requirement →</span>
                         </>
                       ) : (
                         <>Submit Requirement for Proposal Review →</>
@@ -1183,6 +1242,67 @@ const ContactPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ================= AUTH REQUIREMENT MODAL (IF NOT LOGGED IN) ================= */}
+      <AnimatePresence>
+        {showAuthModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#252720]/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              className="bg-white rounded-3xl border border-[#E7E0D3] shadow-2xl max-w-md w-full p-6 sm:p-8 relative overflow-hidden"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="absolute top-4 right-4 p-2 rounded-full text-[#8A897C] hover:text-[#252720] hover:bg-[#F8F5EE] transition cursor-pointer"
+              >
+                <FiX className="text-lg" />
+              </button>
+
+              <div className="text-center pt-2">
+                <div className="w-14 h-14 rounded-2xl bg-[#EAF0E8] text-[#174B39] flex items-center justify-center mx-auto mb-4 border border-[#174B39]/20 shadow-xs">
+                  <FiLock className="text-2xl" />
+                </div>
+
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B88A3B] block mb-1">
+                  Enterprise Client Verification
+                </span>
+                <h3 className="text-xl font-serif font-bold text-[#252720]">
+                  Login or Sign Up to Submit Enquiry
+                </h3>
+                <p className="text-xs text-[#66665D] mt-2 leading-relaxed">
+                  To send an enterprise requirement for <strong className="text-[#252720]">"{currentCategoryObj?.title || 'this service'}"</strong> and track quotation proposals, service agreements, and support tickets in your Client Portal, please sign in or create an account.
+                </p>
+
+                {/* Direct Action Buttons */}
+                <div className="space-y-2.5 mt-6">
+                  <Link
+                    to={`/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#174B39] hover:bg-[#103728] text-white py-3 rounded-full text-xs font-bold shadow-md hover:shadow-lg transition cursor-pointer"
+                  >
+                    <FiLogIn className="text-sm" />
+                    <span>Login to Existing Account</span>
+                  </Link>
+
+                  <Link
+                    to={`/signup?returnTo=${encodeURIComponent(location.pathname + location.search)}`}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-[#F8F5EE] border border-[#E7E0D3] text-[#252720] py-3 rounded-full text-xs font-bold shadow-xs transition cursor-pointer"
+                  >
+                    <FiUserPlus className="text-sm text-[#B88A3B]" />
+                    <span>Create Free Client Account</span>
+                  </Link>
+                </div>
+
+                <p className="text-[11px] text-[#8A897C] mt-4">
+                  After logging in, you will be brought straight back to complete your requirement submission.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

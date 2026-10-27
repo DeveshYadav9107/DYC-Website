@@ -51,9 +51,12 @@ export const createInquiry = async (req, res, next) => {
       inquiryData.priority = inquiryData.priority || 'normal';
     }
 
-    if (req.user && req.user._id) {
-      inquiryData.user = req.user._id;
+    if (!req.user || !req.user._id) {
+      return next(
+        new ApiError(401, 'Please log in or create an account to submit your enquiry.')
+      );
     }
+    inquiryData.user = req.user._id;
 
     const initialTimeline = [{
       type: 'created',

@@ -18,8 +18,8 @@ import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// 1. Public submission (Contact forms, SAP requests, ERP inquiries)
-router.post('/', createInquiry);
+// 1. Enterprise enquiry submission (Requires authenticated client)
+router.post('/', protect, createInquiry);
 
 // 2. Customer enquiries route (Protected for authenticated client/user - notes excluded)
 router.get('/my', protect, getMyInquiries);
