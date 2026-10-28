@@ -371,6 +371,9 @@ export const updateProfile = async (req, res, next) => {
       }
     }
 
+    if (req.body.resumeUrl !== undefined) user.resumeUrl = req.body.resumeUrl;
+    if (req.body.resumeFileName !== undefined) user.resumeFileName = req.body.resumeFileName;
+
     // Optional password change
     if (newPassword) {
       if (!currentPassword) {
